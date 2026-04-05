@@ -1,0 +1,245 @@
+@use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
+
+.block-projects-slider {
+    background: #0f0f0f;
+    overflow: hidden;
+    padding-bottom: 6rem;
+
+    @include maxWidth($md) {
+        padding-bottom: 4rem;
+    }
+
+    @include maxWidth($sm) {
+        padding-bottom: 3rem;
+    }
+
+    // ── Header ──────────────────────────────────────────────────────────────
+    &__header {
+        padding: 5rem 2rem 3.2rem;
+        text-align: center;
+    }
+
+    &__heading {
+        @include resFont(2.4, 4);
+        font-weight: $bold;
+        color: $primaryColor;
+        text-transform: uppercase;
+        margin-bottom: 1.6rem;
+        line-height: 1.2;
+
+        @include maxWidth($xs) {
+            font-size: 1.8rem;
+        }
+    }
+
+    // ── Swiper override ──────────────────────────────────────────────────────
+    // LINEAR là chìa khóa cho smooth marquee — bắt buộc override Swiper default
+    &__swiper {
+        overflow: visible !important;
+        padding-bottom: 0 !important;
+
+        .swiper-wrapper {
+            transition-timing-function: linear !important;
+        }
+    }
+
+    // ── Slide ────────────────────────────────────────────────────────────────
+    &__slide {
+        position: relative;
+        height: 52vh;
+        min-height: 28rem;
+        max-height: 60rem;
+        border-radius: 0.6rem;
+        overflow: hidden;
+        cursor: pointer;
+
+        // Slide kề mờ hơn — dùng opacity thôi, KHÔNG dùng scale/transform
+        // vì scale sẽ kích hoạt layout recalc làm giật marquee
+        opacity: 0.45;
+        transition: opacity 0.8s ease;
+
+        &.swiper-slide-active {
+            opacity: 1;
+
+            .block-projects-slider__overlay {
+                opacity: 1;
+            }
+        }
+    }
+
+    // ── Image link (wrapper toàn slide) ─────────────────────────────────────
+    &__image-link {
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        text-decoration: none;
+
+        &:focus-visible {
+            outline: 2px solid #fff;
+            outline-offset: -3px;
+        }
+    }
+
+    // ── Ảnh nền ─────────────────────────────────────────────────────────────
+    &__img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    // ── Placeholder khi không có ảnh ─────────────────────────────────────────
+    &__no-image {
+        width: 100%;
+        height: 100%;
+        background: #222;
+    }
+
+    // ── Overlay gradient + text ──────────────────────────────────────────────
+    &__overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.80) 0%,
+            rgba(0, 0, 0, 0.20) 50%,
+            transparent 100%
+        );
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        padding: 3rem 2.8rem;
+        opacity: 0;          // ẩn trên slide không active
+        transition: opacity 0.4s ease;
+    }
+
+    // ── Taxonomy label nhỏ ──────────────────────────────────────────────────
+    &__cat {
+        display: block;
+        font-size: 0.9rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.65);
+        margin-bottom: 0.4rem;
+        font-family: $primaryFont;
+    }
+
+    // ── Tiêu đề dự án ───────────────────────────────────────────────────────
+    &__title {
+        font-size: clamp(1.1rem, 1.4vw, 1.5rem);
+        font-weight: 500;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin: 0 0 1.2rem;
+        line-height: 1.35;
+    }
+
+    // ── CTA pill ────────────────────────────────────────────────────────────
+    &__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        padding: 0.7rem 1.6rem;
+        font-size: 1.1rem;
+        font-family: $primaryFont;
+        letter-spacing: 0.04em;
+        border-radius: 10rem;
+        transition: background 0.22s ease, color 0.22s ease;
+
+        svg {
+            flex-shrink: 0;
+            transition: transform 0.22s ease;
+        }
+
+        .block-projects-slider__image-link:hover & {
+            background: #fff;
+            color: #111;
+
+            svg {
+                transform: translateX(3px);
+            }
+        }
+    }
+
+    // ── Navigation arrows ───────────────────────────────────────────────────
+    &__nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+        width: 4.8rem;
+        height: 4.8rem;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
+        backdrop-filter: blur(4px);
+
+        // Hide default Swiper ::after arrows
+        &::after { display: none; }
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.55);
+        }
+
+        &--prev { left: 2rem; }
+        &--next { right: 2rem; }
+
+        @include maxWidth($sm) {
+            width: 3.6rem;
+            height: 3.6rem;
+            &--prev { left: 0.8rem; }
+            &--next { right: 0.8rem; }
+        }
+    }
+
+    // ── Empty state ─────────────────────────────────────────────────────────
+    &__empty {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.4);
+        padding: 4rem 2rem;
+        font-size: 1.4rem;
+    }
+
+    // ── Responsive ───────────────────────────────────────────────────────────
+    @include maxWidth($md) {
+        &__header {
+            padding: 3.6rem 1.6rem 2.4rem;
+        }
+        &__slide {
+            height: 45vh;
+        }
+        &__overlay {
+            padding: 2.4rem 2rem;
+        }
+    }
+
+    @include maxWidth($sm) {
+        &__header {
+            padding: 2.8rem 1.6rem 2rem;
+        }
+        &__slide {
+            height: 60vw;
+            min-height: 22rem;
+        }
+        &__overlay {
+            padding: 1.6rem 1.4rem;
+        }
+        &__title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+    }
+}

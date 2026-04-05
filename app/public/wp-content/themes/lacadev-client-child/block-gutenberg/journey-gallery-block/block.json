@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "version": "1.0.0",
+  "name": "lacadev/journey-gallery-block",
+  "title": "Journey Gallery Block",
+  "description": "Tiêu đề + mô tả + gallery ảnh dạng lưới (repeater)",
+  "category": "lacadev-blocks",
+  "icon": "format-gallery",
+  "editorScript": "lacadev-block-journey-gallery-block-editor",
+  "style": "lacadev-block-journey-gallery-block",
+  "keywords": ["gallery", "hành trình", "ảnh", "lưới", "journey", "grid"],
+  "textdomain": "laca",
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "default": "HÀNH TRÌNH XÂY NHÀ CÙNG PHÚC ĐẠI NAM"
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "items": {
+      "type": "array",
+      "default": []
+    },
+    "columns": {
+      "type": "number",
+      "default": 2
+    },
+    "headingTag": {
+      "type": "string",
+      "default": "h2"
+    },
+    "containerLayout": {
+      "type": "string",
+      "default": "container"
+    },
+    "__isPreview": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"]
+  },
+  "example": {
+    "viewportWidth": 900,
+    "attributes": {
+      "__isPreview": true
+    }
+  }
+}

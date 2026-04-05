@@ -1,0 +1,79 @@
+@use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
+
+.block-shortcode-widget {
+    padding: 5rem 0;
+
+    @include maxWidth($md) {
+        padding: 3.5rem 0;
+    }
+
+    @include maxWidth($sm) {
+        padding: 2.5rem 0;
+    }
+
+    &__header {
+        padding: 0 0 3rem;
+        text-align: center;
+
+        @include maxWidth($sm) {
+            padding: 0 0 2rem;
+        }
+    }
+
+    &__heading {
+        @include resFont(2.4, 4);
+        font-weight: $bold;
+        color: $primaryColor;
+        text-transform: uppercase;
+        margin-bottom: 1.6rem;
+        line-height: 1.2;
+
+        @include maxWidth($xs) {
+            font-size: 1.8rem;
+        }
+    }
+
+    &__cols {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3rem;
+
+        @include maxWidth($sm) {
+            gap: 2rem;
+        }
+    }
+
+    &__col {
+        flex: 1 1 calc(50% - 1.5rem);
+        min-width: 0;
+
+        @include maxWidth($sm) {
+            flex: 1 1 100%;
+        }
+    }
+
+    .wp_phongthuy_form .form-title span:after,
+    .wp_phongthuy_form .form-line input[type="button"] {
+        background-color: $primaryColor;
+
+        &:hover {
+            background-color: $secondaryColor;
+        }
+    }
+
+    // Đảm bảo các input trong shortcode form đủ lớn để touch trên mobile
+    @include maxWidth($sm) {
+        input[type="text"],
+        input[type="number"],
+        select {
+            min-height: 4.4rem; // Touch target minimum
+            font-size: 1.4rem;
+        }
+
+        // Force full-width cho select/input nằm side-by-side
+        .form-line {
+            flex-direction: column !important;
+        }
+    }
+}

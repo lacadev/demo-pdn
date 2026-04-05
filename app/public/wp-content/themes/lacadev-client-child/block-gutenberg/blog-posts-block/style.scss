@@ -1,0 +1,60 @@
+@use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
+
+.wp-block-lacadev-blog-posts-block {
+
+    // CTA link — hover arrow gap handled by Tailwind group-hover
+    .blog-posts-cta {
+        font-family: $primaryFont;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        transition: gap 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+
+        svg {
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        &:hover svg {
+            transform: translate(2px, -2px);
+        }
+    }
+
+    // h3 link màu thừa kế (hover → primary qua Tailwind)
+    h3 a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    // Thumb wrapper — đảm bảo aspect-video đúng kích thước
+    .aspect-video {
+        aspect-ratio: 16 / 9;
+        height: auto;
+    }
+
+    // Mobile: gọn hơn
+    @include maxWidth($sm) {
+        .px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        .py-32 {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        // Force single column grid trên mobile (nếu có grid Tailwind)
+        .grid-cols-2,
+        .grid-cols-3 {
+            grid-template-columns: 1fr !important;
+        }
+
+        // Đảm bảo card không bị tràn width
+        article, .post-card {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+}

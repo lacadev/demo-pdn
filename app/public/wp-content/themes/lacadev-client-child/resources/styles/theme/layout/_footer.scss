@@ -1,0 +1,483 @@
+@use "../abstracts/variables.scss" as *;
+@use "../abstracts/mixin.scss" as *;
+
+.top-footer {
+  padding: 6rem 0;
+
+  @include maxWidth($md) {
+    padding: 4rem 0;
+  }
+
+  @include maxWidth($sm) {
+    padding: 2.4rem 0;
+  }
+
+  // ─── Layout 2-col ────────────────────────────────────────────────
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+
+    @media (max-width: 991px) {
+      flex-direction: column;
+      gap: 2.4rem;
+    }
+  }
+
+  // Cột trái – form card
+  &__left {
+    flex: 0 0 58%;
+    max-width: 58%;
+
+    @media (max-width: 991px) {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
+  // Cột phải – ảnh nhân vật
+  &__right {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+
+  // ─── Rep image ────────────────────────────────────────────────────
+  &__rep-img {
+    display: block;
+    width: 100%;
+    max-width: 46rem;
+    height: auto;
+    object-fit: contain;
+    object-position: bottom;
+  }
+
+  // ─── Card title ───────────────────────────────────────────────────
+  &__card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.6rem;
+  }
+
+  // ─── Card trắng border vàng ───────────────────────────────────────
+  &__card {
+    background: #fff;
+    border: 1.5px solid #e2bb3b;
+    border-radius: 2.4rem;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    padding: 2.4rem 2.8rem 2.8rem;
+
+    @include maxWidth($sm) {
+      padding: 1.6rem 1.4rem 2rem;
+      border-radius: 1.6rem;
+    }
+  }
+
+  // ─── Form ─────────────────────────────────────────────────────────
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  // Single full-width row
+  &__body-form-row {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Two-col flex row
+  &__body-form-row-flex {
+    display: flex;
+    gap: 1.1rem;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+  }
+
+  &__flex-item {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // ─── Inputs / Select / Textarea ──────────────────────────────────
+  &__input,
+  &__select,
+  &__textarea {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    background: #f5f5f5;
+    border: 1.5px solid transparent;
+    border-radius: 0.5rem;
+    color: #333;
+    font-size: 1.2rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    appearance: none;
+
+    &::placeholder { color: #aaa; }
+
+    &:focus {
+      background: #fff;
+      border-color: $secondaryColor;
+      box-shadow: 0 0 0 3px rgba($secondaryColor, 0.12);
+    }
+
+    &.is-invalid {
+      border-color: #e84c4c;
+    }
+
+    @include maxWidth($sm) {
+      font-size: 1.4rem; // Tăng font-size để dễ đọc/gõ trên mobile
+      padding: 1rem 1.1rem;
+    }
+  }
+
+  &__select {
+    cursor: pointer;
+    padding-right: 3rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.2rem center;
+    background-size: 1.2rem;
+  }
+
+  &__textarea {
+    resize: vertical;
+    min-height: 7.5rem;
+    line-height: 1.5;
+  }
+
+  // ─── Error ───────────────────────────────────────────────────────
+  &__error {
+    font-size: 1rem;
+    color: #e84c4c;
+    display: block;
+    &:empty { display: none; }
+  }
+
+  // ─── Budget section ───────────────────────────────────────────────
+  &__budget-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  &__budget-heading {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin: 0;
+  }
+
+  &__radio-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.6rem;
+  }
+
+  &__radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 1.1rem;
+    color: #444;
+    cursor: pointer;
+    user-select: none;
+
+    input[type="radio"] {
+      width: 1.4rem;
+      height: 1.4rem;
+      accent-color: $secondaryColor;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  }
+
+
+  &__submit-wrap {
+    margin-top: 0.6rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 1.15rem 4rem;
+    background: $secondaryColor;
+    color: #fff;
+    border: none;
+    border-radius: 5rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: filter 0.22s ease, transform 0.15s ease;
+    width: 100%; // Full width trên mobile
+    justify-content: center;
+
+    @include minWidth($sm) {
+      width: auto; // Auto width trên tablet trở lên
+    }
+
+    &:hover { filter: brightness(1.1); }
+    &:active { transform: scale(0.98); }
+    &:disabled { opacity: 0.65; cursor: not-allowed; filter: none; }
+
+    .spinner {
+      display: none;
+      width: 1.6rem;
+      height: 1.6rem;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: tf-spin 0.7s linear infinite;
+    }
+
+    &.is-loading .spinner { display: inline-block; }
+    &.is-loading .btn-text { display: none; }
+  }
+
+
+}
+
+@keyframes tf-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+
+.footer {
+  background-color: $primaryColor;
+  color: #fff;
+  position: relative;
+  font-family: inherit;
+  z-index: 1;
+  margin-top: 15rem;
+
+  @include maxWidth($md) {
+    margin-top: 10rem;
+  }
+
+  @include maxWidth($sm) {
+    margin-top: 6rem;
+  }
+
+  &__main {
+    padding: 8rem 0 5rem;
+
+    @include maxWidth($md) {
+      padding: 5rem 0 4rem;
+    }
+
+    @include maxWidth($sm) {
+      padding: 3.5rem 0 3rem;
+    }
+  }
+
+  &__grid {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 0 -1.5rem;
+  }
+
+  &__col {
+    padding: 0 1.5rem;
+    margin-bottom: 3rem;
+    width: 100%;
+
+    @media (min-width: 768px) {
+      &--about, &--contact {
+        width: 50%;
+      }
+    }
+
+    @media (min-width: 992px) {
+      &--about { width: 25%; }
+      &--contact { width: 33.333333%; }
+    }
+  }
+
+  &__logo {
+    display: inline-block;
+    margin-bottom: 2rem;
+
+    @include maxWidth($sm) {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 1.6rem;
+      text-align: center;
+    }
+    
+    img {
+      max-width: 18rem;
+      height: auto;
+
+      @include maxWidth($sm) {
+        max-width: 14rem;
+        margin: 0 auto;
+        display: block;
+      }
+    }
+  }
+
+  &__slogan {
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+
+    @include maxWidth($sm) {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+  }
+
+  &__socials {
+    display: flex;
+    gap: 1.5rem;
+
+    @include maxWidth($sm) {
+      justify-content: center;
+    }
+  }
+
+  &__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.6rem;
+    height: 3.6rem;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: $secondaryColor;
+    }
+
+    i {
+      font-size: 1.6rem;
+    }
+  }
+
+  &__title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2.5rem;
+    position: relative;
+    text-transform: uppercase;
+
+    @include maxWidth($sm) {
+      font-size: 1.6rem;
+      margin-bottom: 2rem;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1rem;
+      width: 4rem;
+      height: 2px;
+      background-color: $secondaryColor; // Fix: màu vàng để hiển thị trên nền nâu
+    }
+  }
+
+  &__contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+  }
+
+  &__contact-item {
+    color: #fff;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    font-size: 1.2rem;
+    line-height: 1.6;
+
+    @include maxWidth($sm) {
+      font-size: 1.3rem; // Tăng để dễ đọc trên mobile
+    }
+  }
+
+  &__contact-icon {
+    color: #fff;
+    margin-right: 1.2rem;
+    margin-top: 0.4rem;
+    font-size: 1.6rem;
+  }
+
+  &__contact-label {
+    color: #fff;
+    margin-right: 0.5rem;
+    font-weight: 600;
+    min-width: max-content;
+  }
+
+  &__contact-link {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $secondaryColor;
+    }
+  }
+
+
+  &__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.15); // Tăng opacity để line dễ thấy hơn
+    padding: 2.5rem 0;
+
+    @include maxWidth($sm) {
+      padding: 1.8rem 0;
+    }
+  }
+
+  // Container trong footer__bottom (dùng class chuyên biệt)
+  &__container {
+    max-width: $container-mw;
+    margin: 0 auto;
+    padding: 0 0.9375rem;
+  }
+
+  &__copyright {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 1.3rem;
+    margin: 0;
+    text-align: center;
+
+    @include maxWidth($sm) {
+      font-size: 1.2rem;
+    }
+  }
+}

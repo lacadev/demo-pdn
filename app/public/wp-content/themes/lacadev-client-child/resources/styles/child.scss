@@ -1,0 +1,24 @@
+/**
+ * Child Theme CSS Overrides
+ *
+ * File này load SAU toàn bộ CSS của parent theme.
+ * Dùng để ghi đè styles mà không cần sửa theme gốc.
+ *
+ * Cách dùng:
+ *   1. Thêm CSS overrides trực tiếp vào đây (không cần build step)
+ *   2. HOẶC dùng build system (Webpack/PostCSS) xuất ra dist/styles/child.css
+ *
+ * Lưu ý: Dùng CSS custom properties (variables) từ parent để dễ maintain:
+ *   var(--primary-color), var(--secondary-color), var(--bg-color)
+ */
+
+/* === CHILD THEME OVERRIDES === */
+
+// Tự động load biến ($themeFont, $primaryColor...) từ parent nhờ Webpack alias @parent
+@use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
+
+// Ví dụ dùng ngay lập tức:
+// body.custom-child {
+//   font-family: $themeFont !important;
+// }

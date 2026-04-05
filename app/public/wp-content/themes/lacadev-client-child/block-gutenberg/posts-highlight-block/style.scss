@@ -1,0 +1,295 @@
+@use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
+
+// Namespace block: phb (posts-highlight-block)
+.block-posts-highlight {
+    padding: 4rem 0 6rem;
+
+    @include maxWidth($md) {
+        padding: 3rem 0 4rem;
+    }
+
+    @include maxWidth($sm) {
+        padding: 2rem 0 3rem;
+    }
+
+    // ── Container ───────────────────────────────────────────────────────────
+    .container {
+        max-width: var(--container-max-width, 1400px);
+        margin: 0 auto;
+        padding: 0 var(--container-gutter, 2rem);
+    }
+
+    // ── Header — đồng bộ projects-slider-block ──────────────────────────────
+    .phb__header {
+        padding: 0 0 3rem;
+        text-align: center;
+
+        @include maxWidth($sm) {
+            padding: 0 0 2rem;
+        }
+    }
+
+    .phb__heading {
+        @include resFont(2.4, 4);
+        font-weight: $bold;
+        color: $primaryColor;
+        text-transform: uppercase;
+        margin-bottom: 1.6rem;
+        line-height: 1.2;
+
+        // Override cho xs mobile: resFont dừng ở $sm=768px nên 390px vẫn = 2.4rem (38px)
+        // Cần override riêng cho kích thước nhỏ hơn
+        @include maxWidth($xs) {
+            font-size: 1.8rem; // ~29px — vừa tầm màn hình 390px
+        }
+    }
+
+    // ── Grid: 1 lớn trái + 2×2 phải ────────────────────────────────────────
+    .phb__grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 0.6rem;
+
+        @include maxWidth($md) {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+            height: auto;
+            gap: 0.5rem;
+        }
+
+        @include maxWidth($sm) {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+            height: auto;
+        }
+    }
+
+    // ── Card chung ──────────────────────────────────────────────────────────
+    .phb__card {
+        position: relative;
+        overflow: hidden;
+        background: #1a1a1a center/cover no-repeat;
+        cursor: pointer;
+
+        @include maxWidth($sm) {
+            min-height: 16,250rem;
+        }
+
+        // Zoom ảnh nền khi hover
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: inherit;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.6s ease;
+            z-index: 0;
+        }
+
+        &:hover::before {
+            transform: scale(1.05);
+        }
+
+        // ── Featured — bài 1: cột trái, span 2 rows ─────────────────────────
+        &--featured {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            min-height: 320px;
+
+            @include maxWidth($md) {
+                grid-column: 1 / -1;
+                grid-row: auto;
+                min-height: 280px;
+            }
+
+            @include maxWidth($sm) {
+                grid-column: auto;
+                grid-row: auto;
+                min-height: 260px;
+            }
+        }
+
+        // ── Skeleton ─────────────────────────────────────────────────────────
+        &--skeleton {
+            background: #e8e8e8;
+            cursor: default;
+
+            &::before { display: none; }
+
+            &.phb__card--featured {
+                background: #d0d0d0;
+            }
+        }
+    }
+
+    // ── Overlay gradient ────────────────────────────────────────────────────
+    .phb__overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.82) 0%,
+            rgba(0, 0, 0, 0.2) 50%,
+            transparent 100%
+        );
+        z-index: 1;
+    }
+
+    // ── Card body (nội dung chồng lên ảnh) ─────────────────────────────────
+    .phb__body {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1.6rem 1.6rem 1rem;
+        z-index: 2;
+
+        .phb__card--featured & {
+            padding: 2.4rem;
+
+            @include maxWidth($sm) {
+                padding: 1.6rem;
+            }
+        }
+    }
+
+    // ── Category badge ──────────────────────────────────────────────────────
+    .phb__cat {
+        position: absolute;
+        top: 1.4rem;
+        left: 1.4rem;
+        z-index: 3;
+        display: inline-block;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        background: transparent;
+        color: #fff;
+        line-height: 1;
+        padding: .8rem 1rem .5rem;
+        border-radius: 2rem;
+        border: 1px solid #fff;
+        width: fit-content;
+    }
+
+    // ── Title trên card ────────────────────────────────────────────────────
+    .phb__title {
+        font-size: clamp(0.8rem, 1.4vw, 1rem);
+        font-weight: 500;
+        color: #fff;
+        margin: 0 0 0.5rem;
+        line-height: 1.35;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+
+        display: -webkit-box;
+        line-clamp: 3;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+
+        .phb__card--featured & {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            line-clamp: 4;
+            -webkit-line-clamp: 4;
+        }
+
+        @include maxWidth($sm) {
+            font-size: 1.1rem;
+
+            .phb__card--featured & {
+                font-size: 1.3rem;
+            }
+        }
+    }
+
+    // ── Date ────────────────────────────────────────────────────────────────
+    .phb__date {
+        font-size: 0.72rem;
+        color: rgba(255, 255, 255, 0.65);
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 0;
+
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23999' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3Cpath d='M12 6v6l4 2' stroke='%23999' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
+        }
+    }
+
+    // ── CTA button ──────────────────────────────────────────────────────────
+    .phb__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        padding: 0.4em 1em;
+        border-radius: 2px;
+        width: fit-content;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+        margin-top: 0.6rem;
+
+        &::after {
+            content: '→';
+        }
+
+        .phb__card:hover & {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    }
+
+    // ── Extra grid: 3 cột cho bài từ thứ 6 trở đi ──────────────────────────
+    .phb__extra-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem;
+        margin-top: 0.6rem;
+
+        @include maxWidth($md) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include maxWidth($sm) {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+
+        .phb__card--extra {
+            height: 280px;
+
+            @include maxWidth($md) {
+                height: 240px;
+            }
+
+            @include maxWidth($sm) {
+                height: 200px;
+            }
+        }
+    }
+}
+
+// ── Editor canvas ────────────────────────────────────────────────────────────
+.wp-block-lacadev-posts-highlight-block {
+    .block-posts-highlight {
+        padding: 2rem 0;
+    }
+
+    .phb__grid {
+        height: clamp(400px, 50vw, 640px);
+    }
+}

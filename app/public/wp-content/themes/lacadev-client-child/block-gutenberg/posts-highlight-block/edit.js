@@ -1,0 +1,337 @@
+/**
+ * posts-highlight-block — edit.js
+ * Layout: 1 bài lớn bên trái (span full height) + 4 bài nhỏ 2×2 bên phải
+ * Đồng bộ chuẩn kiến trúc projects-slider-block
+ */
+import { __ } from '@wordpress/i18n';
+import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { useSelect } from '@wordpress/data';
+import {
+    PanelBody, PanelRow,
+    TextControl, SelectControl, RangeControl,
+    CheckboxControl, RadioControl, Spinner,
+} from '@wordpress/components';
+import { useState, useEffect } from '@wordpress/element';
+
+export default function Edit( { attributes, setAttributes } ) {
+    const {
+        sectionTitle, postType, taxonomy, selectedTerms,
+        mode, orderBy, order, postsCount, selectedPosts, ctaText,
+    } = attributes;
+
+    const [ postSearch, setPostSearch ] = useState( '' );
+
+    // ── Post types ─────────────────────────────────────────────────────────
+    const postTypes = useSelect( ( select ) => {
+        const types = select( 'core' ).getPostTypes( { per_page: -1 } );
+        if ( ! types ) return [];
+        return types
+            .filter( ( t ) => t.viewable && ! [
+                'attachment', 'wp_block', 'wp_template', 'wp_template_part',
+                'wp_navigation', 'wp_font_family', 'wp_font_face',
+            ].includes( t.slug ) )
+            .map( ( t ) => ( { label: t.name, value: t.slug } ) );
+    }, [] );
+
+    // ── Taxonomies theo postType ───────────────────────────────────────────
+    const taxonomies = useSelect( ( select ) => {
+        const types = select( 'core' ).getPostTypes( { per_page: -1 } );
+        if ( ! types ) return [];
+        const current = types.find( ( t ) => t.slug === postType );
+        if ( ! current ) return [];
+        return ( current.taxonomies || [] ).map( ( slug ) => {
+            const tax = select( 'core' ).getTaxonomy( slug );
+            return { label: tax ? tax.name : slug, value: slug };
+        } );
+    }, [ postType ] );
+
+    // ── Terms theo taxonomy ──────────────────────────────────────────────
+    const terms = useSelect( ( select ) => {
+        if ( ! taxonomy ) return [];
+        return select( 'core' ).getEntityRecords( 'taxonomy', taxonomy, { per_page: 50 } ) || [];
+    }, [ taxonomy ] );
+
+    // ── Auto preview ──────────────────────────────────────────────────────
+    const previewPosts = useSelect( ( select ) => {
+        if ( mode !== 'auto' ) return [];
+        const query = {
+            per_page: postsCount,
+            status: 'publish',
+            orderby: orderBy,
+            order,
+            _embed: true,
+        };
+        // Dùng đúng slug taxonomy làm key query (e.g. 'categories', 'tags', custom slug)
+        if ( selectedTerms.length > 0 && taxonomy ) {
+            query[ taxonomy ] = selectedTerms.join( ',' );
+        }
+        return select( 'core' ).getEntityRecords( 'postType', postType, query ) || [];
+    }, [ mode, postType, taxonomy, selectedTerms.join( ',' ), postsCount, orderBy, order ] );
+
+    // ── Manual: all posts (checkbox list) ─────────────────────────────────
+    const manualPosts = useSelect( ( select ) => {
+        if ( mode !== 'manual' ) return [];
+        return select( 'core' ).getEntityRecords( 'postType', postType, {
+            per_page: 50,
+            status: 'publish',
+            search: postSearch || undefined,
+            _embed: true,
+        } ) || [];
+    }, [ mode, postType, postSearch ] );
+
+    // ── Manual: fetch by IDs (canvas preview) ────────────────────────────
+    const selectedPostsData = useSelect( ( select ) => {
+        if ( mode !== 'manual' || selectedPosts.length === 0 ) return [];
+        return select( 'core' ).getEntityRecords( 'postType', postType, {
+            include: selectedPosts.join( ',' ),
+            per_page: 100,
+            orderby: 'include',
+            _embed: true,
+        } ) || [];
+    }, [ mode, postType, selectedPosts.join( ',' ) ] );
+
+    // Reset khi đổi postType
+    useEffect( () => {
+        setAttributes( { selectedTerms: [], taxonomy: '' } );
+    }, [ postType ] );
+
+    // ── Posts to render ──────────────────────────────────────────────
+    const MAIN_MAX   = 5;
+    const allPosts   = mode === 'manual'
+        ? selectedPosts
+            .map( ( id ) => selectedPostsData.find( ( p ) => p.id === id ) )
+            .filter( Boolean )
+        : previewPosts;
+    const mainPosts  = allPosts.slice( 0, MAIN_MAX );
+    const extraPosts = allPosts.slice( MAIN_MAX );
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+    const toggleId = ( arr, id ) =>
+        arr.includes( id ) ? arr.filter( ( x ) => x !== id ) : [ ...arr, id ];
+
+    const getThumb = ( post ) =>
+        post?._embedded?.[ 'wp:featuredmedia' ]?.[ 0 ]?.source_url || '';
+
+    const getCat = ( post ) => {
+        const t = post?._embedded?.[ 'wp:term' ]?.[ 0 ] || [];
+        return t[ 0 ]?.name || '';
+    };
+
+    const blockProps = useBlockProps( {
+        className: 'block-posts-highlight',
+    } );
+
+    // ── Card render ────────────────────────────────────────────────────────
+    const renderCard = ( post, isFeatured ) => {
+        const thumb = getThumb( post );
+        const title = post.title?.rendered || '';
+        const cat = getCat( post );
+        const date = post.date ? new Date( post.date ).toLocaleDateString( 'vi-VN' ) : '';
+
+        return (
+            <article
+                key={ post.id }
+                className={ `phb__card${ isFeatured ? ' phb__card--featured' : '' }` }
+                style={ {
+                    backgroundImage: thumb ? `url(${ thumb })` : undefined,
+                    backgroundColor: ! thumb ? '#ccc' : undefined,
+                } }
+            >
+                <div className="phb__overlay" />
+                <div className="phb__body">
+                    { cat && <span className="phb__cat">{ cat }</span> }
+                    <h3
+                        className="phb__title"
+                        dangerouslySetInnerHTML={ { __html: title } }
+                    />
+                    { isFeatured && date && (
+                        <span className="phb__date">{ date }</span>
+                    ) }
+                </div>
+            </article>
+        );
+    };
+
+    // Skeleton cards
+    const Skeleton = ( { featured } ) => (
+        <div
+            className={ `phb__card phb__card--skeleton${ featured ? ' phb__card--featured' : '' }` }
+            aria-hidden="true"
+        />
+    );
+
+    // Danh sách cards với skeleton fill
+    const renderGrid = () => {
+        if ( mainPosts.length === 0 ) {
+            return (
+                <>
+                    <Skeleton featured />
+                    <Skeleton /><Skeleton />
+                    <Skeleton /><Skeleton />
+                </>
+            );
+        }
+        return mainPosts.map( ( p, i ) => renderCard( p, i === 0 ) );
+    };
+
+    const taxonomyOptions = [
+        { label: __( '— Không lọc —', 'laca' ), value: '' },
+        ...taxonomies.map( ( tx ) => ( { label: tx.label, value: tx.value } ) ),
+    ];
+
+    return (
+        <>
+            <InspectorControls>
+
+                {/* Tiêu đề */}
+                <PanelBody title={ __( 'Hiển thị', 'laca' ) } initialOpen={ true }>
+                    <TextControl
+                        label={ __( 'Tiêu đề section', 'laca' ) }
+                        value={ sectionTitle }
+                        onChange={ ( v ) => setAttributes( { sectionTitle: v } ) }
+                    />
+                    <TextControl
+                        label={ __( 'Text nút CTA', 'laca' ) }
+                        value={ ctaText }
+                        onChange={ ( v ) => setAttributes( { ctaText: v } ) }
+                    />
+                </PanelBody>
+
+                {/* Nguồn bài viết */}
+                <PanelBody title={ __( 'Nguồn bài viết', 'laca' ) } initialOpen={ true }>
+
+                    <RadioControl
+                        label={ __( 'Chế độ', 'laca' ) }
+                        selected={ mode }
+                        options={ [
+                            { label: __( 'Tự động (query)', 'laca' ), value: 'auto' },
+                            { label: __( 'Thủ công (chọn tay)', 'laca' ), value: 'manual' },
+                        ] }
+                        onChange={ ( v ) => setAttributes( { mode: v } ) }
+                    />
+
+                    { postTypes.length > 0 && (
+                        <SelectControl
+                            label={ __( 'Loại bài viết (Post Type)', 'laca' ) }
+                            value={ postType }
+                            options={ postTypes }
+                            onChange={ ( v ) => setAttributes( { postType: v, selectedTerms: [], selectedPosts: [] } ) }
+                        />
+                    ) }
+
+                    {/* AUTO */}
+                    { mode === 'auto' && (
+                        <>
+                            { taxonomyOptions.length > 1 && (
+                                <SelectControl
+                                    label={ __( 'Taxonomy', 'laca' ) }
+                                    value={ taxonomy }
+                                    options={ taxonomyOptions }
+                                    onChange={ ( v ) => setAttributes( { taxonomy: v, selectedTerms: [] } ) }
+                                />
+                            ) }
+
+                            { taxonomy && terms.length > 0 && (
+                                <>
+                                    <p style={ { fontSize: '11px', fontWeight: 600, marginBottom: '6px' } }>
+                                        { __( 'Chọn danh mục', 'laca' ) }
+                                    </p>
+                                    <div style={ { maxHeight: '200px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: '4px', padding: '4px 8px' } }>
+                                        { terms.map( ( term ) => (
+                                            <CheckboxControl
+                                                key={ term.id }
+                                                label={ `${ term.name } (${ term.count })` }
+                                                checked={ selectedTerms.includes( term.id ) }
+                                                onChange={ () => setAttributes( { selectedTerms: toggleId( selectedTerms, term.id ) } ) }
+                                            />
+                                        ) ) }
+                                    </div>
+                                </>
+                            ) }
+
+                            <RangeControl
+                                label={ __( 'Số bài viết', 'laca' ) }
+                                value={ postsCount }
+                                min={ 3 } max={ 20 }
+                                help={ __( '5 bài đầu: grid nổi bật. Bài 6+: 3 cột phía dưới.', 'laca' ) }
+                                onChange={ ( v ) => setAttributes( { postsCount: v } ) }
+                            />
+
+                            <SelectControl
+                                label={ __( 'Sắp xếp theo', 'laca' ) }
+                                value={ orderBy }
+                                options={ [
+                                    { label: __( 'Ngày đăng', 'laca' ), value: 'date' },
+                                    { label: __( 'Tiêu đề', 'laca' ), value: 'title' },
+                                    { label: __( 'Menu Order', 'laca' ), value: 'menu_order' },
+                                    { label: __( 'Lượt bình luận', 'laca' ), value: 'comment_count' },
+                                ] }
+                                onChange={ ( v ) => setAttributes( { orderBy: v } ) }
+                            />
+
+                            <SelectControl
+                                label={ __( 'Thứ tự', 'laca' ) }
+                                value={ order }
+                                options={ [
+                                    { label: __( 'Mới nhất (DESC)', 'laca' ), value: 'DESC' },
+                                    { label: __( 'Cũ nhất (ASC)', 'laca' ), value: 'ASC' },
+                                ] }
+                                onChange={ ( v ) => setAttributes( { order: v } ) }
+                            />
+                        </>
+                    ) }
+
+                    {/* MANUAL */}
+                    { mode === 'manual' && (
+                        <>
+                            <p style={ { fontSize: '11px', color: '#666', margin: '4px 0 8px' } }>
+                                { __( 'Đã chọn: ', 'laca' ) }
+                                <strong>{ selectedPosts.length }</strong>
+                                { __( ' bài — bài đầu tiên sẽ là ảnh lớn, từ bài 6 hiển 3 cột phía dưới', 'laca' ) }
+                            </p>
+                            <TextControl
+                                label={ __( 'Tìm bài viết', 'laca' ) }
+                                value={ postSearch }
+                                onChange={ setPostSearch }
+                                placeholder={ __( 'Nhập tên bài...', 'laca' ) }
+                            />
+                            <div style={ { maxHeight: '240px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: '4px', padding: '4px 8px' } }>
+                                { manualPosts.map( ( post ) => (
+                                    <CheckboxControl
+                                        key={ post.id }
+                                        label={ post.title?.rendered || `#${ post.id }` }
+                                        checked={ selectedPosts.includes( post.id ) }
+                                        onChange={ () => setAttributes( { selectedPosts: toggleId( selectedPosts, post.id ) } ) }
+                                    />
+                                ) ) }
+                            </div>
+                        </>
+                    ) }
+                </PanelBody>
+            </InspectorControls>
+
+            {/* ── Canvas ── */}
+            <section { ...blockProps }>
+                <div className="container">
+
+                    { sectionTitle && (
+                        <div className="phb__header">
+                            <h2 className="phb__heading">{ sectionTitle }</h2>
+                        </div>
+                    ) }
+
+                    <div className="phb__grid">
+                        { renderGrid() }
+                    </div>
+
+                    { extraPosts.length > 0 && (
+                        <div className="phb__extra-grid">
+                            { extraPosts.map( ( p ) => renderCard( p, false ) ) }
+                        </div>
+                    ) }
+
+                </div>
+            </section>
+        </>
+    );
+}

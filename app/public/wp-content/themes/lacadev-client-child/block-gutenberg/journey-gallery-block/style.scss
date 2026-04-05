@@ -1,0 +1,102 @@
+@use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
+
+.block-journey-gallery {
+    padding: 6rem 0;
+
+    @include maxWidth($md) {
+        padding: 4rem 0;
+    }
+
+    @include maxWidth($sm) {
+        padding: 3rem 0;
+    }
+
+    &__header {
+        text-align: center;
+        margin-bottom: 4rem;
+
+        @include maxWidth($sm) {
+            margin-bottom: 2.4rem;
+        }
+    }
+
+    &__heading {
+        @include resFont(2.4, 4);
+        font-weight: $bold;
+        color: $primaryColor;
+        text-transform: uppercase;
+        margin-bottom: 1.6rem;
+        line-height: 1.2;
+
+        // resFont dừng tại $sm=768px, màn hình 390px vẫn = 2.4rem (38px) - quá lớn
+        @include maxWidth($xs) {
+            font-size: 1.8rem;
+        }
+    }
+
+    &__description {
+        @include resFont(1.4, 1.8);
+        color: #555;
+        max-width: 72rem;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    &__grid {
+        display: grid;
+        gap: 2rem;
+        // CSS custom property từ render.php để cho phép PHP set số cột
+        // nhưng media query vẫn ghi đè được
+        grid-template-columns: repeat(var(--jg-cols, 2), 1fr);
+
+        @include maxWidth($md) {
+            grid-template-columns: 1fr !important; // Force 1 col trên tablet/mobile
+            gap: 1.4rem;
+        }
+
+        @include maxWidth($sm) {
+            gap: 1rem;
+        }
+    }
+
+    &__item {
+        overflow: hidden;
+        border-radius: 0.8rem;
+    }
+
+    &__img {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+        // Đảm bảo tỉ lệ ảnh nhất quán trong gallery
+        aspect-ratio: 4 / 3;
+
+        @include maxWidth($sm) {
+            aspect-ratio: 16 / 9; // Rộng hơn trên mobile
+        }
+
+        &:hover {
+            transform: scale(1.03);
+        }
+    }
+
+    &__placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        padding: 4rem 2rem;
+        background: #f5f5f5;
+        border-radius: 0.8rem;
+        color: #aaa;
+
+        p {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+    }
+}
