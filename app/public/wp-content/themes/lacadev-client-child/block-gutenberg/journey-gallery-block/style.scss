@@ -34,7 +34,7 @@
         // số cột = var(--jg-cols) được set inline từ PHP
         grid-template-columns: repeat(var(--jg-cols, 2), 1fr);
         grid-template-rows: auto auto auto; // top-steps / timeline / bottom-steps
-        column-gap: 4rem;
+        column-gap: 2rem;
         position: relative;
 
         @include maxWidth($md) {
@@ -52,6 +52,8 @@
                 width: 1px;
                 background: rgba(255, 255, 255, .2);
                 pointer-events: none;
+
+                @include maxWidth($md) { content: none; }
             }
         }
     }
@@ -70,13 +72,16 @@
         // Bước chẵn → đảo chiều: ảnh trái, text phải
         &--even {
             flex-direction: row-reverse;
+            padding-top: 3rem;
+            padding-bottom: 0;
         }
 
         // Mobile: chấm tròn trên đường dọc
         @include maxWidth($md) {
-            padding-right: 3rem;
             padding-bottom: 3.5rem;
             position: relative;
+
+            flex-wrap: wrap;
 
             &::after {
                 content: '';
@@ -89,12 +94,13 @@
                 background: rgba(255, 255, 255, .45);
                 border: 2px solid rgba(255, 255, 255, .75);
                 z-index: 1;
+
+                display: none;
             }
         }
 
         @include maxWidth($sm) {
             gap: 1.2rem;
-            padding-right: 2.4rem;
             padding-bottom: 2.8rem;
         }
     }
@@ -104,6 +110,10 @@
         flex: 1 1 0;
         min-width: 0;
         display: flex;
+
+        @include maxWidth($md) {
+            width: 100%;
+        }
     }
 
     // Số thứ tự (vàng, rất lớn)
@@ -113,7 +123,7 @@
         color: $secondColor;
         margin-bottom: .6rem;
 
-        @include resFont(6, 12);
+        @include resFont(12, 18);
     }
 
     // Tiêu đề bước (trắng, uppercase)
@@ -127,7 +137,7 @@
 
         margin: 0 0 1.4rem;
 
-        @include resFont(1, 1.2);
+        @include resFont(1, 1.5);
     }
 
     // Mô tả (xám nhạt)
@@ -135,18 +145,18 @@
         color: rgba(255, 255, 255, .65);
         line-height: 1.8;
         margin: 0;
+        text-align: justify;
 
-        @include resFont(.8, .9);
+        @include resFont(.8, 1);
     }
 
     // ── Image ─────────────────────────────────────────────────────────────
     &__image {
-        flex: 0 0 45%;
+        flex: 0 0 40%;
         border-radius: 1rem;
         overflow: hidden;
 
-        @include maxWidth($md) { flex-basis: 44%; }
-        @include maxWidth($sm) { flex-basis: 42%; border-radius: .8rem; }
+        @include maxWidth($md) { flex-basis: 100%; }
 
         img {
             display: block;
@@ -181,6 +191,8 @@
         transform: translateY(-50%);
         height: 1px;
         background: #fff;
+
+        @include maxWidth($md) { display: none; }
     }
 
     &__timeline-dot {
@@ -192,6 +204,8 @@
         border-radius: 50%;
         background: #fff;
         border: 2px solid #fff;
+
+        @include maxWidth($md) { display: none; }
     }
 }
 
