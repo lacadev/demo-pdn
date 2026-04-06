@@ -1,102 +1,243 @@
 @use "@parent/styles/theme/abstracts/variables" as *;
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Journey Gallery Block
+// Desktop : CSS Grid 2×2 — bước lẻ hàng trên, bước chẵn hàng dưới
+// Mobile  : flex-column zigzag + đường dọc bên phải
+// ─────────────────────────────────────────────────────────────────────────────
+
 .block-journey-gallery {
-    padding: 6rem 0;
+    background: #1e1e1e;
+    padding: 6rem 0 5.5rem;
+    overflow: hidden;
 
-    @include maxWidth($md) {
-        padding: 4rem 0;
-    }
+    @include maxWidth($md) { padding: 5rem 0 4rem; }
+    @include maxWidth($sm) { padding: 3.5rem 0 3rem; }
 
-    @include maxWidth($sm) {
-        padding: 3rem 0;
-    }
-
+    // ── Heading ────────────────────────────────────────────────────────────
     &__header {
-        text-align: center;
-        margin-bottom: 4rem;
-
-        @include maxWidth($sm) {
-            margin-bottom: 2.4rem;
-        }
+        margin-bottom: 5rem;
     }
 
     &__heading {
-        @include resFont(2.4, 4);
-        font-weight: $bold;
-        color: $primaryColor;
-        text-transform: uppercase;
-        margin-bottom: 1.6rem;
-        line-height: 1.2;
+        margin-bottom: 2rem;
+        color: $secondColor;
+        font-weight: $regular;
 
-        // resFont dừng tại $sm=768px, màn hình 390px vẫn = 2.4rem (38px) - quá lớn
-        @include maxWidth($xs) {
-            font-size: 1.8rem;
-        }
+        @include resFont(1.2, 2.4);
     }
 
-    &__description {
-        @include resFont(1.4, 1.8);
-        color: #555;
-        max-width: 72rem;
-        margin: 0 auto;
-        line-height: 1.7;
-    }
-
-    &__grid {
+    // ── Track (CSS Grid on desktop) ────────────────────────────────────────
+    &__track {
         display: grid;
-        gap: 2rem;
-        // CSS custom property từ render.php để cho phép PHP set số cột
-        // nhưng media query vẫn ghi đè được
+        // số cột = var(--jg-cols) được set inline từ PHP
         grid-template-columns: repeat(var(--jg-cols, 2), 1fr);
+        grid-template-rows: auto auto auto; // top-steps / timeline / bottom-steps
+        column-gap: 4rem;
+        position: relative;
 
         @include maxWidth($md) {
-            grid-template-columns: 1fr !important; // Force 1 col trên tablet/mobile
-            gap: 1.4rem;
-        }
+            display: flex;
+            flex-direction: column;
+            gap: 0;
 
-        @include maxWidth($sm) {
-            gap: 1rem;
-        }
-    }
-
-    &__item {
-        overflow: hidden;
-        border-radius: 0.8rem;
-    }
-
-    &__img {
-        display: block;
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-        transition: transform 0.4s ease;
-        // Đảm bảo tỉ lệ ảnh nhất quán trong gallery
-        aspect-ratio: 4 / 3;
-
-        @include maxWidth($sm) {
-            aspect-ratio: 16 / 9; // Rộng hơn trên mobile
-        }
-
-        &:hover {
-            transform: scale(1.03);
+            // Đường dọc bên phải (mobile timeline)
+            &::after {
+                content: '';
+                position: absolute;
+                right: 0;
+                top: 2rem;
+                bottom: 2rem;
+                width: 1px;
+                background: rgba(255, 255, 255, .2);
+                pointer-events: none;
+            }
         }
     }
 
-    &__placeholder {
+    // ── Step ──────────────────────────────────────────────────────────────
+    &__step {
+        // Desktop: vị trí grid từ CSS custom properties
+        grid-column: var(--jg-col, 1);
+        grid-row:    var(--jg-row, 1);
+
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.8rem;
-        padding: 4rem 2rem;
-        background: #f5f5f5;
-        border-radius: 0.8rem;
-        color: #aaa;
+        align-items: flex-start;
+        gap: 2rem;
+        padding-bottom: 3rem;
 
-        p {
-            margin: 0;
-            font-size: 1.4rem;
+        // Bước chẵn → đảo chiều: ảnh trái, text phải
+        &--even {
+            flex-direction: row-reverse;
+        }
+
+        // Mobile: chấm tròn trên đường dọc
+        @include maxWidth($md) {
+            padding-right: 3rem;
+            padding-bottom: 3.5rem;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                right: -.5rem;
+                top: 2.5rem;
+                width: 1rem;
+                height: 1rem;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, .45);
+                border: 2px solid rgba(255, 255, 255, .75);
+                z-index: 1;
+            }
+        }
+
+        @include maxWidth($sm) {
+            gap: 1.2rem;
+            padding-right: 2.4rem;
+            padding-bottom: 2.8rem;
         }
     }
+
+    // ── Content ────────────────────────────────────────────────────────────
+    &__content {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+    }
+
+    // Số thứ tự (vàng, rất lớn)
+    &__number {
+        font-weight: $black;
+        line-height: .85;
+        color: $secondColor;
+        margin-bottom: .6rem;
+
+        @include resFont(6, 12);
+    }
+
+    // Tiêu đề bước (trắng, uppercase)
+    &__title {
+        font-weight: $bold;
+        text-transform: uppercase;
+        color: $secondColor;
+        line-height: 1.35;
+        display: inline-block;
+        border-bottom: 1px solid $secondColor;
+
+        margin: 0 0 1.4rem;
+
+        @include resFont(1, 1.2);
+    }
+
+    // Mô tả (xám nhạt)
+    &__desc {
+        color: rgba(255, 255, 255, .65);
+        line-height: 1.8;
+        margin: 0;
+
+        @include resFont(.8, .9);
+    }
+
+    // ── Image ─────────────────────────────────────────────────────────────
+    &__image {
+        flex: 0 0 45%;
+        border-radius: 1rem;
+        overflow: hidden;
+
+        @include maxWidth($md) { flex-basis: 44%; }
+        @include maxWidth($sm) { flex-basis: 42%; border-radius: .8rem; }
+
+        img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            border-radius: 1rem;
+
+            @include maxWidth($sm) { border-radius: .8rem; }
+        }
+    }
+
+    // ── Timeline ngang (desktop) ─────────────────────────────────────────
+    &__timeline {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 1rem 0;
+        margin: 0 0 .5rem;
+
+        @include maxWidth($md) { display: none; } // ẩn trên mobile (dùng đường dọc CSS)
+    }
+
+    &__timeline-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 1px;
+        background: #fff;
+    }
+
+    &__timeline-dot {
+        position: relative;
+        z-index: 1;
+        display: inline-block;
+        width: .9rem;
+        height: .9rem;
+        border-radius: 50%;
+        background: #fff;
+        border: 2px solid #fff;
+    }
+}
+
+// ── Editor canvas preview ─────────────────────────────────────────────────────
+.block-editor-block-list__block .block-journey-gallery__preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: 1.6rem;
+    padding: 2rem;
+}
+
+.block-journey-gallery__preview-step {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    background: #2a2a2a;
+    border-radius: .8rem;
+    padding: 1.2rem;
+}
+
+.block-journey-gallery__preview-number {
+    font-size: 4rem;
+    font-weight: 900;
+    color: var(--second-color, #c9a84c);
+    line-height: 1;
+}
+
+.block-journey-gallery__preview-img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: .6rem;
+    display: block;
+}
+
+.block-journey-gallery__preview-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    display: block;
+}
+
+.block-journey-gallery__preview-desc {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, .6);
+    margin: 0;
+    line-height: 1.6;
 }

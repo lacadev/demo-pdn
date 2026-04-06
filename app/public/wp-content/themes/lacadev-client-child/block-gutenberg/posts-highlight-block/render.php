@@ -1,14 +1,14 @@
 <?php
 /**
  * posts-highlight-block — render.php
- * Layout: 1 bài lớn (cột trái, span 2 rows) + 4 bài nhỏ (cột phải, 2×2)
- * Attribute keys đồng bộ với edit.js: selectedTerms, postsCount, selectedPosts
+ * Layout: 2-column grid, horizontal cards (thumb left + content right)
+ * Gold separator line between title and footer (cat + CTA)
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // ── Attributes ─────────────────────────────────────────────────────────────────
 $section_title   = esc_html( $attributes['sectionTitle']   ?? 'Tin Mới Nhất' );
-$cta_text        = esc_html( $attributes['ctaText']        ?? 'Xem Chi Tiết' );
+$cta_text        = esc_html( $attributes['ctaText']        ?? 'Đọc thêm' );
 $post_type       = sanitize_key( $attributes['postType']   ?? 'post' );
 $taxonomy        = sanitize_key( $attributes['taxonomy']   ?? '' );
 $selected_terms  = array_map( 'absint', (array) ( $attributes['selectedTerms'] ?? [] ) );
@@ -16,7 +16,7 @@ $mode            = in_array( $attributes['mode'] ?? 'auto', [ 'auto', 'manual' ]
                     ? $attributes['mode'] : 'auto';
 $orderby         = sanitize_key( $attributes['orderBy']    ?? 'date' );
 $order           = strtoupper( $attributes['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
-$posts_count     = max( 3, min( 20, intval( $attributes['postsCount'] ?? 5 ) ) );
+$posts_count     = max( 1, min( 20, intval( $attributes['postsCount'] ?? 4 ) ) );
 $selected_posts  = array_map( 'absint', (array) ( $attributes['selectedPosts'] ?? [] ) );
 
 $safe_orderby = in_array( $orderby, [ 'date', 'title', 'menu_order', 'comment_count', 'modified' ], true )
@@ -45,7 +45,7 @@ if ( $mode === 'manual' && ! empty( $selected_posts ) ) {
     ];
 
     if ( $taxonomy && ! empty( $selected_terms ) ) {
-        $query_args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+        $query_args['tax_query'] = [
             [
                 'taxonomy' => $taxonomy,
                 'field'    => 'term_id',
@@ -61,17 +61,7 @@ wp_reset_postdata();
 
 if ( empty( $posts ) ) return;
 
-// Tách: 5 bài đầu vào grid chính, từ bài 6 trở đi vào extra grid 3 cột
-$main_posts  = array_slice( $posts, 0, 5 );
-$extra_posts = array_slice( $posts, 5 );
-
-// ── Helpers (closures — tránh redeclare khi block xuất hiện nhiều lần) ─────────
-$get_thumb = static function ( int $post_id, bool $featured ): string {
-    $size = $featured ? 'large' : 'medium_large';
-    if ( ! has_post_thumbnail( $post_id ) ) return '';
-    return esc_url( get_the_post_thumbnail_url( $post_id, $size ) );
-};
-
+// ── Helper ─────────────────────────────────────────────────────────────────────
 $get_cat = static function ( WP_Post $post, string $taxonomy ): string {
     if ( $taxonomy ) {
         $terms = get_the_terms( $post, $taxonomy );
@@ -87,84 +77,50 @@ $get_cat = static function ( WP_Post $post, string $taxonomy ): string {
 $wrapper_attrs = get_block_wrapper_attributes( [ 'class' => 'block-posts-highlight' ] );
 ?>
 
-<section <?php echo $wrapper_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+<section <?php echo $wrapper_attrs; ?>>
     <div class="container">
 
         <?php if ( $section_title ) : ?>
         <div class="phb__header">
-            <h2 class="phb__heading"><?php echo $section_title; // phpcs:ignore ?></h2>
+            <h2 class="phb__heading"><?php echo $section_title; ?></h2>
         </div>
         <?php endif; ?>
 
         <div class="phb__grid">
-
-            <?php foreach ( $main_posts as $index => $post ) :
-                $is_featured = ( $index === 0 );
-                $thumb_url   = $get_thumb( $post->ID, $is_featured );
-                $post_url    = esc_url( get_permalink( $post ) );
-                $cat_name    = $get_cat( $post, $taxonomy );
-                $title       = esc_html( get_the_title( $post ) );
-                $date        = esc_html( get_the_date( 'd-m-Y', $post ) );
-                $date_iso    = esc_attr( get_the_date( 'c', $post ) );
-
-                $card_class  = 'phb__card';
-                if ( $is_featured ) $card_class .= ' phb__card--featured';
-            ?>
-
-            <article
-                class="<?php echo esc_attr( $card_class ); ?>"
-                <?php if ( $thumb_url ) : ?>style="background-image:url('<?php echo $thumb_url; ?>')"<?php endif; ?>
-            >
-                <div class="phb__overlay" aria-hidden="true"></div>
-
-                <div class="phb__body">
-
-                    <?php if ( $cat_name ) : ?>
-                    <span class="phb__cat"><?php echo $cat_name; // phpcs:ignore ?></span>
-                    <?php endif; ?>
-
-                    <<?php echo $is_featured ? 'h2' : 'h3'; ?> class="phb__title"><?php echo $title; ?></<?php echo $is_featured ? 'h2' : 'h3'; ?>>
-
-                    <?php if ( $date ) : ?>
-                    <time class="phb__date" datetime="<?php echo $date_iso; ?>"><?php echo $date; ?></time>
-                    <?php endif; ?>
-                </div>
-            </article>
-
-            <?php endforeach; ?>
-
-        </div><!-- /.phb__grid -->
-
-        <?php if ( ! empty( $extra_posts ) ) : ?>
-        <div class="phb__extra-grid">
-            <?php foreach ( $extra_posts as $post ) :
-                $thumb_url = $get_thumb( $post->ID, false );
+            <?php foreach ( $posts as $post ) :
                 $post_url  = esc_url( get_permalink( $post ) );
                 $cat_name  = $get_cat( $post, $taxonomy );
                 $title     = esc_html( get_the_title( $post ) );
-                $date      = esc_html( get_the_date( 'd-m-Y', $post ) );
-                $date_iso  = esc_attr( get_the_date( 'c', $post ) );
+                $thumb_id  = get_post_thumbnail_id( $post->ID );
+                $thumb_url = $thumb_id ? esc_url( get_the_post_thumbnail_url( $post->ID, 'medium_large' ) ) : '';
             ?>
-            <article
-                class="phb__card phb__card--extra"
-                <?php if ( $thumb_url ) : ?>style="background-image:url('<?php echo $thumb_url; ?>')"<?php endif; ?>
-            >
-                <div class="phb__overlay" aria-hidden="true"></div>
-                <div class="phb__body">
-                    <?php if ( $cat_name ) : ?>
-                    <span class="phb__cat"><?php echo $cat_name; // phpcs:ignore ?></span>
-                    <?php endif; ?>
-                    <h3 class="phb__title"><?php echo $title; ?></h3>
-                    <?php if ( $date ) : ?>
-                    <time class="phb__date" datetime="<?php echo $date_iso; ?>"><?php echo $date; ?></time>
-                    <?php endif; ?>
-
+            <a href="<?php echo $post_url; ?>" class="phb__card">
+                <div class="phb__card-inner">
+                    <div class="phb__thumb">
+                        <?php if ( $thumb_url ) : ?>
+                            <img src="<?php echo $thumb_url; ?>"
+                                 alt="<?php echo $title; ?>"
+                                 loading="lazy" class="phb__img" />
+                        <?php else : ?>
+                            <div class="phb__thumb-placeholder"></div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="phb__body">
+                        <div class="phb__content">
+                            <h3 class="phb__title"><?php echo $title; ?></h3>
+                        </div>
+                        <div class="phb__separator" aria-hidden="true"></div>
+                        <div class="phb__footer">
+                            <?php if ( $cat_name ) : ?>
+                            <span class="phb__cat"><?php echo $cat_name; ?></span>
+                            <?php endif; ?>
+                            <span class="phb__cta"><?php echo $cta_text; ?> <span aria-hidden="true">→</span></span>
+                        </div>
+                    </div>
                 </div>
-            </article>
+            </a>
             <?php endforeach; ?>
-        </div><!-- /.phb__extra-grid -->
-        <?php endif; ?>
+        </div>
 
-    </div><!-- /.container -->
+    </div>
 </section>
-

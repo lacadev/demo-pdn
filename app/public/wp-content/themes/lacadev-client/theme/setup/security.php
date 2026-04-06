@@ -34,8 +34,8 @@ add_action('send_headers', function() {
     if ( ! is_admin() ) {
         // Content Security Policy
         $csp  = "default-src 'self'; ";
-        $csp .= "script-src 'self' 'nonce-{$nonce}' https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://www.google-analytics.com https://images.dmca.com https://apis.google.com blob:; ";
-        $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; ";
+        $csp .= "script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://www.google-analytics.com https://images.dmca.com https://apis.google.com blob:; ";
+        $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; ";
         $csp .= "font-src 'self' https://fonts.gstatic.com data:; ";
         $csp .= "connect-src 'self' https://www.google.com https://www.gstatic.com https://www.youtube.com https://www.google-analytics.com https://stats.g.doubleclick.net https://apis.google.com ws: wss:; ";
         $csp .= "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://docs.google.com https://www.google.com https://www.gstatic.com; ";
@@ -66,6 +66,20 @@ add_filter('script_loader_tag', function($tag, $handle) {
     }
     return $tag;
 }, 10, 2);
+
+/**
+ * Inject Nonce into INLINE script tags (wp_add_inline_script output)
+ * Required for CSP compliance with wp_add_inline_script()
+ */
+add_filter('wp_inline_script_attributes', function($attributes) {
+    if ( is_admin() ) {
+        return $attributes;
+    }
+    if (defined('LACA_CSP_NONCE') && empty($attributes['nonce'])) {
+        $attributes['nonce'] = LACA_CSP_NONCE;
+    }
+    return $attributes;
+}, 10, 1);
 
 /**
  * Remove WordPress version from head

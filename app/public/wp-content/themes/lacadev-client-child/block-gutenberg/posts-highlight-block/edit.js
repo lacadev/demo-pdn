@@ -96,14 +96,11 @@ export default function Edit( { attributes, setAttributes } ) {
     }, [ postType ] );
 
     // ── Posts to render ──────────────────────────────────────────────
-    const MAIN_MAX   = 5;
     const allPosts   = mode === 'manual'
         ? selectedPosts
             .map( ( id ) => selectedPostsData.find( ( p ) => p.id === id ) )
             .filter( Boolean )
         : previewPosts;
-    const mainPosts  = allPosts.slice( 0, MAIN_MAX );
-    const extraPosts = allPosts.slice( MAIN_MAX );
 
     // ── Helpers ────────────────────────────────────────────────────────────
     const toggleId = ( arr, id ) =>
@@ -121,57 +118,38 @@ export default function Edit( { attributes, setAttributes } ) {
         className: 'block-posts-highlight',
     } );
 
-    // ── Card render ────────────────────────────────────────────────────────
-    const renderCard = ( post, isFeatured ) => {
+    // ── Card render (horizontal: thumb left + body right) ──────────────────
+    const renderCard = ( post ) => {
         const thumb = getThumb( post );
         const title = post.title?.rendered || '';
         const cat = getCat( post );
-        const date = post.date ? new Date( post.date ).toLocaleDateString( 'vi-VN' ) : '';
 
         return (
-            <article
-                key={ post.id }
-                className={ `phb__card${ isFeatured ? ' phb__card--featured' : '' }` }
-                style={ {
-                    backgroundImage: thumb ? `url(${ thumb })` : undefined,
-                    backgroundColor: ! thumb ? '#ccc' : undefined,
-                } }
-            >
-                <div className="phb__overlay" />
-                <div className="phb__body">
-                    { cat && <span className="phb__cat">{ cat }</span> }
-                    <h3
-                        className="phb__title"
-                        dangerouslySetInnerHTML={ { __html: title } }
-                    />
-                    { isFeatured && date && (
-                        <span className="phb__date">{ date }</span>
-                    ) }
+            <div key={ post.id } className="phb__card">
+                <div className="phb__card-inner">
+                    <div className="phb__thumb">
+                        { thumb ? (
+                            <img src={ thumb } alt={ title } className="phb__img" />
+                        ) : (
+                            <div className="phb__thumb-placeholder" />
+                        ) }
+                    </div>
+                    <div className="phb__body">
+                        <div className="phb__content">
+                            <h3
+                                className="phb__title"
+                                dangerouslySetInnerHTML={ { __html: title } }
+                            />
+                        </div>
+                        <div className="phb__separator" />
+                        <div className="phb__footer">
+                            { cat && <span className="phb__cat">{ cat }</span> }
+                            <span className="phb__cta">{ ctaText } <span aria-hidden="true">→</span></span>
+                        </div>
+                    </div>
                 </div>
-            </article>
+            </div>
         );
-    };
-
-    // Skeleton cards
-    const Skeleton = ( { featured } ) => (
-        <div
-            className={ `phb__card phb__card--skeleton${ featured ? ' phb__card--featured' : '' }` }
-            aria-hidden="true"
-        />
-    );
-
-    // Danh sách cards với skeleton fill
-    const renderGrid = () => {
-        if ( mainPosts.length === 0 ) {
-            return (
-                <>
-                    <Skeleton featured />
-                    <Skeleton /><Skeleton />
-                    <Skeleton /><Skeleton />
-                </>
-            );
-        }
-        return mainPosts.map( ( p, i ) => renderCard( p, i === 0 ) );
     };
 
     const taxonomyOptions = [
@@ -321,14 +299,13 @@ export default function Edit( { attributes, setAttributes } ) {
                     ) }
 
                     <div className="phb__grid">
-                        { renderGrid() }
+                        { allPosts.length > 0
+                            ? allPosts.map( ( p ) => renderCard( p ) )
+                            : <p style={{ textAlign: 'center', color: '#aaa', padding: '2rem' }}>
+                                { __( 'Chưa có bài viết', 'laca' ) }
+                              </p>
+                        }
                     </div>
-
-                    { extraPosts.length > 0 && (
-                        <div className="phb__extra-grid">
-                            { extraPosts.map( ( p ) => renderCard( p, false ) ) }
-                        </div>
-                    ) }
 
                 </div>
             </section>

@@ -1,5 +1,5 @@
-@use "../../resources/styles/child/abstracts/variables" as *;
-@use "../../resources/styles/child/abstracts/mixin" as *;
+@use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
 
 .laca-video-block {
     margin-top: 0;

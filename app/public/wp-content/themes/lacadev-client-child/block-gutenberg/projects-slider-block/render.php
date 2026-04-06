@@ -97,11 +97,13 @@ $swiper_id = 'projects-slider-' . $instance;
 
 <section <?php echo get_block_wrapper_attributes( [ 'class' => 'block-projects-slider', 'style' => 'background:' . esc_attr( $bg_rgba ) . ';' ] ); ?>>
 
-    <?php if ( $section_title ) : ?>
-        <div class="block-projects-slider__header">
-            <h2 class="block-projects-slider__heading"<?php echo $heading_color ? ' style="color:' . esc_attr( $heading_color ) . ';"' : ''; ?>><?php echo $section_title; ?></h2>
-        </div>
-    <?php endif; ?>
+    <div class="container">
+        <?php if ( $section_title ) : ?>
+            <div class="block-projects-slider__header">
+                <h2 class="block-projects-slider__heading"<?php echo $heading_color ? ' style="color:' . esc_attr( $heading_color ) . ';"' : ''; ?>><?php echo $section_title; ?></h2>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <?php if ( $query->have_posts() ) : ?>
 
@@ -204,12 +206,13 @@ $js = sprintf( '
 (function () {
     function init_%1$s() {
         if (typeof Swiper === "undefined") { setTimeout(init_%1$s, 80); return; }
+        var SLOW = 6000, FAST = 400;
         var swiper = new Swiper("#%2$s", {
             slidesPerView: 1.3,
             centeredSlides: true,
             spaceBetween: 5,
             loop: true,
-            speed: 6000,
+            speed: SLOW,
             autoplay: {
                 delay: 0,
                 disableOnInteraction: false,
@@ -225,11 +228,47 @@ $js = sprintf( '
                 1200: { slidesPerView: 2.8}
             }
         });
+        /* Nav: interrupt mid-animation, slide fast, restore slow autoplay */
+        var el = document.getElementById("%2$s");
+        var hovering = false;
+        function navGo(dir) {
+            swiper.autoplay.stop();
+            swiper.animating = false;
+            var w = swiper.wrapperEl;
+            var cur = getComputedStyle(w).transform;
+            w.style.transitionDuration = "0ms";
+            w.style.transform = cur;
+            w.offsetHeight;
+            swiper.params.speed = FAST;
+            if (dir === "next") swiper.slideNext(FAST);
+            else swiper.slidePrev(FAST);
+        }
+        el.querySelector(".swiper-button-next").addEventListener("mousedown", function(e){ e.stopPropagation(); navGo("next"); }, true);
+        el.querySelector(".swiper-button-prev").addEventListener("mousedown", function(e){ e.stopPropagation(); navGo("prev"); }, true);
+        swiper.on("transitionEnd", function(){
+            if (swiper.params.speed === FAST) {
+                swiper.params.speed = SLOW;
+                if (!hovering) swiper.autoplay.start();
+            }
+        });
         if (%3$s) {
-            var section = document.getElementById("%2$s").closest("section");
+            var section = el.closest("section");
             if (section) {
-                section.addEventListener("mouseenter", function () { swiper.autoplay.stop(); });
-                section.addEventListener("mouseleave", function () { swiper.autoplay.start(); });
+                section.addEventListener("mouseenter", function () {
+                    hovering = true;
+                    swiper.autoplay.stop();
+                    swiper.animating = false;
+                    var w = swiper.wrapperEl;
+                    var cur = getComputedStyle(w).transform;
+                    w.style.transitionDuration = "0ms";
+                    w.style.transform = cur;
+                    w.offsetHeight;
+                });
+                section.addEventListener("mouseleave", function () {
+                    hovering = false;
+                    swiper.params.speed = SLOW;
+                    swiper.autoplay.start();
+                });
             }
         }
     }

@@ -1,7 +1,6 @@
 @use "@parent/styles/theme/abstracts/variables" as *;
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
-// Namespace block: phb (posts-highlight-block)
 .block-posts-highlight {
     padding: 4rem 0 6rem;
 
@@ -13,17 +12,15 @@
         padding: 2rem 0 3rem;
     }
 
-    // ── Container ───────────────────────────────────────────────────────────
     .container {
         max-width: var(--container-max-width, 1400px);
         margin: 0 auto;
         padding: 0 var(--container-gutter, 2rem);
     }
 
-    // ── Header — đồng bộ projects-slider-block ──────────────────────────────
+    // ── Header ──────────────────────────────────────────────────────────────
     .phb__header {
         padding: 0 0 3rem;
-        text-align: center;
 
         @include maxWidth($sm) {
             padding: 0 0 2rem;
@@ -31,255 +28,166 @@
     }
 
     .phb__heading {
-        @include resFont(2.4, 4);
-        font-weight: $bold;
-        color: $primaryColor;
+        margin-bottom: 2rem;
+        color: $secondColor;
+        font-weight: $regular;
         text-transform: uppercase;
-        margin-bottom: 1.6rem;
-        line-height: 1.2;
 
-        // Override cho xs mobile: resFont dừng ở $sm=768px nên 390px vẫn = 2.4rem (38px)
-        // Cần override riêng cho kích thước nhỏ hơn
-        @include maxWidth($xs) {
-            font-size: 1.8rem; // ~29px — vừa tầm màn hình 390px
-        }
+        @include resFont(1.2, 2.4);
     }
 
-    // ── Grid: 1 lớn trái + 2×2 phải ────────────────────────────────────────
+    // ── Grid 2 cột ──────────────────────────────────────────────────────────
     .phb__grid {
         display: grid;
-        grid-template-columns: 1.6fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-        gap: 0.6rem;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
 
         @include maxWidth($md) {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto;
-            height: auto;
-            gap: 0.5rem;
+            gap: 1.4rem;
         }
 
         @include maxWidth($sm) {
             grid-template-columns: 1fr;
-            grid-template-rows: auto;
-            height: auto;
+            gap: 1.4rem;
         }
     }
 
-    // ── Card chung ──────────────────────────────────────────────────────────
+    // ── Card ─────────────────────────────────────────────────────────────────
     .phb__card {
-        position: relative;
+        display: block;
         overflow: hidden;
-        background: #1a1a1a center/cover no-repeat;
-        cursor: pointer;
+        text-decoration: none;
+    }
 
-        @include maxWidth($sm) {
-            min-height: 16,250rem;
-        }
+    // ── Card inner: thumb left + body right ──────────────────────────────────
+    .phb__card-inner {
+        display: flex;
+        min-height: 200px;
 
-        // Zoom ảnh nền khi hover
-        &::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: inherit;
-            background-size: cover;
-            background-position: center;
-            transition: transform 0.6s ease;
-            z-index: 0;
-        }
-
-        &:hover::before {
-            transform: scale(1.05);
-        }
-
-        // ── Featured — bài 1: cột trái, span 2 rows ─────────────────────────
-        &--featured {
-            grid-column: 1;
-            grid-row: 1 / span 2;
-            min-height: 320px;
-
-            @include maxWidth($md) {
-                grid-column: 1 / -1;
-                grid-row: auto;
-                min-height: 280px;
-            }
-
-            @include maxWidth($sm) {
-                grid-column: auto;
-                grid-row: auto;
-                min-height: 260px;
-            }
-        }
-
-        // ── Skeleton ─────────────────────────────────────────────────────────
-        &--skeleton {
-            background: #e8e8e8;
-            cursor: default;
-
-            &::before { display: none; }
-
-            &.phb__card--featured {
-                background: #d0d0d0;
-            }
+        @include maxWidth($xs) {
+            min-height: 150px;
         }
     }
 
-    // ── Overlay gradient ────────────────────────────────────────────────────
-    .phb__overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.82) 0%,
-            rgba(0, 0, 0, 0.2) 50%,
-            transparent 100%
-        );
-        z-index: 1;
+    // ── Thumbnail ────────────────────────────────────────────────────────────
+    .phb__thumb {
+        flex: 0 0 40%;
+        max-width: 40%;
+        overflow: hidden;
+        border-radius: 2rem;
     }
 
-    // ── Card body (nội dung chồng lên ảnh) ─────────────────────────────────
+    .phb__img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+        aspect-ratio: 16 / 9;
+    }
+
+    .phb__card:hover .phb__img {
+        transform: scale(1.05);
+    }
+
+    .phb__thumb-placeholder {
+        width: 100%;
+        height: 100%;
+        background: #2a2a2a;
+    }
+
+    // ── Body ─────────────────────────────────────────────────────────────────
     .phb__body {
-        position: absolute;
-        inset: 0;
+        flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
-        padding: 1.6rem 1.6rem 1rem;
-        z-index: 2;
+        padding: 1.6rem 1.8rem;
 
-        .phb__card--featured & {
-            padding: 2.4rem;
-
-            @include maxWidth($sm) {
-                padding: 1.6rem;
-            }
+        @include maxWidth($xs) {
+            padding: 1rem 1.2rem;
         }
+    }
+
+    // ── Content (title area, grows to fill) ──────────────────────────────────
+    .phb__content {
+        flex: 1;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    // ── Title ────────────────────────────────────────────────────────────────
+    .phb__title {
+        font-size: clamp(0.9rem, 1.4vw, 1.15rem);
+        font-weight: 400;
+        color: #fff;
+        margin: 0;
+        line-height: 1.6;
+
+        display: -webkit-box;
+        line-clamp: 4;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+
+        @include maxWidth($sm) {
+            font-size: 0.85rem;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+        }
+    }
+
+    // ── Gold separator line ──────────────────────────────────────────────────
+    .phb__separator {
+        height: 2px;
+        background: #f0c11b;
+        margin: 1.2rem 0;
+        flex-shrink: 0;
+
+        @include maxWidth($xs) {
+            margin: 0.8rem 0;
+        }
+    }
+
+    // ── Footer: cat + CTA ───────────────────────────────────────────────────
+    .phb__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+        flex-shrink: 0;
     }
 
     // ── Category badge ──────────────────────────────────────────────────────
     .phb__cat {
-        position: absolute;
-        top: 1.4rem;
-        left: 1.4rem;
-        z-index: 3;
         display: inline-block;
         font-size: 0.65rem;
         font-weight: 600;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        background: transparent;
         color: #fff;
+        padding: 0.5em 1em 0.4em;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 1rem;
         line-height: 1;
-        padding: .8rem 1rem .5rem;
-        border-radius: 2rem;
-        border: 1px solid #fff;
-        width: fit-content;
+        white-space: nowrap;
     }
 
-    // ── Title trên card ────────────────────────────────────────────────────
-    .phb__title {
-        font-size: clamp(0.8rem, 1.4vw, 1rem);
-        font-weight: 500;
-        color: #fff;
-        margin: 0 0 0.5rem;
-        line-height: 1.35;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-
-        display: -webkit-box;
-        line-clamp: 3;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-
-        .phb__card--featured & {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            line-clamp: 4;
-            -webkit-line-clamp: 4;
-        }
-
-        @include maxWidth($sm) {
-            font-size: 1.1rem;
-
-            .phb__card--featured & {
-                font-size: 1.3rem;
-            }
-        }
-    }
-
-    // ── Date ────────────────────────────────────────────────────────────────
-    .phb__date {
-        font-size: 0.72rem;
-        color: rgba(255, 255, 255, 0.65);
-        display: flex;
-        align-items: center;
-        gap: 0.35rem;
-        margin-bottom: 0;
-
-        &::before {
-            content: '';
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23999' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3Cpath d='M12 6v6l4 2' stroke='%23999' stroke-width='1.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
-        }
-    }
-
-    // ── CTA button ──────────────────────────────────────────────────────────
+    // ── CTA ─────────────────────────────────────────────────────────────────
     .phb__cta {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        font-size: 0.72rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        font-size: 0.75rem;
+        font-weight: 500;
         color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        padding: 0.4em 1em;
-        border-radius: 2px;
-        width: fit-content;
-        transition: background 0.2s, border-color 0.2s, color 0.2s;
-        margin-top: 0.6rem;
-
-        &::after {
-            content: '→';
-        }
-
-        .phb__card:hover & {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-        }
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+        transition: color 0.2s ease;
+        margin-left: auto;
     }
 
-    // ── Extra grid: 3 cột cho bài từ thứ 6 trở đi ──────────────────────────
-    .phb__extra-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.6rem;
-        margin-top: 0.6rem;
-
-        @include maxWidth($md) {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        @include maxWidth($sm) {
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-        }
-
-        .phb__card--extra {
-            height: 280px;
-
-            @include maxWidth($md) {
-                height: 240px;
-            }
-
-            @include maxWidth($sm) {
-                height: 200px;
-            }
-        }
+    .phb__card:hover .phb__cta {
+        color: $secondColor;
     }
 }
 
@@ -287,9 +195,5 @@
 .wp-block-lacadev-posts-highlight-block {
     .block-posts-highlight {
         padding: 2rem 0;
-    }
-
-    .phb__grid {
-        height: clamp(400px, 50vw, 640px);
     }
 }

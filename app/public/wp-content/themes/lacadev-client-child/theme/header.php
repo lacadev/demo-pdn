@@ -49,22 +49,8 @@ if (!defined('ABSPATH')) {
         :root {
             /* Theme colors */
             --primary-color: <?php echo carbon_get_theme_option('primary_color'); ?>;
-            --secondary-color: <?php echo carbon_get_theme_option('secondary_color'); ?>;
+            --second-color: <?php echo carbon_get_theme_option('secondary_color'); ?>;
             --bg-color: <?php echo carbon_get_theme_option('bg_color'); ?>;
-
-            --primary-color-dark: <?php echo carbon_get_theme_option('primary_color_dark'); ?>;
-            --secondary-color-dark: <?php echo carbon_get_theme_option('secondary_color_dark'); ?>;
-            --bg-color-dark: <?php echo carbon_get_theme_option('bg_color_dark'); ?>;
-        }
-
-        html[data-theme="dark"] {
-            --primary-color: <?php echo carbon_get_theme_option('primary_color_dark'); ?>;
-            --secondary-color: <?php echo carbon_get_theme_option('secondary_color_dark'); ?>;
-            --bg-color: <?php echo carbon_get_theme_option('bg_color_dark'); ?>;
-
-            --primary-color-dark: <?php echo carbon_get_theme_option('primary_color'); ?>;
-            --secondary-color-dark: <?php echo carbon_get_theme_option('secondary_color'); ?>;
-            --bg-color-dark: <?php echo carbon_get_theme_option('bg_color'); ?>;
         }
     </style>
 </head>

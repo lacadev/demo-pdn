@@ -7,14 +7,10 @@ $secondaryColorAd: var(--secondary-color-ad);
 $backgroundColorAd: var(--bg-color-ad);
 $textColorAd: var(--text-color-ad);
 
-// Theme colors
+// Theme colors (dùng trong _general.scss)
 $primaryColor: var(--primary-color);
-$secondaryColor: var(--secondary-color);
-$backgroundColor: var(--bg-color);
-
-$primaryColorDark: var(--primary-color-dark);
-$secondaryColorDark: var(--secondary-color-dark);
-$backgroundColorDark: var(--bg-color-dark);
+$secondColor: var(--second-color);
+$bgColor: var(--bg-color);
 
 $thin: 100;
 $extraLight: 200;

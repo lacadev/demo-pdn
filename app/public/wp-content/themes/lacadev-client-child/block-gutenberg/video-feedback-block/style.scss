@@ -2,6 +2,7 @@
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
 .block-video-feedback {
+    position: relative;
     overflow: hidden;
     padding: 5rem 0;
 
@@ -15,7 +16,6 @@
 
     // ── Header ────────────────────────────────────────────────────────────────
     &__header {
-        text-align: center;
         padding: 0 0 4rem;
 
         @include maxWidth($sm) {
@@ -24,16 +24,12 @@
     }
 
     &__heading {
-        @include resFont(2.4, 4);
-        font-weight: $bold;
-        color: $primaryColor;
+        margin-bottom: 2rem;
+        color: $secondColor;
+        font-weight: $regular;
         text-transform: uppercase;
-        margin-bottom: 1.6rem;
-        line-height: 1.2;
 
-        @include maxWidth($xs) {
-            font-size: 1.8rem;
-        }
+        @include resFont(1.2, 2.4);
     }
 
     // ── Swiper ────────────────────────────────────────────────────────────────
@@ -53,7 +49,7 @@
     // ── Item (clickable article) ───────────────────────────────────────────
     &__item {
         position: relative;
-        border-radius: 0.8rem;
+        border-radius: 1.2rem;
         overflow: hidden;
         cursor: pointer;
         display: block;
@@ -63,7 +59,7 @@
     &__thumb {
         position: relative;
         width: 100%;
-        aspect-ratio: 9 / 16;
+        aspect-ratio: 4/5;
         overflow: hidden;
         background: #1a1a1a;
 
@@ -120,11 +116,18 @@
 
     // ── Name caption ──────────────────────────────────────────────────────────
     &__name {
-        margin-top: 1.2rem;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: .5rem;
+        z-index: 2;
+        background: #383838;
+        color: $secondColor;
+        border-bottom-left-radius: 1.2rem;
+        border-bottom-right-radius: 1.2rem;
+
         @include resFont(1.4, 1.6);
-        font-weight: $semiBold;
-        color: $primaryColor;
-        text-align: center;
     }
 
     // ── Dot pagination ────────────────────────────────────────────────────────

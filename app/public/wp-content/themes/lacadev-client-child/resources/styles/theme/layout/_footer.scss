@@ -133,8 +133,8 @@
 
     &:focus {
       background: #fff;
-      border-color: $secondaryColor;
-      box-shadow: 0 0 0 3px rgba($secondaryColor, 0.12);
+      border-color: $secondColor;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--second-color) 12%, transparent);
     }
 
     &.is-invalid {
@@ -204,7 +204,7 @@
     input[type="radio"] {
       width: 1.4rem;
       height: 1.4rem;
-      accent-color: $secondaryColor;
+      accent-color: $secondColor;
       cursor: pointer;
       flex-shrink: 0;
     }
@@ -222,7 +222,7 @@
     align-items: center;
     gap: 0.7rem;
     padding: 1.15rem 4rem;
-    background: $secondaryColor;
+    background: $secondColor;
     color: #fff;
     border: none;
     border-radius: 5rem;
@@ -378,7 +378,7 @@
     transition: all 0.3s ease;
     
     &:hover {
-      background-color: $secondaryColor;
+      background-color: $secondColor;
     }
 
     i {
@@ -406,7 +406,7 @@
       bottom: -1rem;
       width: 4rem;
       height: 2px;
-      background-color: $secondaryColor; // Fix: màu vàng để hiển thị trên nền nâu
+      background-color: $secondColor; // Fix: màu vàng để hiển thị trên nền nâu
     }
   }
 
@@ -449,7 +449,7 @@
     transition: color 0.3s ease;
 
     &:hover {
-      color: $secondaryColor;
+      color: $secondColor;
     }
   }
 

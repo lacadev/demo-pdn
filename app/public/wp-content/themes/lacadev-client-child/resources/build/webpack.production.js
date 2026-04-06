@@ -251,7 +251,17 @@ module.exports = {
                                     require('path').resolve(__dirname, '../../../lacadev-client/resources'),
                                     require('path').resolve(__dirname, '../../../lacadev-client/resources/styles'),
                                     require('path').resolve(__dirname, '../../../node_modules')
-                                ]
+                                ],
+                                importers: [{
+                                    findFileUrl(url) {
+                                        if (url.startsWith('@parent/')) {
+                                            const parentRes = require('path').resolve(__dirname, '../../../lacadev-client/resources');
+                                            const resolved = require('path').join(parentRes, url.slice('@parent/'.length));
+                                            return new URL(`file://${resolved}`);
+                                        }
+                                        return null;
+                                    }
+                                }],
                             }
                         }
                     }

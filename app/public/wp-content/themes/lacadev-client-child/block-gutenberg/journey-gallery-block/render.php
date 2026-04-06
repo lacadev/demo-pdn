@@ -1,78 +1,88 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * Journey Gallery Block — render.php
  *
- * @package LacaDev
- * @var array $attributes Block attributes.
+ * Desktop: CSS Grid 2 cột
+ *   - Bước lẻ (1,3,5…) → hàng 1, cột tăng dần → text-trái, ảnh-phải
+ *   - Bước chẵn (2,4,6…) → hàng 3, cột tăng dần → ảnh-trái, text-phải
+ *   - Timeline (đường ngang + chấm) → hàng 2
+ *
+ * Mobile: flex column theo thứ tự DOM (1,2,3,4…) zigzag
+ *   + đường dọc + chấm bên phải
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+$heading   = esc_html( $attributes['heading'] ?? '' );
+$bg_color  = sanitize_hex_color( $attributes['bgColor'] ?? '' );
+$steps     = is_array( $attributes['steps'] ?? [] ) ? $attributes['steps'] : [];
+$steps     = array_values( array_filter( $steps, fn( $s ) => ! empty( $s['title'] ) || ! empty( $s['imageUrl'] ) ) );
+
+if ( empty( $steps ) ) return;
+
+$step_count = count( $steps );
+$cols       = max( 1, (int) ceil( $step_count / 2 ) ); // số cột grid
+
+$wrapper_attrs = [ 'class' => 'block-journey-gallery' ];
+if ( $bg_color ) {
+    $wrapper_attrs['style'] = 'background-color:' . $bg_color;
 }
-
-$heading          = esc_html( $attributes['heading'] ?? '' );
-$description      = wp_kses_post( $attributes['description'] ?? '' );
-$items            = $attributes['items'] ?? [];
-$columns          = (int) ( $attributes['columns'] ?? 2 );
-$heading_tag      = in_array( $attributes['headingTag'] ?? 'h2', [ 'h2', 'h3', 'h4' ], true )
-                    ? $attributes['headingTag']
-                    : 'h2';
-$container_layout = in_array( $attributes['containerLayout'] ?? 'container', [ 'container', 'container-fluid' ], true )
-                    ? $attributes['containerLayout']
-                    : 'container';
-
-// Clamp columns 1-4
-$columns = max( 1, min( 4, $columns ) );
-
-$wrapper_attrs = get_block_wrapper_attributes( [
-    'class' => 'block-journey-gallery',
-] );
 ?>
 
-<section <?php echo $wrapper_attrs; ?>>
-    <div class="<?php echo esc_attr( $container_layout ); ?>">
+<section <?php echo get_block_wrapper_attributes( $wrapper_attrs ); ?>>
+    <div class="container-fluid">
 
-        <?php if ( $heading || $description ) : ?>
-        <div class="block-journey-gallery__header">
-            <?php if ( $heading ) : ?>
-            <<?php echo $heading_tag; ?> class="block-journey-gallery__heading">
-                <?php echo $heading; ?>
-            </<?php echo $heading_tag; ?>>
-            <?php endif; ?>
-
-            <?php if ( $description ) : ?>
-            <p class="block-journey-gallery__description">
-                <?php echo $description; ?>
-            </p>
-            <?php endif; ?>
-        </div>
-        <?php endif; ?>
-
-        <?php if ( ! empty( $items ) ) : ?>
-        <div
-            class="block-journey-gallery__grid"
-            style="--jg-cols: <?php echo $columns; ?>;"
-        >
-            <?php foreach ( $items as $item ) :
-                $image_url = esc_url( $item['imageUrl'] ?? '' );
-                $image_alt = esc_attr( $item['imageAlt'] ?? '' );
-
-                if ( ! $image_url ) {
-                    continue;
-                }
-            ?>
-            <div class="block-journey-gallery__item">
-                <img
-                    src="<?php echo $image_url; ?>"
-                    alt="<?php echo $image_alt; ?>"
-                    class="block-journey-gallery__img"
-                    loading="lazy"
-                    decoding="async"
-                />
+        <?php if ( $heading ) : ?>
+            <div class="block-journey-gallery__header">
+                <h2 class="block-journey-gallery__heading"><?php echo $heading; ?></h2>
             </div>
-            <?php endforeach; ?>
-        </div>
         <?php endif; ?>
 
-    </div>
+        <div class="block-journey-gallery__track" style="--jg-cols:<?php echo $cols; ?>">
+
+            <?php foreach ( $steps as $i => $step ) :
+                $num      = $i + 1;
+                $col      = floor( $i / 2 ) + 1;       // cột grid (1-based)
+                $row      = ( $i % 2 === 0 ) ? 1 : 3;  // hàng 1 (lẻ) hoặc hàng 3 (chẵn)
+                $is_even  = ( $i % 2 !== 0 );           // bước chẵn → đảo chiều
+                $title    = esc_html( $step['title'] ?? '' );
+                $desc     = esc_html( $step['description'] ?? '' );
+                $img      = esc_url( $step['imageUrl'] ?? '' );
+                $alt      = esc_attr( $step['imageAlt'] ?? $title );
+            ?>
+                <article
+                    class="block-journey-gallery__step<?php echo $is_even ? ' block-journey-gallery__step--even' : ''; ?>"
+                    style="--jg-col:<?php echo $col; ?>;--jg-row:<?php echo $row; ?>"
+                >
+                    <div class="block-journey-gallery__content">
+                        <span class="block-journey-gallery__number"><?php echo $num; ?></span>
+
+                        <div class="block-journey-gallery__text">
+                            <?php if ( $title ) : ?>
+                                <h3 class="block-journey-gallery__title"><?php echo $title; ?></h3>
+                            <?php endif; ?>
+                            <?php if ( $desc ) : ?>
+                                <p class="block-journey-gallery__desc"><?php echo $desc; ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <?php if ( $img ) : ?>
+                        <div class="block-journey-gallery__image">
+                            <img src="<?php echo $img; ?>" alt="<?php echo $alt; ?>" loading="lazy" />
+                        </div>
+                    <?php endif; ?>
+                </article>
+            <?php endforeach; ?>
+
+            <!-- Timeline ngang (desktop) — grid-row:2, chiếm toàn bộ cột -->
+            <div class="block-journey-gallery__timeline">
+                <div class="block-journey-gallery__timeline-line"></div>
+                <?php for ( $d = 0; $d < $step_count; $d++ ) : ?>
+                    <span class="block-journey-gallery__timeline-dot"></span>
+                <?php endfor; ?>
+            </div>
+
+        </div><!-- /.block-journey-gallery__track -->
+    </div><!-- /.container -->
 </section>

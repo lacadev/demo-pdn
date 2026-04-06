@@ -17,8 +17,12 @@ class DynamicCptAdminPage
     const MENU_SLUG    = 'laca-dynamic-cpt';
     const PARENT_SLUG  = 'themes.php';
 
+    private DynamicCptMetaEditor $metaEditor;
+
     public function __construct()
     {
+        $this->metaEditor = new DynamicCptMetaEditor();
+
         add_action('admin_menu', [$this, 'registerMenu']);
         add_action('admin_post_laca_cpt_save',   [$this, 'handleSave']);
         add_action('admin_post_laca_cpt_delete', [$this, 'handleDelete']);
@@ -45,6 +49,21 @@ class DynamicCptAdminPage
     {
         if (!current_user_can(self::CAP)) {
             wp_die(esc_html__('You do not have permission to access this page.', 'laca'));
+        }
+
+        // Route: nếu có ?meta=slug thì hiện meta editor thay vì list
+        if (isset($_GET['meta'])) {
+            $metaSlug = sanitize_key($_GET['meta']);
+            $cpts     = DynamicCptManager::getAll();
+            $cptData  = [];
+            foreach ($cpts as $cpt) {
+                if (($cpt['slug'] ?? '') === $metaSlug) {
+                    $cptData = $cpt;
+                    break;
+                }
+            }
+            $this->metaEditor->renderMetaEditor($metaSlug, $cptData);
+            return;
         }
 
         $cpts       = DynamicCptManager::getAll();
@@ -136,6 +155,19 @@ class DynamicCptAdminPage
                                             </button>
                                         </form>
                                     <?php endif; ?>
+                                    <?php
+                                    $meta_url        = add_query_arg(['meta' => $cpt_slug], $page_url);
+                                    $has_meta        = $this->metaEditor->metaFileExists($cpt_slug);
+                                    $meta_btn_class  = $has_meta ? 'laca-btn-icon laca-btn-icon--meta-ok' : 'laca-btn-icon';
+                                    $meta_btn_title  = $has_meta
+                                        ? esc_attr__('Meta Fields (đã có file)', 'laca')
+                                        : esc_attr__('Meta Fields (chưa cấu hình)', 'laca');
+                                    ?>
+                                    <a href="<?php echo esc_url($meta_url); ?>"
+                                       class="<?php echo $meta_btn_class; ?>"
+                                       title="<?php echo $meta_btn_title; ?>">
+                                        <span class="dashicons dashicons-database"></span>
+                                    </a>
                                     <a href="<?php echo esc_url(add_query_arg(['edit' => $idx], $page_url)); ?>"
                                        class="laca-btn-icon" title="<?php esc_attr_e('Sửa', 'laca'); ?>">
                                         <span class="dashicons dashicons-edit"></span>
@@ -416,6 +448,8 @@ class DynamicCptAdminPage
         .laca-btn-icon--danger:hover { background: #fdf3f3; border-color: #f5b8b8; color: #d63638; }
         .laca-btn-icon--regen { color: #996800; border-color: #f0d061; background: #fffaeb; }
         .laca-btn-icon--regen:hover { background: #fef3cd; border-color: #dab600; }
+        .laca-btn-icon--meta-ok { color: #1d7a34; border-color: #a7ddb0; background: #edfaef; }
+        .laca-btn-icon--meta-ok:hover { background: #d6f5dc; border-color: #00a32a; }
         .laca-btn-icon .dashicons { font-size: 16px; width: 16px; height: 16px; }
 
         /* ── Form ────────────────────────────────────────────────────── */
@@ -678,6 +712,7 @@ class DynamicCptAdminPage
 
         if ($slug) {
             (new DynamicCptTemplateGenerator())->delete($slug);
+            $this->metaEditor->deleteMetaFile($slug);
         }
 
         flush_rewrite_rules();

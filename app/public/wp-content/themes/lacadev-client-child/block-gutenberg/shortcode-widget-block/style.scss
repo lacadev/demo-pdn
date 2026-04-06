@@ -2,78 +2,105 @@
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
 .block-shortcode-widget {
-    padding: 5rem 0;
-
-    @include maxWidth($md) {
-        padding: 3.5rem 0;
-    }
+    padding: 8rem 0;
 
     @include maxWidth($sm) {
-        padding: 2.5rem 0;
-    }
-
-    &__header {
-        padding: 0 0 3rem;
-        text-align: center;
-
-        @include maxWidth($sm) {
-            padding: 0 0 2rem;
-        }
+        padding: 4rem 0;
     }
 
     &__heading {
-        @include resFont(2.4, 4);
-        font-weight: $bold;
-        color: $primaryColor;
-        text-transform: uppercase;
-        margin-bottom: 1.6rem;
-        line-height: 1.2;
+        margin-bottom: 2rem;
+        color: $secondColor;
+        font-weight: $regular;
 
-        @include maxWidth($xs) {
-            font-size: 1.8rem;
-        }
+        @include resFont(1.2, 2.4);
     }
 
     &__cols {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 3rem;
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
 
         @include maxWidth($sm) {
-            gap: 2rem;
+            grid-template-columns: repeat(1, 1fr);
+        }
+
+        &::before {
+            content: '';
+            width: 1px;
+            height: 100%;
+            background-color: #fff;
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
         }
     }
 
-    &__col {
-        flex: 1 1 calc(50% - 1.5rem);
-        min-width: 0;
+    .wp_phongthuy_form {
+        border: none;
+        box-shadow: none;
+        background: transparent;
+    }
 
-        @include maxWidth($sm) {
-            flex: 1 1 100%;
+    .form-title {
+        display: inline-block;
+        color: $secondColor;
+        border-bottom: none;
+
+        span {
+            &::before {
+                content: '';
+                width: 100%;
+                height: 4px;
+                background-color: #fff;
+                position: absolute;
+                left: 0;
+                bottom: -2px;
+            }
+
+            &:after {
+                width: 30%;
+                background-color: $secondColor;
+            }
         }
     }
 
-    .wp_phongthuy_form .form-title span:after,
-    .wp_phongthuy_form .form-line input[type="button"] {
-        background-color: $primaryColor;
+    .form-line {
+        color: #fff;
 
-        &:hover {
-            background-color: $secondaryColor;
+        @include resFont(1, 1.2);
+
+        .label {
+            margin-bottom: 5px;
         }
-    }
 
-    // Đảm bảo các input trong shortcode form đủ lớn để touch trên mobile
-    @include maxWidth($sm) {
-        input[type="text"],
-        input[type="number"],
+        input[type="button"] {
+            height: auto;
+            background-color: $secondColor;
+            color: #fff;
+            border: 1px solid $secondColor;
+            border-radius: 2rem;
+            padding: .5rem 1rem;
+            line-height: 1.3;
+            font-weight: $bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background-color: #fff;
+                color: $secondColor;
+            }
+
+        }
+
         select {
-            min-height: 4.4rem; // Touch target minimum
-            font-size: 1.4rem;
-        }
-
-        // Force full-width cho select/input nằm side-by-side
-        .form-line {
-            flex-direction: column !important;
+            border-radius: 2rem;
+            padding: .5rem 1rem;
+            line-height: 1;
+            font-size: 1rem;
         }
     }
 }

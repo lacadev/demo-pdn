@@ -18,6 +18,7 @@ module.exports = {
     '@styles': path.resolve(__dirname, '../../../../lacadev-client/resources/styles'),
     '@images': path.resolve(__dirname, '../../../../lacadev-client/resources/images'),
     '@fonts': path.resolve(__dirname, '../../../../lacadev-client/resources/fonts'),
+    '@child-fonts': path.resolve(__dirname, '../../fonts'),
     '@vendor': path.resolve(__dirname, '../../../../lacadev-client/resources/vendor'),
     // Phục vụ cho output của child theme
     '@dist': utils.distPath(),

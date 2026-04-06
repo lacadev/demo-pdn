@@ -1,0 +1,7 @@
+@use "../abstracts/variables.scss" as *;
+@use "../abstracts/mixin.scss" as *;
+
+body {
+  font-family: $mainFont !important;
+  background-color: $bgColor;
+}

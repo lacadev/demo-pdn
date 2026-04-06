@@ -23,16 +23,9 @@ $optionsPage = Container::make('theme_options', __('Laca Theme', 'laca'))
 		Field::make('color', 'bg_color', __('Background color', 'laca'))
 			->set_width(33.33),
 
-		Field::make('color', 'primary_color_dark', __('Primary color dark', 'laca'))
-			->set_width(33.33),
-		Field::make('color', 'secondary_color_dark', __('Secondary color dark', 'laca'))
-			->set_width(33.33),
-		Field::make('color', 'bg_color_dark', __('Background color dark', 'laca'))
-			->set_width(33.33),
-
 		Field::make('image', 'logo', __('Logo', 'laca'))
 			->set_width(33.33),
-		Field::make('image', 'logo_dark', __('Logo Dark', 'laca'))
+		Field::make('image', 'logo_footer', __('Logo Footer', 'laca'))
 			->set_width(33.33),
 		Field::make('image', 'default_image', __('Default image | Hình ảnh mặc định', 'laca'))
 			->set_width(33.33),
@@ -67,22 +60,6 @@ $optionsPage = Container::make('theme_options', __('Laca Theme', 'laca'))
 			->set_attribute('placeholder', 'youtube'),
 		Field::make('text', 'zalo' . currentLanguage(), __('', 'laca'))->set_width(50)
 			->set_attribute('placeholder', 'zalo'),
-	])
-
-	->add_tab(__('Archive pages | List bài viết CPT', 'laca'), [
-		Field::make('html', 'service', __('', 'laca'))
-			->set_html('----<i> Service </i>----'),
-		Field::make('text', 'service_page_title' . currentLanguage(), __('', 'laca'))
-			->set_attribute('placeholder', 'Service page title | Tiêu đề trang dịch vụ'),
-		Field::make('text', 'service_page_description' . currentLanguage(), __('', 'laca'))
-			->set_attribute('placeholder', 'Service page description | Mô tả trang dịch vụ'),
-
-		Field::make('html', 'project', __('', 'laca'))
-			->set_html('----<i> Project </i>----'),
-		Field::make('text', 'project_page_title' . currentLanguage(), __('', 'laca'))
-			->set_attribute('placeholder', 'Project page title | Tiêu đề trang dự án'),
-		Field::make('text', 'project_page_description' . currentLanguage(), __('', 'laca'))
-			->set_attribute('placeholder', 'Project page description | Mô tả trang dự án'),
 	])
 
 	->add_tab(__('Scripts', 'laca'), [

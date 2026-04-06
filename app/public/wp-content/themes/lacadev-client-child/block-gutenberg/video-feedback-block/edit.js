@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
 import {
     PanelBody,
     TextControl,
@@ -128,7 +128,7 @@ export default function Edit( { attributes, setAttributes } ) {
                                     onChange={ ( v ) => updateVideo( index, 'url', v ) }
                                     placeholder="https://youtu.be/..."
                                 />
-                                { ytId && (
+                                { ytId && !item.thumbnailUrl && (
                                     <img
                                         src={ `https://img.youtube.com/vi/${ ytId }/mqdefault.jpg` }
                                         alt="YouTube thumbnail"
@@ -139,6 +139,49 @@ export default function Edit( { attributes, setAttributes } ) {
                                         } }
                                     />
                                 ) }
+                                <div style={{ marginBottom: '0.8rem' }}>
+                                    <p style={{ marginBottom: '0.4rem', fontSize: '13px' }}>{__('Ảnh Thumbnail (tùy chọn)', 'laca')}</p>
+                                    <MediaUploadCheck>
+                                        <MediaUpload
+                                            onSelect={(media) => {
+                                                const next = [...videos];
+                                                next[index] = { ...next[index], thumbnailUrl: media.url, thumbnailId: media.id };
+                                                setAttributes({ videos: next });
+                                            }}
+                                            allowedTypes={['image']}
+                                            value={item.thumbnailId}
+                                            render={({ open }) => (
+                                                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                                                    {item.thumbnailUrl ? (
+                                                        <img 
+                                                            src={item.thumbnailUrl} 
+                                                            style={{ width: '100px', height: 'auto', cursor: 'pointer', borderRadius: '4px' }} 
+                                                            onClick={open}
+                                                        />
+                                                    ) : (
+                                                        <Button variant="secondary" onClick={open}>
+                                                            {__('Chọn ảnh', 'laca')}
+                                                        </Button>
+                                                    )}
+                                                    {item.thumbnailUrl && (
+                                                        <Button 
+                                                            isDestructive 
+                                                            variant="link" 
+                                                            style={{ padding: 0 }}
+                                                            onClick={() => {
+                                                                const next = [...videos];
+                                                                next[index] = { ...next[index], thumbnailUrl: '', thumbnailId: null };
+                                                                setAttributes({ videos: next });
+                                                            }}
+                                                        >
+                                                            {__('Xóa ảnh', 'laca')}
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            )}
+                                        />
+                                    </MediaUploadCheck>
+                                </div>
                                 <TextControl
                                     label={ __( 'Tên người feedback', 'laca' ) }
                                     value={ item.name }
@@ -177,9 +220,17 @@ export default function Edit( { attributes, setAttributes } ) {
                             return (
                                 <figure key={ index } className="block-video-feedback__preview-item">
                                     <div
-                                        className={ `block-video-feedback__thumb-wrap${ ! ytId ? ' block-video-feedback__thumb-wrap--empty' : '' }` }
+                                        className={ `block-video-feedback__thumb-wrap${ (!ytId && !item.thumbnailUrl) ? ' block-video-feedback__thumb-wrap--empty' : '' }` }
                                     >
-                                        { ytId ? (
+                                        { item.thumbnailUrl ? (
+                                            <>
+                                                <img
+                                                    src={ item.thumbnailUrl }
+                                                    alt={ item.name || `Video ${ index + 1 }` }
+                                                />
+                                                <span className="block-video-feedback__play" aria-hidden="true">▶</span>
+                                            </>
+                                        ) : ytId ? (
                                             <>
                                                 <img
                                                     src={ `https://img.youtube.com/vi/${ ytId }/mqdefault.jpg` }
@@ -188,7 +239,7 @@ export default function Edit( { attributes, setAttributes } ) {
                                                 <span className="block-video-feedback__play" aria-hidden="true">▶</span>
                                             </>
                                         ) : (
-                                            <span>YouTube URL</span>
+                                            <span>YouTube URL / Thumbnail</span>
                                         ) }
                                     </div>
                                     { item.name && (

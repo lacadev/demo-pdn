@@ -12,8 +12,8 @@
   left: 0;
   width: 100%;
   z-index: 100;
-  background-color: $secondaryColor;
-  background-color: color-mix(in srgb, var(--secondary-color) 85%, transparent);
+  background-color: $bgColor;
+  background-color: color-mix(in srgb, $bgColor 85%, transparent);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &--scrolled {
@@ -101,7 +101,7 @@
         align-items: center;
         padding: 1.4rem 1rem;
         font-weight: $medium;
-        color: #111;
+        color: #fff;
         text-decoration: none;
         white-space: nowrap;
         transition: color 0.2s ease;
@@ -125,7 +125,7 @@
 
       &:hover > a,
       &.actived-menu > a {
-        color: #fff;
+        color: $secondColor;
 
         &::after {
           transform: scaleX(1);
@@ -188,7 +188,7 @@
           &::after { display: none; }
 
           &:hover {
-            color: $secondaryColor;
+            color: $secondColor;
           }
         }
       }
@@ -212,8 +212,8 @@
         max-width: 80rem;
         padding: 2.8rem 3.2rem;
 
-        // Background: $secondaryColor 85% opacity
-        // background-color: $secondaryColor;
+        // Background: $secondColor 85% opacity
+        // background-color: $secondColor;
         // background-color: color-mix(in srgb, var(--secondary-color) 85%, transparent);
         border-radius: 1.2rem;
         box-shadow: 0 1.6rem 4rem rgba(0, 0, 0, 0.18);
@@ -273,7 +273,7 @@
 
             &:hover {
               background: transparent;
-              color: $secondaryColor;
+              color: $secondColor;
             }
           }
         }
