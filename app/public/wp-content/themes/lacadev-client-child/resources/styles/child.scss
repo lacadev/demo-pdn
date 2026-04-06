@@ -11,6 +11,9 @@
 @use "@parent/styles/theme/abstracts/variables" as *;
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
+// === Fonts (child) ===
+@use "./theme/base/fonts";
+
 // === Layout ===
 @use "./theme/layout/general";
 @use "./theme/layout/header";

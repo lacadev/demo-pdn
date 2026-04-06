@@ -25,6 +25,10 @@ $order          = in_array( strtoupper( $attr['order'] ?? 'DESC' ), [ 'ASC', 'DE
     : 'DESC';
 $selected_posts = array_map( 'intval', $attr['selectedPosts'] ?? [] );
 
+$show_popup      = ! empty( $attr['showPopupForm'] );
+$popup_budget    = is_array( $attr['popupBudgetOptions'] ?? [] ) ? $attr['popupBudgetOptions'] : [];
+$popup_btn_text  = esc_html( $attr['popupButtonText'] ?? 'GỬI YÊU CẦU' );
+
 // ── Appearance attributes ──────────────────────────────────────────────────
 $bg_color     = preg_match( '/^#[0-9a-fA-F]{6}$/', $attr['bgColor'] ?? '' )
     ? $attr['bgColor']
@@ -93,9 +97,15 @@ $query = new WP_Query( $query_args );
 static $instance = 0;
 $instance++;
 $swiper_id = 'projects-slider-' . $instance;
+
+$section_extra_attrs = 'class="block-projects-slider" style="background:' . esc_attr( $bg_rgba ) . ';"';
+if ( $show_popup ) {
+    $popup_id = 'pslider-popup-' . $instance;
+    $section_extra_attrs .= ' data-popup-id="' . esc_attr( $popup_id ) . '"';
+}
 ?>
 
-<section <?php echo get_block_wrapper_attributes( [ 'class' => 'block-projects-slider', 'style' => 'background:' . esc_attr( $bg_rgba ) . ';' ] ); ?>>
+<section <?php echo get_block_wrapper_attributes(); ?> <?php echo $section_extra_attrs; ?>>
 
     <div class="container">
         <?php if ( $section_title ) : ?>
@@ -283,3 +293,147 @@ $js = sprintf( '
     $pause_hover ? 'true' : 'false'
 );
 wp_add_inline_script( 'swiper', $js );
+
+// ── Popup Contact Form (scroll-triggered) ──────────────────────────────────
+if ( $show_popup ) :
+?>
+<div class="pslider-popup" id="<?php echo esc_attr( $popup_id ); ?>" hidden>
+    <div class="pslider-popup__backdrop"></div>
+    <div class="pslider-popup__panel">
+        <button class="pslider-popup__close" aria-label="<?php esc_attr_e( 'Đóng', 'laca' ); ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+
+        <h3 class="pslider-popup__title"><?php esc_html_e( 'Nhận Tư Vấn Ngay', 'laca' ); ?></h3>
+
+        <form class="pslider-popup__form" method="POST"
+              action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>"
+              novalidate data-pslider-form>
+            <?php wp_nonce_field( 'laca_footer_contact_nonce', 'nonce' ); ?>
+            <input type="hidden" name="action" value="laca_footer_contact_submit">
+
+            <div class="pslider-popup__field">
+                <input type="text" name="tf_address" class="pslider-popup__input"
+                       placeholder="<?php esc_attr_e( 'Địa chỉ xây dựng', 'laca' ); ?>" required>
+            </div>
+            <div class="pslider-popup__field">
+                <input type="text" name="tf_scale" class="pslider-popup__input"
+                       placeholder="<?php esc_attr_e( 'Quy mô xây dựng', 'laca' ); ?>" required>
+            </div>
+            <div class="pslider-popup__field">
+                <select name="tf_budget" class="pslider-popup__select" required>
+                    <option value=""><?php esc_html_e( 'Ngân sách', 'laca' ); ?></option>
+                    <?php foreach ( $popup_budget as $opt ) :
+                        if ( empty( $opt ) ) continue; ?>
+                        <option value="<?php echo esc_attr( $opt ); ?>"><?php echo esc_html( $opt ); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="pslider-popup__field">
+                <input type="text" name="tf_name" class="pslider-popup__input"
+                       placeholder="<?php esc_attr_e( 'Họ và tên', 'laca' ); ?>" required>
+            </div>
+            <div class="pslider-popup__field">
+                <input type="tel" name="tf_phone" class="pslider-popup__input"
+                       placeholder="<?php esc_attr_e( 'Số điện thoại liên hệ', 'laca' ); ?>" required>
+            </div>
+
+            <button type="submit" class="pslider-popup__btn">
+                <span class="pslider-popup__btn-text"><?php echo $popup_btn_text; ?></span>
+                <span class="pslider-popup__btn-loader" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="31.42" stroke-dashoffset="10"/></svg>
+                </span>
+            </button>
+
+            <div class="pslider-popup__msg" role="alert" hidden></div>
+        </form>
+    </div>
+</div>
+<?php
+    $popup_js = sprintf( '
+(function(){
+    var popup = document.getElementById("%1$s");
+    if (!popup) return;
+    var KEY = "pslider_popup_shown_%2$d";
+    var section = document.querySelector(\'[data-popup-id="%1$s"]\');
+    if (!section) return;
+
+    /* ── Show / Hide helpers ── */
+    function showPopup() {
+        popup.removeAttribute("hidden");
+        popup.offsetHeight;
+        popup.classList.add("pslider-popup--visible");
+        document.body.style.overflow = "hidden";
+    }
+    function hidePopup() {
+        popup.classList.remove("pslider-popup--visible");
+        document.body.style.overflow = "";
+        setTimeout(function(){ popup.setAttribute("hidden",""); }, 350);
+    }
+
+    /* ── Close handlers ── */
+    popup.querySelector(".pslider-popup__close").addEventListener("click", hidePopup);
+    popup.querySelector(".pslider-popup__backdrop").addEventListener("click", hidePopup);
+
+    /* ── IntersectionObserver: trigger once per session, only after user scrolls ── */
+    if (sessionStorage.getItem(KEY)) return;
+    var observer = new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) {
+            observer.disconnect();
+            sessionStorage.setItem(KEY, "1");
+            setTimeout(showPopup, 500);
+        }
+    }, { threshold: 0.3 });
+    /* Wait for first scroll before observing — prevents firing on page load */
+    var scrollHandler = function() {
+        window.removeEventListener("scroll", scrollHandler);
+        if (section) observer.observe(section);
+    };
+    window.addEventListener("scroll", scrollHandler, { passive: true });
+
+    /* ── Form AJAX submit ── */
+    var form = popup.querySelector("[data-pslider-form]");
+    if (form) {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            var btn = form.querySelector(".pslider-popup__btn");
+            var msg = form.querySelector(".pslider-popup__msg");
+            btn.classList.add("pslider-popup__btn--loading");
+            btn.disabled = true;
+            var fd = new FormData(form);
+            fetch(form.action, { method: "POST", body: fd, credentials: "same-origin" })
+            .then(function(r){ return r.json(); })
+            .then(function(d){
+                msg.removeAttribute("hidden");
+                if (d.success) {
+                    msg.textContent = d.data || "Gửi thành công!";
+                    msg.className = "pslider-popup__msg pslider-popup__msg--ok";
+                    form.reset();
+                    setTimeout(hidePopup, 1500);
+                } else {
+                    msg.textContent = d.data || "Có lỗi, vui lòng thử lại.";
+                    msg.className = "pslider-popup__msg pslider-popup__msg--err";
+                }
+            })
+            .catch(function(){
+                msg.removeAttribute("hidden");
+                msg.textContent = "Lỗi kết nối.";
+                msg.className = "pslider-popup__msg pslider-popup__msg--err";
+            })
+            .finally(function(){
+                btn.classList.remove("pslider-popup__btn--loading");
+                btn.disabled = false;
+            });
+        });
+    }
+})();',
+        $popup_id,
+        $instance
+    );
+    wp_add_inline_script( 'swiper', $popup_js );
+endif;

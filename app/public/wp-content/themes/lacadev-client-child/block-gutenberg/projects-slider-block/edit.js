@@ -13,6 +13,7 @@ import {
     TextControl,
     ToggleControl,
     ColorPicker,
+    Button,
     Spinner,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -61,6 +62,9 @@ export default function Edit( { attributes, setAttributes } ) {
         bgColor,
         bgOpacity,
         pauseOnHover,
+        showPopupForm,
+        popupBudgetOptions,
+        popupButtonText,
     } = attributes;
 
     // Tính màu nền thực tế với opacity
@@ -288,6 +292,46 @@ export default function Edit( { attributes, setAttributes } ) {
                         checked={ pauseOnHover }
                         onChange={ ( v ) => setAttributes( { pauseOnHover: v } ) }
                     />
+                </PanelBody>
+
+                { /* Panel: Popup Liên Hệ */ }
+                <PanelBody title={ __( 'Popup Liên Hệ', 'laca' ) } initialOpen={ false }>
+                    <ToggleControl
+                        label={ __( 'Hiện popup form khi scroll tới', 'laca' ) }
+                        checked={ showPopupForm }
+                        onChange={ ( v ) => setAttributes( { showPopupForm: v } ) }
+                    />
+                    { showPopupForm && (
+                        <>
+                            <TextControl
+                                label={ __( 'Text nút gửi', 'laca' ) }
+                                value={ popupButtonText }
+                                onChange={ ( v ) => setAttributes( { popupButtonText: v } ) }
+                            />
+                            <p style={ { fontWeight: 600, fontSize: '0.8rem', margin: '12px 0 6px' } }>
+                                { __( 'Ngân sách (dropdown)', 'laca' ) }
+                            </p>
+                            { popupBudgetOptions.map( ( item, index ) => (
+                                <div key={ index } style={{ display: 'flex', gap: '6px', marginBottom: '6px', alignItems: 'center' }}>
+                                    <TextControl
+                                        value={ item }
+                                        onChange={ ( v ) => {
+                                            const next = popupBudgetOptions.map( ( o, i ) => i === index ? v : o );
+                                            setAttributes( { popupBudgetOptions: next } );
+                                        } }
+                                        placeholder={ __( 'VD: 1 - 3 tỷ', 'laca' ) }
+                                        style={{ flex: 1, marginBottom: 0 }}
+                                    />
+                                    <Button isDestructive size="small" onClick={ () => {
+                                        setAttributes( { popupBudgetOptions: popupBudgetOptions.filter( ( _, i ) => i !== index ) } );
+                                    } }>✕</Button>
+                                </div>
+                            ) ) }
+                            <Button variant="secondary" onClick={ () => setAttributes( { popupBudgetOptions: [ ...popupBudgetOptions, '' ] } ) }>
+                                { __( '+ Thêm mục', 'laca' ) }
+                            </Button>
+                        </>
+                    ) }
                 </PanelBody>
 
                 { /* Panel 2: Nguồn dự án */ }

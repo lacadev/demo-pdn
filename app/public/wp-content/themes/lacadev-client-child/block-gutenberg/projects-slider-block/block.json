@@ -40,7 +40,11 @@
 
         "bgColor":      { "type": "string", "default": "#0f0f0f" },
         "bgOpacity":    { "type": "number", "default": 100 },
-        "pauseOnHover": { "type": "boolean", "default": true }
+        "pauseOnHover": { "type": "boolean", "default": true },
+
+        "showPopupForm":      { "type": "boolean", "default": false },
+        "popupBudgetOptions": { "type": "array",   "default": ["Dưới 1 tỷ", "1 - 3 tỷ", "3 - 5 tỷ", "5 - 10 tỷ", "Trên 10 tỷ"] },
+        "popupButtonText":    { "type": "string",  "default": "GỬI YÊU CẦU" }
     },
 
     "editorScript": "lacadev-block-projects-slider-block-editor",

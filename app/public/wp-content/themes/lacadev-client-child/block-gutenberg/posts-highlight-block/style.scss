@@ -12,12 +12,6 @@
         padding: 2rem 0 3rem;
     }
 
-    .container {
-        max-width: var(--container-max-width, 1400px);
-        margin: 0 auto;
-        padding: 0 var(--container-gutter, 2rem);
-    }
-
     // ── Header ──────────────────────────────────────────────────────────────
     .phb__header {
         padding: 0 0 3rem;
@@ -64,7 +58,8 @@
         display: flex;
         min-height: 200px;
 
-        @include maxWidth($xs) {
+        @include maxWidth($sm) {
+            flex-wrap: wrap;
             min-height: 150px;
         }
     }
@@ -75,6 +70,11 @@
         max-width: 40%;
         overflow: hidden;
         border-radius: 2rem;
+
+        @include maxWidth($sm) {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
     }
 
     .phb__img {
