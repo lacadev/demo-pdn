@@ -6,6 +6,9 @@ namespace App\Settings;
  * BlockSyncReceiver
  *
  * Nhận block files từ lacadev.com qua REST API, ghi vào block-gutenberg/ của child theme.
+ * Blocks được ghi vào: lacadev-client-child/block-gutenberg/{block_name}/
+ * Nhờ vậy khi update lacadev-client (parent theme) sẽ không ảnh hưởng đến blocks đã sync.
+ *
  * Endpoint: POST /wp-json/lacadev/v1/sync-block
  * Status:   GET  /wp-json/lacadev/v1/sync-block/status
  */
@@ -65,12 +68,11 @@ class BlockSyncReceiver
         }
 
         // --- Ghi files ---
-        // Dùng APP_DIR (= lacadev-child/) để nhất quán với lacadev_register_custom_blocks()
-        // APP_DIR được define trong theme/functions.php: dirname(__DIR__) của functions.php
-        // --> lacadev-child/block-gutenberg/{blockName}
-        $blockDir = defined('APP_DIR')
-            ? rtrim(APP_DIR, '/\\') . '/block-gutenberg/' . $blockName
-            : get_stylesheet_directory() . '/block-gutenberg/' . $blockName;
+        // Ghi vào child theme để tách biệt với parent theme (lacadev-client).
+        // Khi update lacadev-client sẽ không xoá blocks đã sync.
+        // get_stylesheet_directory() trả về .../lacadev-client-child/theme khi child theme active,
+        // nên dirname() lên 1 cấp → .../lacadev-client-child/
+        $blockDir = dirname(get_stylesheet_directory()) . '/block-gutenberg/' . $blockName;
 
         // Xác định đây là install mới hay update
         $installed = get_option(self::INST_OPTION, []);
@@ -143,17 +145,12 @@ class BlockSyncReceiver
     private function writeBlockFiles(string $blockDir, array $files): void
     {
         // Validate block name để tránh path traversal
-        // Validate trong phạm vi block-gutenberg directory (không phải toàn bộ style dir)
-        $realStyleDir = realpath(
-            defined('APP_DIR')
-                ? rtrim(APP_DIR, '/\\') . '/block-gutenberg'
-                : get_stylesheet_directory() . '/block-gutenberg'
-        );
+        // Validate trong phạm vi block-gutenberg/ của child theme
+        $childBlockGutenberg = dirname(get_stylesheet_directory()) . '/block-gutenberg';
+        $realStyleDir = realpath($childBlockGutenberg);
         if ($realStyleDir === false) {
             // Thư mục chưa tồn tại - sẽ được tạo khi ghi file đầu tiên
-            $realStyleDir = (defined('APP_DIR')
-                ? rtrim(APP_DIR, '/\\') . '/block-gutenberg'
-                : get_stylesheet_directory() . '/block-gutenberg');
+            $realStyleDir = $childBlockGutenberg;
         }
 
         foreach ($files as $relativePath => $base64Content) {

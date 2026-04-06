@@ -20,11 +20,11 @@ if (!defined('ABSPATH')) {
  */
 class ThemeUpdater
 {
-    /** Slug của theme (khớp với tên thư mục) */
-    private string $themeSlug = 'lacadev-child';
+    /** Slug của theme (khớp với tên thư mục wp-content/themes/lacadev-client/) */
+    private string $themeSlug = 'lacadev-client';
 
     /** URL file info.json đặt trên lacadev.com */
-    private string $updateInfoUrl = 'https://lacadev.com/theme-updates/lacadev-child.json';
+    private string $updateInfoUrl = 'https://lacadev.com/theme-updates/lacadev-client.json';
 
     /** Cache transient key (tránh gọi API quá nhiều) */
     private string $cacheKey = 'lacadev_child_update_info';

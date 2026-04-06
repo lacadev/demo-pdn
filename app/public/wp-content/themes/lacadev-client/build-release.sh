@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# build-release.sh — Build & release lacadev-child theme
+# build-release.sh — Build & release lacadev-client theme
 #
 # Cách dùng:
 #   chmod +x build-release.sh
@@ -8,15 +8,15 @@
 #
 # Script sẽ:
 #   1. Cập nhật Version trong style.css
-#   2. Cập nhật lacadev-child.json (file server-side)
-#   3. Tạo file .zip (loại bỏ file không cần)
+#   2. Cập nhật lacadev-client.json (file server-side)
+#   3. Tạo file .zip với tên thư mục đúng (lacadev-client/)
 #   4. Hướng dẫn upload lên lacadev.com
 # =============================================================================
 
 set -euo pipefail
 
 # ── Cấu hình ──────────────────────────────────────────────────────────────────
-THEME_SLUG="lacadev-child"
+THEME_SLUG="lacadev-client"
 THEME_DIR="$(cd "$(dirname "$0")" && pwd)"
 BUILD_DIR="/tmp/${THEME_SLUG}-build"
 OUTPUT_DIR="${THEME_DIR}/releases"
@@ -33,10 +33,10 @@ fi
 TODAY=$(date +%Y-%m-%d)
 ZIP_FILENAME="${THEME_SLUG}-${NEW_VERSION}.zip"
 ZIP_PATH="${OUTPUT_DIR}/${ZIP_FILENAME}"
-JSON_FILE="${THEME_DIR}/theme-server/lacadev-child.json"
+JSON_FILE="${THEME_DIR}/theme-server/lacadev-client.json"
 STYLE_CSS="${THEME_DIR}/theme/style.css"
 
-echo "🚀 Build lacadev-child v${NEW_VERSION}"
+echo "🚀 Build lacadev-client v${NEW_VERSION}"
 echo "   Changelog: ${CHANGELOG}"
 echo ""
 
@@ -46,7 +46,7 @@ sed -i.bak "s/^\( \* Version:\).*/\1 ${NEW_VERSION}/" "$STYLE_CSS"
 rm -f "${STYLE_CSS}.bak"
 
 # ── Bước 2: Cập nhật info.json ────────────────────────────────────────────────
-echo "📝 Cập nhật lacadev-child.json"
+echo "📝 Cập nhật lacadev-client.json"
 
 DOWNLOAD_URL="https://lacadev.com/theme-updates/${ZIP_FILENAME}"
 CHANGELOG_HTML="<h4>${NEW_VERSION} (${TODAY})</h4><ul><li>${CHANGELOG}</li></ul>"
@@ -113,10 +113,10 @@ echo "1. Upload ZIP:"
 echo "   scp '${ZIP_PATH}' user@lacadev.com:/path/to/public_html/theme-updates/"
 echo ""
 echo "2. Upload JSON (cập nhật thông tin version mới):"
-echo "   scp '${JSON_FILE}' user@lacadev.com:/path/to/public_html/theme-updates/lacadev-child.json"
+echo "   scp '${JSON_FILE}' user@lacadev.com:/path/to/public_html/theme-updates/lacadev-client.json"
 echo ""
 echo "3. Kiểm tra URL sau khi upload:"
-echo "   curl https://lacadev.com/theme-updates/lacadev-child.json"
+echo "   curl https://lacadev.com/theme-updates/lacadev-client.json"
 echo ""
 echo "📦 File zip: ${ZIP_PATH}"
 echo "📋 File JSON: ${JSON_FILE}"

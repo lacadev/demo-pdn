@@ -29,9 +29,10 @@ function lacadev_register_gutenberg_blocks_assets() {
     
     $asset = require $asset_file;
     
-    // URL root of theme (one level above `theme/`)
-    $theme_root_uri = dirname(get_stylesheet_directory_uri());
-    
+    // URL root of theme (one level above `theme/`) — dùng get_template_directory_uri()
+    // để luôn trỏ về parent theme, không bị lệch khi child theme active.
+    $theme_root_uri = dirname(get_template_directory_uri());
+
     // Register block editor script
     wp_register_script(
         'lacadev-gutenberg-blocks',
@@ -56,7 +57,9 @@ function lacadev_register_custom_blocks() {
     }
 
     $blocks_dir = trailingslashit(APP_DIR) . 'block-gutenberg';
-    $theme_root_uri = dirname(get_stylesheet_directory_uri());
+    // Luôn dùng get_template_directory_uri() để trỏ về parent theme URI,
+    // tránh trỏ nhầm sang child theme khi child theme đang active.
+    $theme_root_uri = dirname(get_template_directory_uri());
     
     if (!is_dir($blocks_dir)) {
         return;
@@ -167,26 +170,22 @@ add_filter('block_categories_all', 'lacadev_register_block_category', 10, 2);
 /**
  * Đăng ký các blocks đã được sync về từ lacadev server.
  *
- * BlockSyncReceiver ghi files vào APP_DIR/block-gutenberg/{block_name}/
- * (APP_DIR = lacadev-child/, rùng với lacadev_register_custom_blocks() ơ trên).
- * Hàm này chạy sau priority 10 để không xầy ra conflict với parent theme register.
+ * BlockSyncReceiver ghi files vào lacadev-client-child/block-gutenberg/{block_name}/
+ * (child theme) để tách biệt với parent theme — update lacadev-client sẽ không xoá blocks đã sync.
+ * Hàm này chạy sau priority 10 để không xảy ra conflict với parent theme register.
  */
 function lacadev_child_register_synced_blocks(): void
 {
-    if (!defined('APP_DIR')) {
-        return;
-    }
-
-    $childBlocksDir = rtrim(APP_DIR, '/\\') . '/block-gutenberg';
+    // Blocks được BlockSyncReceiver ghi vào child theme để tách biệt với parent theme.
+    // get_stylesheet_directory() → .../lacadev-client-child/theme (khi child active)
+    // dirname() → .../lacadev-client-child/
+    $childBlocksDir = dirname(get_stylesheet_directory()) . '/block-gutenberg';
 
     if (!is_dir($childBlocksDir)) {
         return;
     }
 
-    // URL tương ứng với APP_DIR - một level trên theme/ (đã có trailing slash)
-    // APP_DIR = .../lacadev-child/  nhưng cần URI tương ứng
-    // get_stylesheet_directory_uri() = .../lacadev-child/theme
-    // nên cần dirname() để lên lacadev-child/
+    // URI tương ứng với child theme root
     $childThemeUri = dirname(get_stylesheet_directory_uri());
 
     $entries = scandir($childBlocksDir);
@@ -297,4 +296,3 @@ function lacadev_register_term_image_rest_field() {
     }
 }
 add_action( 'rest_api_init', 'lacadev_register_term_image_rest_field' );
-
