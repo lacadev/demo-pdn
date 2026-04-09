@@ -1,10 +1,25 @@
 @use "@parent/styles/theme/abstracts/variables" as *;
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
+.wp-block-lacadev-projects-slider-block {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 6rem;
+
+    @include maxWidth($md) {
+        padding-bottom: 4rem;
+    }
+
+    @include maxWidth($sm) {
+        padding-bottom: 3rem;
+    }
+}
+
 .block-projects-slider {
     background: #0f0f0f;
     overflow: hidden;
     padding-bottom: 6rem;
+    position: relative;
 
     @include maxWidth($md) {
         padding-bottom: 4rem;

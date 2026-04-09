@@ -10,16 +10,9 @@
 ?>
 <!-- footer -->
 <?php
-$contact_slogan = getOption('contact_slogan');
-$bg_contact_ft = getOption('bg_contact_ft');
-$bg_contact_ft_url = $bg_contact_ft ? wp_get_attachment_image_url($bg_contact_ft, 'full') : '';
+$company = getOption('company');
 $logo_footer = getOption('logo_footer');
 $logo_footer_url = wp_get_attachment_image_url($logo_footer, 'full');
-$footer_slogan = getOption('footer_slogan');
-$ft_title_1 = getOption('footer_title_menu_1');
-$ft_menu_1 = getOption('footer_menu_1');
-$ft_title_2 = getOption('footer_title_menu_2');
-$ft_menu_2 = getOption('footer_menu_2');
 ?>
 
 <footer class="footer" role="contentinfo">
@@ -32,13 +25,13 @@ $ft_menu_2 = getOption('footer_menu_2');
                         <img src="<?php echo esc_url( $logo_footer_url ); ?>" alt="<?php echo esc_attr( get_bloginfo('name') ); ?>" loading="lazy" width="180" height="auto">
                         <?php endif; ?>
                     </a>
-                    <?php if ( $footer_slogan = carbon_get_theme_option( 'footer_slogan' . currentLanguage() ) ) : ?>
-                        <p class="footer__slogan"><?php echo nl2br( esc_html( $footer_slogan ) ); ?></p>
+                    <?php if ( $googlemap = carbon_get_theme_option( 'googlemap' . currentLanguage() ) ) : ?>
+                        <div class="footer__slogan"><?php echo $googlemap; ?></div>
                     <?php endif; ?>
                 </div>
                 
                 <div class="footer__col footer__col--contact">
-                    <h3 class="footer__title"><?php echo esc_html($ft_title_1); ?></h3>
+                    <h3 class="footer__title"><?php echo esc_html($company); ?></h3>
                     <ul class="footer__contact-list">
                         <?php 
                         $ft_phones = getOption('phone_numbers'); 

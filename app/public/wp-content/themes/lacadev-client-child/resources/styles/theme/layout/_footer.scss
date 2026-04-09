@@ -1,279 +1,12 @@
 @use "../abstracts/variables.scss" as *;
 @use "../abstracts/mixin.scss" as *;
 
-.top-footer {
-  padding: 6rem 0;
-
-  @include maxWidth($md) {
-    padding: 4rem 0;
-  }
-
-  @include maxWidth($sm) {
-    padding: 2.4rem 0;
-  }
-
-  // ─── Layout 2-col ────────────────────────────────────────────────
-  &__inner {
-    display: flex;
-    align-items: center;
-    gap: 4rem;
-
-    @media (max-width: 991px) {
-      flex-direction: column;
-      gap: 2.4rem;
-    }
-  }
-
-  // Cột trái – form card
-  &__left {
-    flex: 0 0 58%;
-    max-width: 58%;
-
-    @media (max-width: 991px) {
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
-  }
-
-  // Cột phải – ảnh nhân vật
-  &__right {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-
-    @media (max-width: 767px) {
-      display: none;
-    }
-  }
-
-  // ─── Rep image ────────────────────────────────────────────────────
-  &__rep-img {
-    display: block;
-    width: 100%;
-    max-width: 46rem;
-    height: auto;
-    object-fit: contain;
-    object-position: bottom;
-  }
-
-  // ─── Card title ───────────────────────────────────────────────────
-  &__card-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 1.6rem;
-  }
-
-  // ─── Card trắng border vàng ───────────────────────────────────────
-  &__card {
-    background: #fff;
-    border: 1.5px solid #e2bb3b;
-    border-radius: 2.4rem;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-    padding: 2.4rem 2.8rem 2.8rem;
-
-    @include maxWidth($sm) {
-      padding: 1.6rem 1.4rem 2rem;
-      border-radius: 1.6rem;
-    }
-  }
-
-  // ─── Form ─────────────────────────────────────────────────────────
-  &__form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-  }
-
-  // Single full-width row
-  &__body-form-row {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  // Two-col flex row
-  &__body-form-row-flex {
-    display: flex;
-    gap: 1.1rem;
-
-    @media (max-width: 480px) {
-      flex-direction: column;
-    }
-  }
-
-  &__flex-item {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  // ─── Inputs / Select / Textarea ──────────────────────────────────
-  &__input,
-  &__select,
-  &__textarea {
-    width: 100%;
-    padding: 0.8rem 1.2rem;
-    background: #f5f5f5;
-    border: 1.5px solid transparent;
-    border-radius: 0.5rem;
-    color: #333;
-    font-size: 1.2rem;
-    font-family: inherit;
-    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    outline: none;
-    appearance: none;
-
-    &::placeholder { color: #aaa; }
-
-    &:focus {
-      background: #fff;
-      border-color: $secondColor;
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--second-color) 12%, transparent);
-    }
-
-    &.is-invalid {
-      border-color: #e84c4c;
-    }
-
-    @include maxWidth($sm) {
-      font-size: 1.4rem; // Tăng font-size để dễ đọc/gõ trên mobile
-      padding: 1rem 1.1rem;
-    }
-  }
-
-  &__select {
-    cursor: pointer;
-    padding-right: 3rem;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1.2rem center;
-    background-size: 1.2rem;
-  }
-
-  &__textarea {
-    resize: vertical;
-    min-height: 7.5rem;
-    line-height: 1.5;
-  }
-
-  // ─── Error ───────────────────────────────────────────────────────
-  &__error {
-    font-size: 1rem;
-    color: #e84c4c;
-    display: block;
-    &:empty { display: none; }
-  }
-
-  // ─── Budget section ───────────────────────────────────────────────
-  &__budget-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-
-  &__budget-heading {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: #444;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin: 0;
-  }
-
-  &__radio-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 1.6rem;
-  }
-
-  &__radio-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 1.1rem;
-    color: #444;
-    cursor: pointer;
-    user-select: none;
-
-    input[type="radio"] {
-      width: 1.4rem;
-      height: 1.4rem;
-      accent-color: $secondColor;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-  }
-
-
-  &__submit-wrap {
-    margin-top: 0.6rem;
-    display: flex;
-    justify-content: center;
-  }
-
-  &__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 1.15rem 4rem;
-    background: $secondColor;
-    color: #fff;
-    border: none;
-    border-radius: 5rem;
-    font-size: 1.35rem;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: inherit;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: filter 0.22s ease, transform 0.15s ease;
-    width: 100%; // Full width trên mobile
-    justify-content: center;
-
-    @include minWidth($sm) {
-      width: auto; // Auto width trên tablet trở lên
-    }
-
-    &:hover { filter: brightness(1.1); }
-    &:active { transform: scale(0.98); }
-    &:disabled { opacity: 0.65; cursor: not-allowed; filter: none; }
-
-    .spinner {
-      display: none;
-      width: 1.6rem;
-      height: 1.6rem;
-      border: 2px solid rgba(255, 255, 255, 0.35);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: tf-spin 0.7s linear infinite;
-    }
-
-    &.is-loading .spinner { display: inline-block; }
-    &.is-loading .btn-text { display: none; }
-  }
-
-
-}
-
-@keyframes tf-spin {
-  to { transform: rotate(360deg); }
-}
-
-
-
 .footer {
   background-color: $primaryColor;
   color: #fff;
   position: relative;
   font-family: inherit;
   z-index: 1;
-  margin-top: 15rem;
 
   @include maxWidth($md) {
     margin-top: 10rem;
@@ -284,14 +17,10 @@
   }
 
   &__main {
-    padding: 8rem 0 5rem;
+    padding: 4rem 0;
 
     @include maxWidth($md) {
-      padding: 5rem 0 4rem;
-    }
-
-    @include maxWidth($sm) {
-      padding: 3.5rem 0 3rem;
+      padding: 2rem 0;
     }
   }
 
@@ -314,8 +43,8 @@
     }
 
     @media (min-width: 992px) {
-      &--about { width: 25%; }
-      &--contact { width: 33.333333%; }
+      &--about { width: 40%; }
+      &--contact { width: 40%; }
     }
   }
 

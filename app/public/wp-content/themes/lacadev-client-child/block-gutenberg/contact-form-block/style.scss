@@ -2,16 +2,14 @@
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
 .block-contact-form {
-    padding: 4rem 0;
+    padding: 6rem 0;
 
     @include maxWidth($md) {
-        padding: 3rem 0;
+        padding: 4rem 0;
     }
 
-    .container {
-        max-width: var(--container-max-width, 1400px);
-        margin: 0 auto;
-        padding: 0 var(--container-gutter, 2rem);
+    @include maxWidth($sm) {
+        padding: 3rem 0;
     }
 
     // ── Inner: 2-col layout ─────────────────────────────────────────────────
@@ -147,18 +145,13 @@
 
     // ── Right: Image ────────────────────────────────────────────────────────
     .bcf__right {
-        flex: 0 0 320px;
+        flex: 0 0 450px;
         display: flex;
         align-items: center;
         justify-content: center;
 
-        @include maxWidth($lg) {
-            flex: 0 0 260px;
-        }
-
         @include maxWidth($md) {
-            flex: none;
-            order: -1;
+            display: none;
         }
     }
 
