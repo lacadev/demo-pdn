@@ -325,7 +325,7 @@
       display: block;
       width: 2.4rem;
       height: 2px;
-      background-color: $primaryColor;
+      background-color: #fff;
       border-radius: 2px;
       transform-origin: right center;
       transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
@@ -403,6 +403,7 @@
     position: absolute;
     top: 1em;
     right: 1rem;
+    z-index: 10;
     width: 3rem;
     height: 3rem;
     background: none;

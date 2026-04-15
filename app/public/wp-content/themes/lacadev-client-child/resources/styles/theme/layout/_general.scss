@@ -4,4 +4,22 @@
 body {
   font-family: $mainFont !important;
   background-color: $bgColor;
+  color: #fff !important;
+  line-height: 1.2 !important;
+}
+
+.container {
+  max-width: $lg;
+}
+
+h1.page-title {
+  color: $secondColor;
+}
+
+figcaption {
+  color: #fff !important;
+}
+
+.page-hero {
+  padding: 3rem 0;
 }

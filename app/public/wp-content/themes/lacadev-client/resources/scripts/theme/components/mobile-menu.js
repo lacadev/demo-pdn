@@ -45,18 +45,33 @@ export function initMobileMenu() {
 		}
 	}, { signal } );
 
+	// Close button & backdrop support (if added by child themes)
+	const closeBtn = overlay.querySelector('.header__overlay-close');
+	if (closeBtn) {
+		closeBtn.addEventListener('click', closeMobileMenu, { signal });
+	}
+	const backdrop = overlay.querySelector('.header__overlay-backdrop');
+	if (backdrop) {
+		backdrop.addEventListener('click', closeMobileMenu, { signal });
+	}
+
 	overlay.querySelectorAll( 'a' ).forEach( ( link ) => {
 		link.addEventListener( 'click', ( e ) => {
 			const parentLi = link.parentElement;
-			const isParent = parentLi.classList.contains( 'has-children' );
+			const isParent = parentLi.classList.contains( 'has-children' ) || parentLi.classList.contains('menu-item-has-children');
 
-			if ( window.innerWidth < 992 && isParent && ! parentLi.classList.contains( 'open' ) ) {
+			if ( window.innerWidth < 992 && isParent ) {
 				e.preventDefault();
 				e.stopPropagation();
-				overlay.querySelectorAll( '.has-children' ).forEach( ( p ) => {
-					if ( p !== parentLi ) p.classList.remove( 'open' );
-				} );
-				parentLi.classList.add( 'open' );
+				
+				if (!parentLi.classList.contains( 'open' )) {
+					overlay.querySelectorAll( '.has-children, .menu-item-has-children' ).forEach( ( p ) => {
+						if ( p !== parentLi ) p.classList.remove( 'open' );
+					} );
+					parentLi.classList.add( 'open' );
+				} else {
+					parentLi.classList.remove( 'open' );
+				}
 				return;
 			}
 

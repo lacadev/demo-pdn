@@ -66,12 +66,12 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 15px;
+  gap: rem(15);
 
   .share-label {
       font-weight: 500;
       color: var(--text-color, #333);
-      font-size: 0.6875rem;
+      font-size: rem(11); // 0.6875rem
       text-transform: uppercase;
   }
 
@@ -80,28 +80,28 @@
       padding: 0;
       margin: 0;
       display: flex;
-      gap: 12px;
+      gap: rem(12);
 
       li {
           a {
               display: flex;
               align-items: center;
               justify-content: center;
-              width: 40px;
-              height: 40px;
+              width: rem(40);
+              height: rem(40);
               border-radius: 50%;
               background: var(--bg-color-alt, #f5f5f5);
               color: var(--text-muted, #666);
               transition: all 0.25s ease;
 
               svg {
-                  width: 20px;
-                  height: 20px;
+                  width: rem(20);
+                  height: rem(20);
               }
 
               &:hover {
                   color: #fff;
-                  transform: translateY(-2px);
+                  transform: translateY(rem(-2));
               }
           }
 

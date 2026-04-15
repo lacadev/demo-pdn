@@ -42,6 +42,14 @@ const dimensions = [
 (async () => {
     try {
         const { generate } = await import('critical');
+        // Prefer system Chrome over old bundled Chromium (r722234) which times out on macOS 15+
+        const systemChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+        const fs = require('fs');
+        const penthouseArgs = {};
+        if (fs.existsSync(systemChrome)) {
+            penthouseArgs.executablePath = systemChrome;
+        }
+
         const { css, html, uncritical } = await generate({
             base: distPath,
             src: targetUrl,
@@ -53,7 +61,7 @@ const dimensions = [
             ignore: {
                 atrule: ['@font-face'],
             },
-
+            penthouse: penthouseArgs,
         });
 
         console.log('✅ Critical CSS generated successfully at: dist/styles/critical.css');

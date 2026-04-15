@@ -103,7 +103,7 @@ p:empty {
 
 .container {
   width: 100%;
-  max-width: $container-mw;
+  max-width: $xl;
   padding-right: 0.9375rem;
   padding-left: 0.9375rem;
   margin-right: auto;
@@ -155,18 +155,18 @@ p:empty {
 
 // Global focus-visible styles
 *:focus-visible {
-  outline: 3px solid #2196f3;
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline: rem(3) solid #2196f3;
+  outline-offset: rem(2);
+  border-radius: rem(2);
 }
 
 // Button focus styles
 button:focus-visible,
 .btn:focus-visible,
 a:focus-visible {
-  outline: 3px solid #2196f3;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
+  outline: rem(3) solid #2196f3;
+  outline-offset: rem(2);
+  box-shadow: 0 0 rem(3) rgba(33, 150, 243, 0.3);
 }
 
 // Skip link (already styled but ensure visibility)
@@ -177,14 +177,14 @@ a:focus-visible {
     background-color: #2196f3;
     color: white;
     display: block;
-    font-size: 14px;
+    font-size: rem(14);
     font-weight: bold;
     height: auto;
-    left: 5px;
+    left: rem(5);
     line-height: normal;
-    padding: 15px 23px 14px;
+    padding: rem(15) rem(23) rem(14);
     text-decoration: none;
-    top: 5px;
+    top: rem(5);
     width: auto;
     z-index: 100000;
   }

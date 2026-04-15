@@ -112,8 +112,7 @@ class LacaDevTrackerClient
     {
         // Không có response = không có plugin cần update
         if (empty($value->response) || !is_array($value->response)) {
-            // Xoá "known updates" nếu không còn plugin nào chờ
-            delete_option(self::OPT_KNOWN_UPDATES);
+            // KHÔNG delete known list — giữ để tránh re-alert khi WP check lại
             return $value;
         }
 
@@ -439,13 +438,17 @@ class LacaDevTrackerClient
     {
         $logs = [];
 
-        // 1. Kiểm tra plugin chờ update
+        // 1. Kiểm tra plugin chờ update — chỉ gửi plugin MỚI so với known list
         $pluginUpdates = $this->getPendingPluginUpdates();
-        if (!empty($pluginUpdates)) {
-            $list   = implode("\n", array_map(fn($p) => "  - {$p['name']}: {$p['current']} → {$p['new']}", $pluginUpdates));
+        $knownKeys = (array) get_option(self::OPT_KNOWN_UPDATES, []);
+        $newPlugins = array_filter($pluginUpdates, function ($p) use ($knownKeys) {
+            return !in_array($p['slug'] ?? '', $knownKeys, true);
+        });
+        if (!empty($newPlugins)) {
+            $list   = implode("\n", array_map(fn($p) => "  - {$p['name']}: {$p['current']} → {$p['new']}", $newPlugins));
             $logs[] = [
                 'type'    => 'update_pending',
-                'content' => "📦 Có " . count($pluginUpdates) . " plugin chờ update:\n{$list}",
+                'content' => "Plugin mới chờ update (" . count($newPlugins) . "):\n{$list}",
                 'level'   => 'warning',
             ];
         }
@@ -504,6 +507,7 @@ class LacaDevTrackerClient
         foreach ($updates->response as $pluginFile => $data) {
             $installed = get_plugin_data(WP_PLUGIN_DIR . '/' . $pluginFile, false, false);
             $result[]  = [
+                'slug'    => $pluginFile,
                 'name'    => $installed['Name'] ?? $pluginFile,
                 'current' => $installed['Version'] ?? '?',
                 'new'     => $data->new_version ?? '?',

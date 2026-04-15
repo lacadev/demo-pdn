@@ -1,0 +1,165 @@
+/* ── Team Carousel Block ─────────────────────────────────── */
+
+.block-team-carousel {
+    overflow: hidden;
+    padding: 60px 0;
+
+    &__heading {
+        text-align: center;
+        font-size: clamp(1.5rem, 3vw, 2.25rem);
+        font-weight: 700;
+        margin-bottom: 40px;
+        padding: 0 1rem;
+    }
+
+    /* ── Swiper wrapper ── */
+    &__swiper {
+        width: 100%;
+        overflow: hidden; /* clip slides outside bounds */
+    }
+
+    /* ── swiper-wrapper needs extra height for scale room ── */
+    .swiper-wrapper {
+        align-items: center;
+    }
+
+    /* ── Individual slide shell — let Swiper manage its position ── */
+    .swiper-slide {
+        width: clamp(240px, 32vw, 400px);
+        height: clamp(320px, 44vw, 540px);
+        flex-shrink: 0;
+    }
+
+    /* ── Inner element carries the visual scale ── */
+    &__slide-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #e8e8e8;
+        transform: scale(var(--tc-inactive-scale, 0.62));
+        transform-origin: center center;
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: transform;
+    }
+
+    /* Active slide: full size */
+    .swiper-slide-active &__slide-inner {
+        transform: scale(1);
+    }
+
+    &__img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+    }
+
+    &__no-image {
+        width: 100%;
+        height: 100%;
+        background: #d4d4d4;
+    }
+
+    /* ── Label bar ── */
+    &__label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-weight: 700;
+        font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 14px 16px;
+    }
+
+    /* ── Navigation buttons ── */
+    .swiper-button-prev,
+    .swiper-button-next {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+        color: #1a1a1a;
+        top: 50%;
+        transform: translateY(-50%);
+
+        /* hide swiper default icon */
+        &::after { display: none; }
+
+        &:hover {
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        svg { pointer-events: none; }
+    }
+
+    .swiper-button-prev {
+        left: calc(50% - clamp(120px, 16vw, 200px) - 52px);
+    }
+
+    .swiper-button-next {
+        right: calc(50% - clamp(120px, 16vw, 200px) - 52px);
+    }
+
+    /* ── Editor preview ── */
+    &__editor-wrap {
+        padding: 24px;
+    }
+
+    &__title {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    &__preview {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    &__preview-item {
+        position: relative;
+        flex-shrink: 0;
+        width: 160px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #e8e8e8;
+
+        img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+    }
+
+    &__preview-placeholder {
+        width: 100%;
+        height: 200px;
+        background: #d4d4d4;
+    }
+
+    &__preview-label {
+        display: block;
+        text-align: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 6px 8px;
+    }
+}

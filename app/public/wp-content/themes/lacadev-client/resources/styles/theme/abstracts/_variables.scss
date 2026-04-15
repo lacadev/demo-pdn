@@ -12,6 +12,23 @@ $primaryColor: var(--primary-color);
 $secondColor: var(--second-color);
 $bgColor: var(--bg-color);
 
+// font size
+$fz-base: 1rem; // 16px
+$fz-sm: 0.875rem; // 14px
+$fz-lg: 1.125rem; // 18px
+$fz-xl: 1.25rem; // 20px
+$fz-2xl: 1.5rem; // 24px
+$fz-3xl: 1.75rem; // 28px
+$fz-4xl: 2rem; // 32px
+$fz-5xl: 2.25rem; // 36px
+$fz-6xl: 2.5rem; // 40px
+$fz-7xl: 3rem; // 48px
+$fz-8xl: 3.5rem; // 56px
+$fz-9xl: 4rem; // 64px
+$fz-10xl: 4.5rem; // 72px
+$fz-11xl: 5rem; // 80px
+$fz-12xl: 6rem; // 96px
+
 $thin: 100;
 $extraLight: 200;
 $light: 300;
@@ -27,5 +44,3 @@ $sm: 768px;
 $md: 992px;
 $lg: 1200px;
 $xl: 1440px;
-
-$container-mw: 90rem;

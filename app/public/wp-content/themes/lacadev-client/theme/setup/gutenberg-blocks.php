@@ -296,3 +296,4 @@ function lacadev_register_term_image_rest_field() {
     }
 }
 add_action( 'rest_api_init', 'lacadev_register_term_image_rest_field' );
+

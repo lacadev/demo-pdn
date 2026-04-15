@@ -64,6 +64,7 @@ class Laca_Menu_Walker extends Walker_Nav_Menu
             'current-menu-item',
             'current-menu-parent',
             'current-menu-ancestor',
+            'menu-item-has-children',
         ];
         
         $new_classes = array_intersect($classes, $allowed_classes);
@@ -75,17 +76,13 @@ class Laca_Menu_Walker extends Walker_Nav_Menu
         }
         
         // Thêm class nếu có menu con
-        $has_children = false;
-        if (is_object($args) && isset($args->walker) && property_exists($args->walker, 'has_children')) {
-            $has_children = $args->walker->has_children;
-        }
-
-        if ($has_children) {
+        if (in_array('menu-item-has-children', $classes) || $this->has_children) {
             $new_classes[] = 'has-children';
+            $new_classes[] = 'menu-item-has-children';
         }
 
         // Tạo chuỗi class gọn gàng
-        $class_names = join(' ', array_filter($new_classes));
+        $class_names = join(' ', array_filter(array_unique($new_classes)));
         $class_names = $class_names ? ' class="menu-item ' . esc_attr($class_names) . '"' : ' class="menu-item"';
 
         $output .= '<li' . $class_names . '>';

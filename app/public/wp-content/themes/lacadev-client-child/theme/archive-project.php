@@ -56,7 +56,7 @@ $ajax_config = wp_json_encode( [
 ] );
 ?>
 
-<main class="archive-project laca-project-archive" data-archive-config='<?php echo $ajax_config; ?>'>
+<div class="archive-project laca-project-archive" data-archive-config='<?php echo $ajax_config; ?>'>
 	<?php get_template_part( 'template-parts/page-hero' ); ?>
 
 	<div class="container-fluid">
@@ -160,6 +160,6 @@ $ajax_config = wp_json_encode( [
 		<?php endif; ?>
 
 	</div><!-- /.container-fluid -->
-</main>
+</div>
 
 <?php wp_reset_postdata(); ?>

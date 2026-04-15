@@ -1,0 +1,38 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "lacadev/featured-projects-block",
+    "version": "1.0.0",
+    "title": "Featured Projects Block",
+    "category": "lacadev-blocks",
+    "description": "Section DỰ ÁN BIỂU TƯỢNG — title lớn góc trái, badges, lưới 2x2 ảnh dự án.",
+    "keywords": ["projects", "featured", "dự án", "portfolio"],
+    "textdomain": "laca",
+
+    "supports": {
+        "html": false,
+        "align": ["wide", "full"]
+    },
+
+    "attributes": {
+        "backgroundColor":  { "type": "string", "default": "#3A3A3A" },
+        "sectionTitle":     { "type": "string", "default": "DỰ ÁN BIỂU TƯỢNG" },
+        "badges": {
+            "type": "array",
+            "default": [
+                { "label": "CHẤT LƯỢNG", "sublabel": "VƯỢT TRỘI" },
+                { "label": "GIẢI PHÁP",  "sublabel": "HOÀN THIỆN" }
+            ]
+        },
+        "ctaText":    { "type": "string", "default": "" },
+        "ctaUrl":     { "type": "string", "default": "" },
+        "mode":       { "type": "string", "default": "auto" },
+        "postType":   { "type": "string", "default": "project" },
+        "postIds":    { "type": "array",  "default": [] },
+        "postsCount": { "type": "number", "default": 3 },
+        "orderBy":    { "type": "string", "default": "date" }
+    },
+
+    "editorScript": "lacadev-block-featured-projects-block-editor",
+    "style":        "lacadev-block-featured-projects-block"
+}

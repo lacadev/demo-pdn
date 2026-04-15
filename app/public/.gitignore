@@ -10,6 +10,8 @@
 /wp-content/backup-db/
 /wp-content/debug.log
 /wp-content/index.php
+/wp-content/themes/lacadev-client-child-old
+/wp-content/themes/lacadev-client-old
 
 .htaccess
 index.php

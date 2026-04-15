@@ -22,4 +22,3 @@ if (!defined('ABSPATH')) {
 <body <?php body_class(); ?>>
 	<div class="wrapper" data-barba="wrapper">
         <div data-barba="container" data-barba-namespace="default">
-            

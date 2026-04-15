@@ -45,7 +45,7 @@ module.exports = {
       },
       // Container max-width sync với $container-mw: 90rem
       maxWidth: {
-        container: '90rem',
+        container: '1440px',
       },
       // Font weights sync với SCSS variables
       fontWeight: {

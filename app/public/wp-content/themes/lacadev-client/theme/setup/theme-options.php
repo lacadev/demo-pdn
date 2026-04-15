@@ -36,10 +36,12 @@ $optionsPage = Container::make('theme_options', __('Laca Theme', 'laca'))
 			->set_html('----<i> Information | Thông tin </i>----'),
 		Field::make('text', 'company' . currentLanguage(), __('', 'laca'))->set_width(50)
 			->set_attribute('placeholder', 'Company | Công ty'),
-		// Field::make('text', 'address' . currentLanguage(), __('', 'laca'))->set_width(50)
-		// 	->set_attribute('placeholder', 'Address | Địa chỉ'),
+		Field::make('text', 'address' . currentLanguage(), __('', 'laca'))->set_width(50)
+			->set_attribute('placeholder', 'Address | Địa chỉ'),
+		Field::make('textarea', 'googlemap' . currentLanguage(), __('', 'laca'))
+			->set_attribute('placeholder', 'Google map'),
 
-			Field::make('complex', 'phone_numbers' . currentLanguage(), __('Số hotline', 'laca'))->set_width(50)
+		Field::make('complex', 'phone_numbers' . currentLanguage(), __('Số hotline', 'laca'))->set_width(50)
 			->set_layout('tabbed-vertical')
 			->add_fields([
 				Field::make('text', 'name', __('', 'laca'))->set_width(50)
@@ -57,8 +59,6 @@ $optionsPage = Container::make('theme_options', __('Laca Theme', 'laca'))
 				->set_attribute('placeholder', 'Address | Địa chỉ'),
 			])->set_header_template('<% if (branch) { %><%- branch %><% } %>'),
 		
-		Field::make('textarea', 'googlemap' . currentLanguage(), __('', 'laca'))
-			->set_attribute('placeholder', 'Google map'),
 		Field::make('text', 'email' . currentLanguage(), __('', 'laca'))->set_width(33.33)
 			->set_attribute('placeholder', 'Email'),
 		Field::make('text', 'phone_number' . currentLanguage(), __('', 'laca'))->set_width(33.33)

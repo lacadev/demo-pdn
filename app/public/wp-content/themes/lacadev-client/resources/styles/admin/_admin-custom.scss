@@ -256,17 +256,16 @@ ul#adminmenu {
 
 .button-primary,
 #publish {
-  background: var(--primary-color-ad, #2ea2cc) !important;
-  border-color: var(--primary-color-ad, #2ea2cc) !important;
+  background: var(--primary-color-ad, #8aadf7) !important;
+  border-color: var(--primary-color-ad, #8aadf7) !important;
   color: #fff !important;
   border-radius: 6px !important;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
-  transition: opacity 0.15s ease, transform 0.1s ease !important;
+  box-shadow: none !important;
+  transition: opacity 0.15s ease !important;
 
   &:hover:not(:disabled) {
-    opacity: 0.88;
-    transform: translateY(-1px);
+    opacity: 0.85;
   }
 }
 
@@ -280,10 +279,10 @@ div.error {
   box-shadow: none !important;
 }
 
-.notice-success { border-left-color: #3ecf8e !important; }
-.notice-info    { border-left-color: var(--primary-color-ad, #2ea2cc) !important; }
-.notice-warning { border-left-color: #f5a623 !important; }
-.notice-error   { border-left-color: #f15d4f !important; }
+.notice-success { border-left-color: #7dd3a8 !important; }
+.notice-info    { border-left-color: #8aadf7 !important; }
+.notice-warning { border-left-color: #f5c97a !important; }
+.notice-error   { border-left-color: #f29b9b !important; }
 
 // ─── LacaDev Dashboard Widgets ───────────────────────────────
 
@@ -299,8 +298,7 @@ div.error {
   transition: box-shadow 0.2s ease, transform 0.15s ease;
 
   &:hover {
-    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
-    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   }
 
   .laca-stat-icon {

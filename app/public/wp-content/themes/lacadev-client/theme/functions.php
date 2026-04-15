@@ -213,10 +213,28 @@ function lacadev_register_search_query_vars($vars)
 add_filter('query_vars', 'lacadev_register_search_query_vars');
 
 // =============================================================================
+// CLIENT TRACKER — báo cáo thay đổi plugin/theme/file về lacadev master
+// =============================================================================
+// Cấu hình URL webhook tại: Settings > General > laca_tracker_webhook_url
+(new \App\Features\ClientTracker\Tracker())->init();
+
+// =============================================================================
 // CUSTOM POST TYPES
 // =============================================================================
 // Dynamic CPT — đăng ký CPT được tạo qua admin panel (Appearance > Custom Post Types)
 new \App\Features\DynamicCPT\DynamicCptManager();
+
+// =============================================================================
+// DATABASE TABLES
+// =============================================================================
+add_action('after_switch_theme', function () {
+    \App\Databases\ContactFormTable::install();
+    \App\Settings\EmailLog\EmailLogTable::install();
+});
+
+// Đảm bảo bảng luôn tồn tại
+\App\Databases\ContactFormTable::install();
+\App\Settings\EmailLog\EmailLogTable::install();
 
 // =============================================================================
 // COMMENTS CALLBACK

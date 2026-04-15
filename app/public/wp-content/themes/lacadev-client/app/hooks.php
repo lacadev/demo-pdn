@@ -88,6 +88,90 @@ add_action('init', static function () {
 }, 5);
 
 /**
+ * CONTACT FORM — Frontend AJAX + Shortcode
+ */
+add_action('init', function () {
+    if (class_exists('\App\Features\ContactForm\ContactFormAjaxHandler')) {
+        (new \App\Features\ContactForm\ContactFormAjaxHandler())->init();
+    }
+}, 10);
+
+/**
+ * Maintenance Mode
+ */
+add_action('init', function () {
+    if (class_exists('\App\Settings\MaintenanceModeManager')) {
+        (new \App\Settings\MaintenanceModeManager())->init();
+    }
+}, 1);
+
+/**
+ * Email Log
+ */
+add_action('init', function () {
+    if (class_exists('\App\Settings\EmailLog\EmailLogManager')) {
+        (new \App\Settings\EmailLog\EmailLogManager())->init();
+    }
+});
+
+/**
+ * Mobile Sticky CTA Bar
+ */
+// add_action('init', function () {
+//     if (class_exists('\App\Features\MobileStickyCta')) {
+//         (new \App\Features\MobileStickyCta())->init();
+//     }
+// });
+
+/**
+ * Related Posts
+ */
+add_action('init', function () {
+    if (class_exists('\App\Features\RelatedPosts')) {
+        (new \App\Features\RelatedPosts())->init();
+    }
+});
+
+/**
+ * Exit Intent Popup
+ */
+add_action('init', function () {
+    if (class_exists('\App\Features\ExitIntentPopup')) {
+        (new \App\Features\ExitIntentPopup())->init();
+    }
+});
+
+/**
+ * Frontend Chatbot
+ */
+add_action('init', function () {
+    if (class_exists('\App\Features\FrontendChatbot\FrontendChatbotHandler')) {
+        (new \App\Features\FrontendChatbot\FrontendChatbotHandler())->init();
+    }
+});
+
+/**
+ * Security — Custom Login, 2FA, Security Manager
+ */
+add_action('init', function () {
+    if (class_exists('\App\Settings\Security\CustomLoginManager')) {
+        new \App\Settings\Security\CustomLoginManager();
+    }
+}, 1);
+
+add_action('init', function () {
+    if (class_exists('\App\Settings\Security\TwoFactorAuth')) {
+        new \App\Settings\Security\TwoFactorAuth();
+    }
+});
+
+add_action('init', function () {
+    if (class_exists('\App\Settings\Security\SecurityManager')) {
+        (new \App\Settings\Security\SecurityManager())->init();
+    }
+});
+
+/**
  * Pages/Posts list table: Add Thumbnail column
  */
 function app_add_featured_image_column($cols) {
