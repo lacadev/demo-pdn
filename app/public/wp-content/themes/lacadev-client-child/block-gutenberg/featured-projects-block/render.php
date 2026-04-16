@@ -1,6 +1,15 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+
+
+// ── Appearance attributes ──────────────────────────────────────────────────
+$bg_color     = preg_match( '/^#[0-9a-fA-F]{6}$/', $attributes['bgColor'] ?? '' ) ? $attributes['bgColor'] : '#0f0f0f';
+$bg_opacity   = max( 0, min( 100, intval( $attributes['bgOpacity'] ?? 100 ) ) );
+$r = hexdec( substr( $bg_color, 1, 2 ) );
+$g = hexdec( substr( $bg_color, 3, 2 ) );
+$b = hexdec( substr( $bg_color, 5, 2 ) );
+$bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ( $bg_opacity / 100 ) . ')';
 /**
  * Featured Projects Block — render.php
  * Section "DỰ ÁN BIỂU TƯỢNG" — title + badges + lưới 2x2.
@@ -8,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package lacadev-client-child
  */
 
-$bg_color      = $attributes['backgroundColor'] ?? '#3A3A3A';
+
 $section_title = esc_html( $attributes['sectionTitle'] ?? 'DỰ ÁN BIỂU TƯỢNG' );
 $badges        = $attributes['badges']          ?? [];
 $cta_text      = esc_html( $attributes['ctaText'] ?? '' );
@@ -45,7 +54,7 @@ if ( $mode === 'manual' && ! empty( $post_ids ) ) {
 $query = new WP_Query( $query_args );
 ?>
 
-<section <?php echo get_block_wrapper_attributes( [ 'class' => 'block-featured-projects' ] ); ?> style="background-color:<?php echo esc_attr( $bg_color ); ?>;">
+<section <?php echo get_block_wrapper_attributes( [ 'class' => 'block-featured-projects' ] ); ?> style="background:<?php echo esc_attr($bg_rgba); ?>;" >
     <div class="container">
     <div class="block-featured-projects__inner">
 

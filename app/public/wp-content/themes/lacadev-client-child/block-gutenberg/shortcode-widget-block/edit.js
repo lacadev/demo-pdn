@@ -1,9 +1,14 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl } from '@wordpress/components';
+import {
+    PanelBody,
+    TextControl,
+    ColorPicker,
+    RangeControl
+} from '@wordpress/components';
 
 export default function Edit( { attributes, setAttributes } ) {
-    const { heading, shortcode1, shortcode2 } = attributes;
+    const { heading, shortcode1, shortcode2 , bgColor, bgOpacity } = attributes;
     const blockProps = useBlockProps();
 
     const colStyle = {
@@ -39,6 +44,28 @@ export default function Edit( { attributes, setAttributes } ) {
                         placeholder="[wp_xemhuongnha]"
                     />
                 </PanelBody>
+            
+                { /* Panel 3: Giao diện */ }
+                <PanelBody title={ __( 'Giao diện', 'laca' ) } initialOpen={ false }>
+                    <p style={ { fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' } }>
+                        { __( 'Màu nền section', 'laca' ) }
+                    </p>
+                    <ColorPicker
+                        color={ bgColor }
+                        onChange={ ( v ) => setAttributes( { bgColor: v } ) }
+                        enableAlpha={ false }
+                        defaultValue="#0f0f0f"
+                    />
+                    <RangeControl
+                        label={ __( 'Độ mờ nền (%) — 0 = trong suốt', 'laca' ) }
+                        value={ bgOpacity }
+                        min={ 0 }
+                        max={ 100 }
+                        step={ 5 }
+                        onChange={ ( v ) => setAttributes( { bgOpacity: v } ) }
+                    />
+                </PanelBody>
+
             </InspectorControls>
 
             <div { ...blockProps }>

@@ -8,7 +8,7 @@ $shortcode2 = trim($attributes['shortcode2'] ?? '');
 
 $is_valid = fn($sc) => preg_match('/^\[[\w\-]/', $sc);
 ?>
-<section <?php echo get_block_wrapper_attributes(['class' => 'block-shortcode-widget']); ?>>
+<section <?php echo get_block_wrapper_attributes(['class' => 'block-shortcode-widget']); ?> style="background:<?php echo esc_attr($bg_rgba); ?>;">
     <div class="container">
         <?php if ($heading): ?>
             <div class="block-shortcode-widget__header">

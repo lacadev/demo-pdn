@@ -12,6 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// ── Appearance attributes ──────────────────────────────────────────────────
+$bg_color     = preg_match( '/^#[0-9a-fA-F]{6}$/', $attributes['bgColor'] ?? '' ) ? $attributes['bgColor'] : '#0f0f0f';
+$bg_opacity   = max( 0, min( 100, intval( $attributes['bgOpacity'] ?? 100 ) ) );
+$r = hexdec( substr( $bg_color, 1, 2 ) );
+$g = hexdec( substr( $bg_color, 3, 2 ) );
+$b = hexdec( substr( $bg_color, 5, 2 ) );
+$bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ( $bg_opacity / 100 ) . ')';
+
+
 $source_type     = isset( $attributes['sourceType'] ) ? $attributes['sourceType'] : 'url';
 $video_url       = isset( $attributes['videoUrl'] ) ? esc_url( $attributes['videoUrl'] ) : '';
 $video_file      = isset( $attributes['videoFileUrl'] ) ? esc_url( $attributes['videoFileUrl'] ) : '';
@@ -27,6 +36,10 @@ $overlay_color   = isset( $attributes['overlayColor'] ) ? $attributes['overlayCo
 $overlay_opacity = isset( $attributes['overlayOpacity'] ) ? (int) $attributes['overlayOpacity'] : 40;
 $overlay_text      = isset( $attributes['overlayText'] ) ? $attributes['overlayText'] : '';
 $overlay_font_size = isset( $attributes['overlayFontSize'] ) ? (int) $attributes['overlayFontSize'] : 16;
+$overlay_text_color = isset( $attributes['overlayTextColor'] ) ? $attributes['overlayTextColor'] : '#ffffff';
+$overlay_text_align = isset( $attributes['overlayTextAlign'] ) ? $attributes['overlayTextAlign'] : 'center';
+$overlay_vertical_align = isset( $attributes['overlayVerticalAlign'] ) ? $attributes['overlayVerticalAlign'] : 'center';
+$text_align = $overlay_text_align === 'flex-start' ? 'left' : ( $overlay_text_align === 'flex-end' ? 'right' : 'center' );
 
 // Tính opacity 0–1 từ 0–100
 $opacity_css = round( $overlay_opacity / 100, 2 );
@@ -69,7 +82,7 @@ if ( ! function_exists( 'lacadev_parse_video_url' ) ) {
 ?>
 
 <section <?php echo $wrapper_attrs; ?>>
-    <div class="laca-video-block__inner">
+    <div class="laca-video-block__inner" style="background:<?php echo esc_attr($bg_rgba); ?>;">
         <div class="laca-video-block__media-wrap">
         <?php if ( 'url' === $source_type && $video_url ) :
             $parsed = lacadev_parse_video_url( $video_url );
@@ -130,9 +143,9 @@ if ( ! function_exists( 'lacadev_parse_video_url' ) ) {
                 style="background-color:<?php echo esc_attr( $overlay_color ); ?>;opacity:<?php echo esc_attr( $opacity_css ); ?>;"
                 aria-hidden="true"
             ></div>
-            <?php if ( $overlay_text ) : ?>
-            <div class="laca-video-block__overlay-text" style="font-size:<?php echo esc_attr( $overlay_font_size ); ?>px;">
-                <?php echo wp_kses_post( $overlay_text ); ?>
+            <?php if ( $content || $overlay_text ) : ?>
+            <div class="laca-video-block__overlay-text" style="align-items:<?php echo esc_attr( $overlay_vertical_align ); ?>;justify-content:<?php echo esc_attr( $overlay_text_align ); ?>;color:<?php echo esc_attr( $overlay_text_color ); ?>;font-size:<?php echo esc_attr( $overlay_font_size ); ?>px;text-align:<?php echo esc_attr( $text_align ); ?>;width:100%;flex-direction:column;">
+                <?php echo $content ? $content : wp_kses_post( $overlay_text ); ?>
             </div>
             <?php endif; ?>
         <?php endif; ?>

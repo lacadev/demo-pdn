@@ -3,15 +3,17 @@ import {
 	useBlockProps,
 	InspectorControls,
 	RichText,
+	InnerBlocks,
 } from '@wordpress/block-editor';
 import {
-	PanelBody,
-	SelectControl,
-	TextControl,
-	ToggleControl,
-	Button,
-	Placeholder,
-	RangeControl,
+    PanelBody,
+    SelectControl,
+    TextControl,
+    ToggleControl,
+    Button,
+    Placeholder,
+    RangeControl,
+    ColorPicker
 } from '@wordpress/components';
 import { ColorPalette } from '@wordpress/block-editor';
 import { MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
@@ -38,8 +40,7 @@ function getEmbedUrl( url ) {
 
 export default function Edit( { attributes, setAttributes } ) {
 
-	const {
-		sourceType,
+	const { sourceType,
 		videoUrl,
 		videoId,
 		videoFileUrl,
@@ -54,7 +55,10 @@ export default function Edit( { attributes, setAttributes } ) {
 		overlayOpacity,
 		overlayText,
 		overlayFontSize,
-	} = attributes;
+		overlayTextColor = '#ffffff',
+		overlayTextAlign = 'center',
+		overlayVerticalAlign = 'center',
+    bgColor, bgOpacity } = attributes;
 
 	const blockProps = useBlockProps( {
 		className: 'laca-video-block',
@@ -283,10 +287,59 @@ export default function Edit( { attributes, setAttributes } ) {
 								step={ 1 }
 								onChange={ ( val ) => setAttributes( { overlayFontSize: val } ) }
 							/>
+							<p style={ { marginBottom: '4px', fontWeight: 600, fontSize: '11px', textTransform: 'uppercase', color: '#1e1e1e', marginTop: '16px' } }>
+								{ __( 'Màu chữ', 'lacadev' ) }
+							</p>
+							<ColorPalette
+								value={ overlayTextColor }
+								onChange={ ( val ) => setAttributes( { overlayTextColor: val || '#ffffff' } ) }
+							/>
+							<SelectControl
+								label={ __( 'Căn ngang', 'lacadev' ) }
+								value={ overlayTextAlign }
+								options={ [
+									{ label: __( 'Trái', 'lacadev' ), value: 'flex-start' },
+									{ label: __( 'Giữa', 'lacadev' ), value: 'center' },
+									{ label: __( 'Phải', 'lacadev' ), value: 'flex-end' },
+								] }
+								onChange={ ( val ) => setAttributes( { overlayTextAlign: val } ) }
+							/>
+							<SelectControl
+								label={ __( 'Căn dọc', 'lacadev' ) }
+								value={ overlayVerticalAlign }
+								options={ [
+									{ label: __( 'Trên', 'lacadev' ), value: 'flex-start' },
+									{ label: __( 'Giữa', 'lacadev' ), value: 'center' },
+									{ label: __( 'Dưới', 'lacadev' ), value: 'flex-end' },
+								] }
+								onChange={ ( val ) => setAttributes( { overlayVerticalAlign: val } ) }
+							/>
 						</>
 					) }
 				</PanelBody>
-			</InspectorControls>
+			
+                { /* Panel 3: Giao diện */ }
+                <PanelBody title={ __( 'Giao diện', 'laca' ) } initialOpen={ false }>
+                    <p style={ { fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' } }>
+                        { __( 'Màu nền section', 'laca' ) }
+                    </p>
+                    <ColorPicker
+                        color={ bgColor }
+                        onChange={ ( v ) => setAttributes( { bgColor: v } ) }
+                        enableAlpha={ false }
+                        defaultValue="#0f0f0f"
+                    />
+                    <RangeControl
+                        label={ __( 'Độ mờ nền (%) — 0 = trong suốt', 'laca' ) }
+                        value={ bgOpacity }
+                        min={ 0 }
+                        max={ 100 }
+                        step={ 5 }
+                        onChange={ ( v ) => setAttributes( { bgOpacity: v } ) }
+                    />
+                </PanelBody>
+
+            </InspectorControls>
 
 			<div { ...blockProps }>
 				{ ! hasVideo ? (
@@ -347,30 +400,18 @@ export default function Edit( { attributes, setAttributes } ) {
 									position: 'absolute',
 									inset: 0,
 									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
+									alignItems: overlayVerticalAlign,
+									justifyContent: overlayTextAlign,
 									padding: '2rem',
 									zIndex: 2,
 									fontSize: `${ overlayFontSize }px`,
+									color: overlayTextColor,
 								} }
 							>
-								<RichText
-									tagName="p"
-									value={ overlayText }
-									onChange={ ( val ) => setAttributes( { overlayText: val } ) }
-									placeholder={ __( 'Nhập văn bản overlay…', 'lacadev' ) }
-									allowedFormats={ [
-										'core/bold',
-										'core/italic',
-										'core/underline',
-										'core/strikethrough',
-										'core/link',
-										'core/text-color',
-										'core/font-size',
-										'core/subscript',
-										'core/superscript',
+								<InnerBlocks
+									template={ [
+										[ 'core/paragraph', { placeholder: 'Nhập nội dung overlay...', align: 'center' } ]
 									] }
-									style={ { color: '#fff', textAlign: 'center', width: '100%', margin: 0 } }
 								/>
 							</div>
 						) }

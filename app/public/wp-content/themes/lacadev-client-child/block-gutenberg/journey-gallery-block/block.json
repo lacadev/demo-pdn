@@ -1,20 +1,36 @@
 {
-  "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
-  "name": "lacadev/journey-gallery-block",
-  "title": "Journey Gallery",
-  "category": "lacadev-blocks",
-  "icon": "editor-ol",
-  "editorScript": "lacadev-block-journey-gallery-block-editor",
-  "style": "lacadev-block-journey-gallery-block",
-  "textdomain": "laca",
-  "supports": {
-    "html": false,
-    "align": ["wide", "full"]
-  },
-  "attributes": {
-    "heading": { "type": "string", "default": "HÀNH TRÌNH XÂY NHÀ" },
-    "bgColor": { "type": "string", "default": "" },
-    "steps":   { "type": "array",  "default": [] }
-  }
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "lacadev/journey-gallery-block",
+    "title": "Journey Gallery",
+    "category": "lacadev-blocks",
+    "icon": "editor-ol",
+    "editorScript": "lacadev-block-journey-gallery-block-editor",
+    "style": "lacadev-block-journey-gallery-block",
+    "textdomain": "laca",
+    "supports": {
+        "html": false,
+        "align": [
+            "wide",
+            "full"
+        ]
+    },
+    "attributes": {
+        "heading": {
+            "type": "string",
+            "default": "HÀNH TRÌNH XÂY NHÀ"
+        },
+        "bgColor": {
+            "type": "string",
+            "default": ""
+        },
+        "steps": {
+            "type": "array",
+            "default": []
+        },
+        "bgOpacity": {
+            "type": "number",
+            "default": 100
+        }
+    }
 }

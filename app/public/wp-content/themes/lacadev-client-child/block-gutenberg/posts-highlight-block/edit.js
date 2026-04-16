@@ -7,17 +7,22 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
 import {
-    PanelBody, PanelRow,
-    TextControl, SelectControl, RangeControl,
-    CheckboxControl, RadioControl, Spinner,
+    PanelBody,
+    PanelRow,
+    TextControl,
+    SelectControl,
+    RangeControl,
+    CheckboxControl,
+    RadioControl,
+    Spinner,
+    ColorPicker
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 
 export default function Edit( { attributes, setAttributes } ) {
-    const {
-        sectionTitle, postType, taxonomy, selectedTerms,
+    const { sectionTitle, postType, taxonomy, selectedTerms,
         mode, orderBy, order, postsCount, selectedPosts, ctaText,
-    } = attributes;
+    bgColor, bgOpacity } = attributes;
 
     const [ postSearch, setPostSearch ] = useState( '' );
 
@@ -286,6 +291,28 @@ export default function Edit( { attributes, setAttributes } ) {
                         </>
                     ) }
                 </PanelBody>
+            
+                { /* Panel 3: Giao diện */ }
+                <PanelBody title={ __( 'Giao diện', 'laca' ) } initialOpen={ false }>
+                    <p style={ { fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' } }>
+                        { __( 'Màu nền section', 'laca' ) }
+                    </p>
+                    <ColorPicker
+                        color={ bgColor }
+                        onChange={ ( v ) => setAttributes( { bgColor: v } ) }
+                        enableAlpha={ false }
+                        defaultValue="#0f0f0f"
+                    />
+                    <RangeControl
+                        label={ __( 'Độ mờ nền (%) — 0 = trong suốt', 'laca' ) }
+                        value={ bgOpacity }
+                        min={ 0 }
+                        max={ 100 }
+                        step={ 5 }
+                        onChange={ ( v ) => setAttributes( { bgOpacity: v } ) }
+                    />
+                </PanelBody>
+
             </InspectorControls>
 
             {/* ── Canvas ── */}

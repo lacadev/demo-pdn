@@ -62,7 +62,7 @@ $vf_instance++;
 $swiper_id = 'video-feedback-' . $vf_instance;
 ?>
 
-<section <?php echo get_block_wrapper_attributes(['class' => 'block-video-feedback']); ?>>
+<section <?php echo get_block_wrapper_attributes(['class' => 'block-video-feedback']); ?> style="background:<?php echo esc_attr($bg_rgba); ?>;">
     <div class="container">
 
         <?php if ($heading): ?>

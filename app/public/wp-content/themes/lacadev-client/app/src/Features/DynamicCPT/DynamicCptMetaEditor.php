@@ -32,8 +32,7 @@ class DynamicCptMetaEditor
 
     public function __construct()
     {
-        // app/src/Features/DynamicCPT/ → ../../PostTypes/DynamicMeta
-        $this->metaDir = realpath(__DIR__ . '/../../PostTypes') . '/DynamicMeta';
+        $this->metaDir = DynamicCptManager::getMetaDir();
 
         add_action('admin_post_laca_cpt_meta_save',     [$this, 'handleSave']);
         add_action('admin_post_laca_cpt_meta_generate', [$this, 'handleGenerate']);
@@ -116,11 +115,8 @@ class DynamicCptMetaEditor
  * Tham khảo Carbon Fields API: https://docs.carbonfields.net
  */
 
-use Carbon_Fields\Container\Container;
-use Carbon_Fields\Field;
-
 add_action('carbon_fields_register_fields', function () {
-    Container::make('post_meta', __('{$safeTitle}', 'laca'))
+    \Carbon_Fields\Container\Container::make('post_meta', __('{$safeTitle}', 'laca'))
         ->where('post_type', '=', '{$safeSlug}')
         ->add_fields([
 {$lines}        ]);
@@ -241,7 +237,7 @@ PHP;
                 break;
         }
 
-        return "            Field::make('{$type}', '{$name}', __('{$label}', 'laca')){$chains},\n";
+        return "            \\Carbon_Fields\\Field\\Field::make('{$type}', '{$name}', __('{$label}', 'laca')){$chains},\n";
     }
 
     /**

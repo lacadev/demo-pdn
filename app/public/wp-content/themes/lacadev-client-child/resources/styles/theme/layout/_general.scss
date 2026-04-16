@@ -1,7 +1,7 @@
 @use "../abstracts/variables.scss" as *;
 @use "../abstracts/mixin.scss" as *;
 
-body {
+body:not(.wp-admin) {
   font-family: $mainFont !important;
   background-color: $bgColor;
   color: #fff !important;

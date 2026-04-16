@@ -6,27 +6,42 @@
     "title": "Services Grid Block",
     "category": "lacadev-blocks",
     "description": "Section DỊCH VỤ — layout bất đối xứng 3 nhóm dịch vụ, mỗi nhóm có layout riêng.",
-    "keywords": ["services", "dịch vụ", "grid", "layout"],
+    "keywords": [
+        "services",
+        "dịch vụ",
+        "grid",
+        "layout"
+    ],
     "textdomain": "laca",
-
     "supports": {
         "html": false,
-        "align": ["wide", "full"]
+        "align": [
+            "wide",
+            "full"
+        ]
     },
-
     "attributes": {
-        "sectionTitle": { "type": "string", "default": "DỊCH VỤ" },
-        "backgroundColor": { "type": "string", "default": "#111111" },
+        "sectionTitle": {
+            "type": "string",
+            "default": "DỊCH VỤ"
+        },
         "serviceGroups": {
             "type": "array",
             "default": [
                 {
                     "layout": "left-main-right-grid",
                     "title": "THIẾT KẾ KIẾN TRÚC – NỘI THẤT",
-                    "mainImageId": 0, "mainImageUrl": "",
+                    "mainImageId": 0,
+                    "mainImageUrl": "",
                     "subImages": [
-                        { "imageId": 0, "imageUrl": "" },
-                        { "imageId": 0, "imageUrl": "" }
+                        {
+                            "imageId": 0,
+                            "imageUrl": ""
+                        },
+                        {
+                            "imageId": 0,
+                            "imageUrl": ""
+                        }
                     ],
                     "link": ""
                 },
@@ -34,25 +49,54 @@
                     "layout": "top-title-3cols",
                     "title": "THI CÔNG TRỌN GÓI",
                     "items": [
-                        { "imageId": 0, "imageUrl": "", "label": "NHÀ Ở", "link": "" },
-                        { "imageId": 0, "imageUrl": "", "label": "BIỆT THỰ", "link": "" },
-                        { "imageId": 0, "imageUrl": "", "label": "APARTMENT", "link": "" }
+                        {
+                            "imageId": 0,
+                            "imageUrl": "",
+                            "label": "NHÀ Ở",
+                            "link": ""
+                        },
+                        {
+                            "imageId": 0,
+                            "imageUrl": "",
+                            "label": "BIỆT THỰ",
+                            "link": ""
+                        },
+                        {
+                            "imageId": 0,
+                            "imageUrl": "",
+                            "label": "APARTMENT",
+                            "link": ""
+                        }
                     ]
                 },
                 {
                     "layout": "right-main-left-grid",
                     "title": "THI CÔNG NỘI THẤT CAO CẤP",
-                    "mainImageId": 0, "mainImageUrl": "",
+                    "mainImageId": 0,
+                    "mainImageUrl": "",
                     "subImages": [
-                        { "imageId": 0, "imageUrl": "" },
-                        { "imageId": 0, "imageUrl": "" }
+                        {
+                            "imageId": 0,
+                            "imageUrl": ""
+                        },
+                        {
+                            "imageId": 0,
+                            "imageUrl": ""
+                        }
                     ],
                     "link": ""
                 }
             ]
+        },
+        "bgColor": {
+            "type": "string",
+            "default": "#0f0f0f"
+        },
+        "bgOpacity": {
+            "type": "number",
+            "default": 100
         }
     },
-
     "editorScript": "lacadev-block-services-grid-block-editor",
-    "style":        "lacadev-block-services-grid-block"
+    "style": "lacadev-block-services-grid-block"
 }

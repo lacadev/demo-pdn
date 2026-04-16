@@ -1,2 +1,5 @@
-// Dynamic block — rendered by render.php
-export default () => null;
+import { InnerBlocks } from '@wordpress/block-editor';
+
+export default function save() {
+	return <InnerBlocks.Content />;
+}

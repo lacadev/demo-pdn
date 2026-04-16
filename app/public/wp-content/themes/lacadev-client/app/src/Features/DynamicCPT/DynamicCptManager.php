@@ -13,8 +13,21 @@ class DynamicCptManager
 {
     const OPTION_KEY = 'laca_dynamic_cpts';
 
-    /** Thư mục chứa meta files của dynamic CPT. */
-    public const META_DIR = __DIR__ . '/../../PostTypes/DynamicMeta';
+    /**
+     * Thư mục chứa meta files — luôn trỏ về child theme (hoặc parent nếu không có child).
+     * Dùng method thay vì const để hỗ trợ get_stylesheet_directory() runtime.
+     */
+    
+    public static function getMetaDir(): string
+    {
+        $dir = get_stylesheet_directory(); // filesystem path, e.g. .../lacadev-client-child/theme
+        // WPEmerge child themes có style.css trong /theme subfolder.
+        // Strip /theme để về child theme root thực sự.
+        if (basename($dir) === 'theme') {
+            $dir = dirname($dir);
+        }
+        return $dir . '/app/src/PostTypes/DynamicMeta';
+    }
 
     public function __construct()
     {
@@ -165,8 +178,8 @@ class DynamicCptManager
      */
     public function loadAllMetaFiles(): void
     {
-        $dir = realpath(self::META_DIR);
-        if (!$dir || !is_dir($dir)) {
+        $dir = self::getMetaDir();
+        if (!is_dir($dir)) {
             return;
         }
 

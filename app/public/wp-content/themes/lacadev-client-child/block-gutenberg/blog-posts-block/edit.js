@@ -15,6 +15,7 @@ import {
     TextControl,
     Spinner,
     __experimentalNumberControl as NumberControl,
+    ColorPicker
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
@@ -36,9 +37,8 @@ export default function Edit( { attributes, setAttributes } ) {
         );
     }
 
-    const {
-        containerLayout,
-        backgroundColor,
+    const { containerLayout,
+        
         sectionBadge,
         sectionTitle,
         postType,
@@ -51,7 +51,7 @@ export default function Edit( { attributes, setAttributes } ) {
         mode,
         selectedPosts,
         ctaText,
-    } = attributes;
+    bgColor, bgOpacity } = attributes;
 
     const blockProps = useBlockProps( {
         className: 'wp-block-lacadev-blog-posts-block',
@@ -354,6 +354,28 @@ export default function Edit( { attributes, setAttributes } ) {
                     <ColorPalette
                         value={ backgroundColor }
                         onChange={ ( v ) => setAttributes( { backgroundColor: v || '' } ) }
+                    />
+                </PanelBody>
+
+            
+                { /* Panel 3: Giao diện */ }
+                <PanelBody title={ __( 'Giao diện', 'laca' ) } initialOpen={ false }>
+                    <p style={ { fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' } }>
+                        { __( 'Màu nền section', 'laca' ) }
+                    </p>
+                    <ColorPicker
+                        color={ bgColor }
+                        onChange={ ( v ) => setAttributes( { bgColor: v } ) }
+                        enableAlpha={ false }
+                        defaultValue="#0f0f0f"
+                    />
+                    <RangeControl
+                        label={ __( 'Độ mờ nền (%) — 0 = trong suốt', 'laca' ) }
+                        value={ bgOpacity }
+                        min={ 0 }
+                        max={ 100 }
+                        step={ 5 }
+                        onChange={ ( v ) => setAttributes( { bgOpacity: v } ) }
                     />
                 </PanelBody>
 

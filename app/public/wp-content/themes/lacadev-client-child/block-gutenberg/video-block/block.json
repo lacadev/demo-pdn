@@ -15,7 +15,10 @@
         "sourceType": {
             "type": "string",
             "default": "url",
-            "enum": ["url", "file"]
+            "enum": [
+                "url",
+                "file"
+            ]
         },
         "videoUrl": {
             "type": "string",
@@ -72,6 +75,26 @@
         "overlayFontSize": {
             "type": "number",
             "default": 16
+        },
+        "overlayTextColor": {
+            "type": "string",
+            "default": "#ffffff"
+        },
+        "overlayTextAlign": {
+            "type": "string",
+            "default": "center"
+        },
+        "overlayVerticalAlign": {
+            "type": "string",
+            "default": "center"
+        },
+        "bgColor": {
+            "type": "string",
+            "default": "#0f0f0f"
+        },
+        "bgOpacity": {
+            "type": "number",
+            "default": 100
         }
     },
     "textdomain": "lacadev",

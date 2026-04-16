@@ -6,6 +6,7 @@ import {
     Button,
     ToggleControl,
     RangeControl,
+    ColorPicker
 } from '@wordpress/components';
 
 /**
@@ -20,8 +21,7 @@ function extractYoutubeId( url ) {
 }
 
 export default function Edit( { attributes, setAttributes } ) {
-    const {
-        heading,
+    const { heading,
         videos,
         slidesPerView,
         spaceBetween,
@@ -30,7 +30,7 @@ export default function Edit( { attributes, setAttributes } ) {
         autoplayDelay,
         showPagination,
         showNavigation,
-    } = attributes;
+        bgColor, bgOpacity } = attributes;
 
     const blockProps = useBlockProps();
 
@@ -203,6 +203,28 @@ export default function Edit( { attributes, setAttributes } ) {
                         { __( '+ Thêm video', 'laca' ) }
                     </Button>
                 </PanelBody>
+            
+                { /* Panel 3: Giao diện */ }
+                <PanelBody title={ __( 'Giao diện', 'laca' ) } initialOpen={ false }>
+                    <p style={ { fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' } }>
+                        { __( 'Màu nền section', 'laca' ) }
+                    </p>
+                    <ColorPicker
+                        color={ bgColor }
+                        onChange={ ( v ) => setAttributes( { bgColor: v } ) }
+                        enableAlpha={ false }
+                        defaultValue="#0f0f0f"
+                    />
+                    <RangeControl
+                        label={ __( 'Độ mờ nền (%) — 0 = trong suốt', 'laca' ) }
+                        value={ bgOpacity }
+                        min={ 0 }
+                        max={ 100 }
+                        step={ 5 }
+                        onChange={ ( v ) => setAttributes( { bgOpacity: v } ) }
+                    />
+                </PanelBody>
+
             </InspectorControls>
 
             {/* ── Canvas preview ── */}

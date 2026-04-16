@@ -10,6 +10,10 @@
 body.wp-admin {
   background: var(--bg-color-ad, #f0f0f1);
   font-family: $themeFont !important;
+
+  h1.wp-block-post-title {
+    line-height: 1.5 !important;
+  }
 }
 
 // ─── Admin Bar ───────────────────────────────────────────────

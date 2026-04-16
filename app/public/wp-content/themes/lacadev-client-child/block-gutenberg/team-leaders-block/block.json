@@ -6,38 +6,55 @@
     "title": "Team Leaders Block",
     "category": "lacadev-blocks",
     "description": "Hiển thị section lãnh đạo — ảnh cutout, tên, chức vụ và quote.",
-    "keywords": ["team", "leaders", "người", "lãnh đạo"],
+    "keywords": [
+        "team",
+        "leaders",
+        "người",
+        "lãnh đạo"
+    ],
     "textdomain": "laca",
-
     "supports": {
         "html": false,
-        "align": ["wide", "full"]
+        "align": [
+            "wide",
+            "full"
+        ]
     },
-
     "attributes": {
-        "sectionTitle":    { "type": "string", "default": "CON NGƯỜI PHÚC ĐẠI NAM" },
-        "backgroundColor": { "type": "string", "default": "#3A3A3A" },
+        "sectionTitle": {
+            "type": "string",
+            "default": "CON NGƯỜI PHÚC ĐẠI NAM"
+        },
         "leaders": {
             "type": "array",
             "default": [
                 {
-                    "imageId": 0, "imageUrl": "",
+                    "imageId": 0,
+                    "imageUrl": "",
                     "prefix": "Ông",
                     "name": "KÔ SÔ PHA",
                     "position": "CHỦ TỊCH HĐTV",
                     "quote": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 },
                 {
-                    "imageId": 0, "imageUrl": "",
+                    "imageId": 0,
+                    "imageUrl": "",
                     "prefix": "Ông",
                     "name": "HUỲNH QUANG ĐẠI",
                     "position": "GIÁM ĐỐC ĐIỀU HÀNH",
                     "quote": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 }
             ]
+        },
+        "bgColor": {
+            "type": "string",
+            "default": "#0f0f0f"
+        },
+        "bgOpacity": {
+            "type": "number",
+            "default": 100
         }
     },
-
     "editorScript": "lacadev-block-team-leaders-block-editor",
-    "style":        "lacadev-block-team-leaders-block"
+    "style": "lacadev-block-team-leaders-block"
 }

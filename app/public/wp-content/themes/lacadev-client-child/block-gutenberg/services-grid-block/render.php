@@ -1,6 +1,15 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+
+
+// ── Appearance attributes ──────────────────────────────────────────────────
+$bg_color     = preg_match( '/^#[0-9a-fA-F]{6}$/', $attributes['bgColor'] ?? '' ) ? $attributes['bgColor'] : '#0f0f0f';
+$bg_opacity   = max( 0, min( 100, intval( $attributes['bgOpacity'] ?? 100 ) ) );
+$r = hexdec( substr( $bg_color, 1, 2 ) );
+$g = hexdec( substr( $bg_color, 3, 2 ) );
+$b = hexdec( substr( $bg_color, 5, 2 ) );
+$bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ( $bg_opacity / 100 ) . ')';
 /**
  * Services Grid Block — render.php
  * Section DỊCH VỤ — layout bất đối xứng 3 nhóm.
@@ -8,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package lacadev-client-child
  */
 
-$bg_color       = $attributes['backgroundColor'] ?? '#111111';
+
 $service_groups = $attributes['serviceGroups']   ?? [];
 
 /**
