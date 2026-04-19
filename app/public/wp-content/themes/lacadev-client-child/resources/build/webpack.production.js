@@ -145,52 +145,9 @@ module.exports = {
                 ],
             })
         ],
-        splitChunks: {
-            chunks: 'all',
-            minSize: 20000,
-            cacheGroups: {
-                // GSAP — animation library (~200KB) — tách riêng để cache lâu dài
-                gsap: {
-                    test: /[\\/]node_modules[\\/]gsap[\\/]/,
-                    name: 'vendor-gsap',
-                    chunks: 'all',
-                    priority: 30,
-                    enforce: true,
-                },
-                // Swiper — slider library — tách riêng
-                swiper: {
-                    test: /[\\/]node_modules[\\/]swiper[\\/]/,
-                    name: 'vendor-swiper',
-                    chunks: 'all',
-                    priority: 25,
-                    enforce: true,
-                },
-                // SweetAlert2 — chỉ dùng trong admin
-                sweetalert2: {
-                    test: /[\\/]node_modules[\\/]sweetalert2[\\/]/,
-                    name: 'vendor-swal',
-                    chunks: 'all',
-                    priority: 25,
-                    enforce: true,
-                },
-                // Chart.js — chỉ dùng trong admin
-                chartjs: {
-                    test: /[\\/]node_modules[\\/]chart\.js[\\/]/,
-                    name: 'vendor-chart',
-                    chunks: 'all',
-                    priority: 25,
-                    enforce: true,
-                },
-                // Các vendor còn lại vào 1 chunk chung
-                vendor: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name: 'vendors',
-                    chunks: 'all',
-                    priority: 10,
-                    minChunks: 2,
-                },
-            },
-        }
+        // Tắt splitChunks: WP không tự enqueue vendor chunks,
+        // nên tất cả dependencies phải bundle vào entry file tương ứng.
+        splitChunks: false,
     },
     entry: require('./webpack/entry'),
     output: {

@@ -5,8 +5,6 @@
  * Dùng để ghi đè styles mà không cần sửa theme gốc.
  */
 
-/* === CHILD THEME OVERRIDES === */
-
 // Variables & Mixins từ parent theme
 @use "@parent/styles/theme/abstracts/variables" as *;
 @use "@parent/styles/theme/abstracts/mixin" as *;
@@ -21,6 +19,7 @@
 @use "./theme/layout/archive";
 @use "./theme/layout/single-post";
 @use "./theme/layout/archive-project";
+@use "./theme/layout/archive-gallery";
 @use "./theme/layout/single-project";
 
 // === Components ===
@@ -30,4 +29,5 @@
 
 // === Pages ===
 @use "./theme/pages/contact";
+
 

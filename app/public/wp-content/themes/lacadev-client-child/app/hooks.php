@@ -16,6 +16,9 @@ if (!defined('ABSPATH')) {
 // CHILD HOOKS — thêm hooks của bạn bên dưới
 // =============================================================================
 
+// ── Gallery Archive AJAX Handler ─────────────────────────────────────────────
+require_once CHILD_APP_DIR . 'src/Ajax/GalleryAjaxHandler.php';
+
 // Ví dụ: ghi đè excerpt length của parent
 // add_filter('excerpt_length', function($length) {
 //     return 25;

@@ -56,7 +56,7 @@ function child_enqueue_frontend_assets()
             'child-theme-js',
             $child_dir_uri . '/dist/child.js',
             ['theme-js-bundle'], // load sau parent JS
-            $child_version,
+            filemtime($child_dist_js), // cache-bust khi file thay đổi
             true // in footer
         );
     }
