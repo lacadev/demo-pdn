@@ -80,6 +80,7 @@
 			height: 1rem;
 			fill: #111;
 			transition: transform 0.25s ease;
+			transform: rotate(90deg);
 		}
 	}
 
@@ -127,7 +128,7 @@
 		}
 
 		.laca-gallery-filter__arrow svg {
-			transform: rotate(180deg);
+			transform: rotate(0deg);
 		}
 
 		.laca-gallery-filter__list {

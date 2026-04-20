@@ -430,7 +430,6 @@ function formatHumanTime($time)
 // =============================================================================
 // VIDEO HANDLING
 // =============================================================================
-
 function getYoutubeEmbedUrl($url)
 {
     $youtube_id = '';
@@ -476,7 +475,6 @@ function getVideoUrl($video_link)
 // =============================================================================
 // UTILITY FUNCTIONS
 // =============================================================================
-
 function crb_normalize_path($path)
 {
     return preg_replace('~[/' . preg_quote('\\', '~') . ']~', DIRECTORY_SEPARATOR, $path);

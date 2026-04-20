@@ -1,5 +1,6 @@
-// Fonts (dùng chung với frontend)
+// Shared font declarations used by both frontend and admin.
 @use "../theme/base/fonts";
+@use "../theme/abstracts/variables.scss" as *;
 
 @use "admin-column-style";
 @use "admin-dashboard";
@@ -7,16 +8,26 @@
 @use "admin-help";
 
 html :where(.wp-block) {
-  max-width: 90rem !important;
+  max-width: 95% !important;
   position: relative;
   overflow: hidden;
+  margin-bottom: 0 !important;
+
+  .container {
+    width: 100%;
+    max-width: $xl;
+    padding-right: 0.9375rem;
+    padding-left: 0.9375rem;
+    margin-right: auto;
+    margin-left: auto;
+  }
 }
 
 body.wp-admin {
   font-size: 13px !important;
 }
 
-//img theme preview
+// Theme preview in Appearance screen.
 .theme-overlay .screenshot {
   box-shadow: none;
 
@@ -170,7 +181,7 @@ button[data-toggle="password-toggle"] {
   }
 }
 
-// Custom Animations
+// Custom animations for admin notices/modals.
 @keyframes alpEmojiBounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -199,7 +210,7 @@ button[data-toggle="password-toggle"] {
   font-family: "dashicons", sans-serif !important;
 }
 
-// Custom Screeshot theme
+// Theme card cleanup in Appearance screen.
 .theme-browser .theme .theme-name {
   padding: 20px 10px;
   display: flex;

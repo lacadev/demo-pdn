@@ -42,16 +42,24 @@ add_filter('nav_menu_item_id', '__return_empty_string');
 add_filter('nav_menu_css_class', function ($classes, $item, $args, $depth) {
     if (!is_array($classes)) return $classes;
 
-    $allowed = [
-        'current-menu-item',
+    $is_active = !empty(array_intersect($classes, [
+        'actived-menu',
         'current-menu-parent',
         'current-menu-ancestor',
-        'menu-item-has-children',
-    ];
+        'current_page_item',
+        'current_page_parent',
+        'current_page_ancestor',
+    ]));
 
-    $filtered = array_intersect($classes, $allowed);
-    
-    return array_map(function($class) {
-        return $class === 'current-menu-item' ? 'actived-menu' : $class;
-    }, $filtered);
+    $result = [];
+
+    if ($is_active) {
+        $result[] = 'actived-menu';
+    }
+
+    if (in_array('menu-item-has-children', $classes, true)) {
+        $result[] = 'menu-item-has-children';
+    }
+
+    return $result;
 }, 10, 4);

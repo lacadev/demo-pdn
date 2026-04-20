@@ -291,6 +291,82 @@ add_action('admin_head', function() {
 function app_action_login_enqueue_assets()
 {
     $template_dir = dirname(get_stylesheet_directory_uri());
+    $resolveLogoUrl = static function ($rawValue): string {
+        // Carbon Fields image can return ID, URL string, or array.
+        if (empty($rawValue)) {
+            return '';
+        }
+
+        if (is_numeric($rawValue)) {
+            $url = wp_get_attachment_image_url((int) $rawValue, 'full');
+            return $url ?: '';
+        }
+
+        if (is_array($rawValue)) {
+            if (!empty($rawValue['url']) && is_string($rawValue['url'])) {
+                return esc_url_raw($rawValue['url']);
+            }
+
+            if (!empty($rawValue['id']) && is_numeric($rawValue['id'])) {
+                $url = wp_get_attachment_image_url((int) $rawValue['id'], 'full');
+                return $url ?: '';
+            }
+
+            if (!empty($rawValue['value']) && is_numeric($rawValue['value'])) {
+                $url = wp_get_attachment_image_url((int) $rawValue['value'], 'full');
+                return $url ?: '';
+            }
+
+            return '';
+        }
+
+        if (is_string($rawValue)) {
+            if (filter_var($rawValue, FILTER_VALIDATE_URL)) {
+                return esc_url_raw($rawValue);
+            }
+
+            if (ctype_digit($rawValue)) {
+                $url = wp_get_attachment_image_url((int) $rawValue, 'full');
+                return $url ?: '';
+            }
+        }
+
+        return '';
+    };
+
+    $login_logo_raw = carbon_get_theme_option('login_logo');
+    $login_logo_url = $resolveLogoUrl($login_logo_raw);
+    if (empty($login_logo_url)) {
+        $login_logo_url = $resolveLogoUrl(carbon_get_theme_option('logo'));
+    }
+    $pickLoginI18n = static function (string $key, string $lang, string $fallback) {
+        $value = carbon_get_theme_option("{$key}_{$lang}");
+        if (empty($value)) {
+            // Backward compatibility with old single-language keys.
+            $value = carbon_get_theme_option($key);
+        }
+        return !empty($value) ? $value : $fallback;
+    };
+
+    $loginVi = [
+        'userLabel' => $pickLoginI18n('login_user_label', 'vi', 'Ai đang ghé trạm?'),
+        'userPlaceholder' => $pickLoginI18n('login_user_placeholder', 'vi', 'Điền tên hoặc email vào đây nhé'),
+        'passLabel' => $pickLoginI18n('login_password_label', 'vi', 'Chìa khóa'),
+        'passPlaceholder' => $pickLoginI18n('login_password_placeholder', 'vi', 'Nhập chìa khóa mở cửa'),
+        'welcomeText' => nl2br(sanitize_textarea_field($pickLoginI18n('login_welcome_text', 'vi', "Chào mừng về Trạm Laca!\nCắm sạc, pha trà và bắt đầu nào!"))),
+        'forgetPwd' => $pickLoginI18n('login_forgot_label', 'vi', 'Rớt chìa khoá?'),
+        'backToBlog' => $pickLoginI18n('login_back_label', 'vi', '← Rời khỏi Trạm'),
+    ];
+
+    $loginEn = [
+        'userLabel' => $pickLoginI18n('login_user_label', 'en', "Who's visiting the station?"),
+        'userPlaceholder' => $pickLoginI18n('login_user_placeholder', 'en', 'Enter name or email here'),
+        'passLabel' => $pickLoginI18n('login_password_label', 'en', 'The Key'),
+        'passPlaceholder' => $pickLoginI18n('login_password_placeholder', 'en', 'Enter your key to open'),
+        'welcomeText' => nl2br(sanitize_textarea_field($pickLoginI18n('login_welcome_text', 'en', "Welcome to Laca Station!\nCharge up, brew some tea and let's go!"))),
+        'forgetPwd' => $pickLoginI18n('login_forgot_label', 'en', 'Lost your key?'),
+        'backToBlog' => $pickLoginI18n('login_back_label', 'en', '← Leave the Station'),
+    ];
 
     /**
      * Enqueue scripts.
@@ -303,15 +379,24 @@ function app_action_login_enqueue_assets()
     );
 
     wp_localize_script('theme-login-js-bundle', 'loginI18n', [
-        'userLabel' => __('Ai đang ghé trạm? (Tên / Email)', 'lacadev'),
-        'userPlaceholder' => __('Điền tên hoặc email vào đây nhé', 'lacadev'),
-        'passLabel' => __('Chìa khóa', 'lacadev'),
-        'passPlaceholder' => __('Nhập chìa khóa mở cửa', 'lacadev'),
-        'welcomeText' => __('Chào mừng về Trạm Laca!<br/>Cắm sạc, pha trà và bắt đầu nào!', 'lacadev'),
-        'forgetPwd' => __('Rớt chìa khoá?', 'lacadev'),
-        'backToBlog' => __('← Rời khỏi Trạm', 'lacadev'),
-        'language' => get_bloginfo('language')
+        'logoUrl' => $login_logo_url,
+        'locales' => [
+            'vi' => $loginVi,
+            'en' => $loginEn,
+        ],
+        'userLabel' => $loginVi['userLabel'],
+        'userPlaceholder' => $loginVi['userPlaceholder'],
+        'passLabel' => $loginVi['passLabel'],
+        'passPlaceholder' => $loginVi['passPlaceholder'],
+        'welcomeText' => $loginVi['welcomeText'],
+        'forgetPwd' => $loginVi['forgetPwd'],
+        'backToBlog' => $loginVi['backToBlog'],
+        'language' => get_bloginfo('language'),
+        'homeUrl' => home_url('/'),
     ]);
+
+    // Ensure placeholders can be overridden from Carbon Fields without requiring JS rebuild.
+    wp_add_inline_script('theme-login-js-bundle', "(function(){document.addEventListener('DOMContentLoaded',function(){var cfg=window.loginI18n||{};var locales=cfg.locales||{};var lang=(document.documentElement.lang||'').indexOf('en')!==-1?'en':'vi';var data=locales[lang]||locales.vi||{};var userPlaceholder=data.userPlaceholder||cfg.userPlaceholder||'';var passPlaceholder=data.passPlaceholder||cfg.passPlaceholder||'';var user=document.getElementById('user_login');var pass=document.getElementById('user_pass');if(user&&userPlaceholder){user.setAttribute('placeholder',userPlaceholder);}if(pass&&passPlaceholder){pass.setAttribute('placeholder',passPlaceholder);}});}());", 'after');
 
     /**
      * Enqueue styles.
@@ -320,6 +405,13 @@ function app_action_login_enqueue_assets()
         'theme-login-css-bundle',
         $template_dir . '/dist/styles/login.css'
     );
+
+    // Force override login logo in case theme CSS uses !important.
+    if (!empty($login_logo_url)) {
+        $safe_logo_url = esc_url_raw($login_logo_url);
+        $login_logo_css = "#login h1 a{background-image:url('{$safe_logo_url}') !important;}";
+        wp_add_inline_style('theme-login-css-bundle', $login_logo_css);
+    }
 }
 
 /**

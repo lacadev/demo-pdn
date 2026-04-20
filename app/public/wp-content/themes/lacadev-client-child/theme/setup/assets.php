@@ -61,11 +61,11 @@ function child_enqueue_frontend_assets()
         );
     }
     // Stats Counter Block animation script — enqueue trực tiếp
-    $sc_js = get_stylesheet_directory() . '/block-gutenberg/stats-counter-block/stats-counter.js';
+    $sc_js = get_stylesheet_directory() . '/block-gutenberg/block-stats-counter/stats-counter.js';
     if ( file_exists( $sc_js ) ) {
         wp_enqueue_script(
             'block-stats-counter-js',
-            get_stylesheet_directory_uri() . '/block-gutenberg/stats-counter-block/stats-counter.js',
+            get_stylesheet_directory_uri() . '/block-gutenberg/block-stats-counter/stats-counter.js',
             [],
             filemtime( $sc_js ),
             true

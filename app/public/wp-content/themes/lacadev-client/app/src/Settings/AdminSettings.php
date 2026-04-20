@@ -716,6 +716,63 @@ class AdminSettings
 						->set_attribute('type', 'password')
 						->set_attribute('data-field', 'password-field')
 						->set_default_value('utakxthdfibquxos'),
+				])
+				->add_tab(__('LOGIN', 'laca'), [
+					Field::make('image', 'login_logo', __('Login logo', 'laca'))
+						->set_width(20)
+						->set_help_text('Nếu để trống sẽ dùng logo mặc định của website'),
+
+					Field::make('textarea', 'login_welcome_text_vi', __('Lời chào (VI)', 'laca'))
+						->set_rows(4)
+						->set_width(40)
+						->set_default_value("Chào mừng về Trạm Laca!\nCắm sạc, pha trà và bắt đầu nào!")
+						->set_help_text('Có thể xuống dòng, hệ thống sẽ tự đổi sang <br/>'),
+					Field::make('textarea', 'login_welcome_text_en', __('Welcome text (EN)', 'laca'))
+						->set_rows(4)
+						->set_width(40)
+						->set_default_value("Welcome to Laca Station!\nCharge up, brew some tea and let's go!"),
+
+					Field::make('text', 'login_user_label_vi', __('Label user (VI)', 'laca'))
+						->set_width(50)
+						->set_default_value('Ai đang ghé trạm?'),
+					Field::make('text', 'login_user_label_en', __('Label user (EN)', 'laca'))
+						->set_width(50)
+						->set_default_value("Who's visiting the station?"),
+
+					Field::make('text', 'login_password_label_vi', __('Label password (VI)', 'laca'))
+						->set_width(50)
+						->set_default_value('Chìa khóa'),
+					Field::make('text', 'login_password_label_en', __('Label password (EN)', 'laca'))
+						->set_width(50)
+						->set_default_value('The Key'),
+
+					Field::make('text', 'login_user_placeholder_vi', __('Placeholder user (VI)', 'laca'))
+						->set_width(50)
+						->set_default_value('Điền tên hoặc email vào đây nhé'),
+					Field::make('text', 'login_user_placeholder_en', __('Placeholder user (EN)', 'laca'))
+						->set_width(50)
+						->set_default_value('Enter name or email here'),
+
+					Field::make('text', 'login_password_placeholder_vi', __('Placeholder password (VI)', 'laca'))
+						->set_width(50)
+						->set_default_value('Nhập chìa khóa mở cửa'),
+					Field::make('text', 'login_password_placeholder_en', __('Placeholder password (EN)', 'laca'))
+						->set_width(50)
+						->set_default_value('Enter your key to open'),
+
+					Field::make('text', 'login_forgot_label_vi', __('Label rớt chìa khoá (VI)', 'laca'))
+						->set_width(50)
+						->set_default_value('Rớt chìa khoá?'),
+					Field::make('text', 'login_forgot_label_en', __('Forgot label (EN)', 'laca'))
+						->set_width(50)
+						->set_default_value('Lost your key?'),
+
+					Field::make('text', 'login_back_label_vi', __('Label rời khỏi trạm (VI)', 'laca'))
+						->set_width(50)
+						->set_default_value('← Rời khỏi Trạm'),
+					Field::make('text', 'login_back_label_en', __('Back label (EN)', 'laca'))
+						->set_width(50)
+						->set_default_value('← Leave the Station'),
 				]);
 
 			Container::make('theme_options', __('Tools', 'laca'))

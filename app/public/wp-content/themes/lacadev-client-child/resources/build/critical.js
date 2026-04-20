@@ -42,12 +42,37 @@ const dimensions = [
 (async () => {
     try {
         const { generate } = await import('critical');
+        const puppeteer = require('puppeteer');
         // Prefer system Chrome over old bundled Chromium (r722234) which times out on macOS 15+
         const systemChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
         const fs = require('fs');
-        const penthouseArgs = {};
+        const browserLaunchOptions = {
+            headless: true,
+            timeout: 120000,
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--ignore-certificate-errors'],
+        };
+        const penthouseArgs = {
+            // Local WP pages may include many third-party scripts; block JS requests
+            // so Penthouse can focus on CSS and avoid waiting on long-running assets.
+            blockJSRequests: true,
+            // 30s default is often too short for local environments.
+            timeout: 120000,
+            // Stop waiting for full page load after a grace period.
+            pageLoadSkipTimeout: 15000,
+            // Small buffer to let above-the-fold styles settle.
+            renderWaitTime: 1000,
+            // Penthouse supports custom browser via puppeteer.getBrowser.
+            // This avoids fallback to old bundled Chromium revisions.
+            puppeteer: {
+                getBrowser: () => puppeteer.launch(browserLaunchOptions),
+                pageGotoOptions: {
+                    waitUntil: 'domcontentloaded',
+                    timeout: 60000,
+                },
+            },
+        };
         if (fs.existsSync(systemChrome)) {
-            penthouseArgs.executablePath = systemChrome;
+            browserLaunchOptions.executablePath = systemChrome;
         }
 
         const { css, html, uncritical } = await generate({

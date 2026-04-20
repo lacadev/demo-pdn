@@ -59,24 +59,43 @@ class Laca_Menu_Walker extends Walker_Nav_Menu
     {
         $classes = empty($item->classes) ? [] : (array)$item->classes;
         
-        // Chỉ giữ lại các class cần thiết cho trạng thái (Active)
+        // Chỉ giữ lại class cần thiết cho trạng thái active/children.
         $allowed_classes = [
+            'actived-menu',
             'current-menu-item',
             'current-menu-parent',
             'current-menu-ancestor',
+            'current_page_item',
+            'current_page_parent',
+            'current_page_ancestor',
             'menu-item-has-children',
         ];
-        
-        $new_classes = array_intersect($classes, $allowed_classes);
-        
-        // Đổi tên class current-menu-item thành actived-menu
-        if (in_array('current-menu-item', $new_classes)) {
-            $key = array_search('current-menu-item', $new_classes);
-            $new_classes[$key] = 'actived-menu';
+
+        $new_classes = array_values(array_intersect($classes, $allowed_classes));
+
+        // Gom mọi trạng thái current* về 1 class hiển thị chung.
+        $active_markers = [
+            'actived-menu',
+            'current-menu-item',
+            'current-menu-parent',
+            'current-menu-ancestor',
+            'current_page_item',
+            'current_page_parent',
+            'current_page_ancestor',
+        ];
+        if (!empty(array_intersect($new_classes, $active_markers))) {
+            $new_classes[] = 'actived-menu';
         }
+
+        // Final output keeps only actived state + children state.
+        $new_classes = array_values(array_intersect($new_classes, [
+            'actived-menu',
+            'has-children',
+            'menu-item-has-children',
+        ]));
         
         // Thêm class nếu có menu con
-        if (in_array('menu-item-has-children', $classes) || $this->has_children) {
+        if (in_array('menu-item-has-children', $classes, true) || !empty($args->has_children) || $this->has_children) {
             $new_classes[] = 'has-children';
             $new_classes[] = 'menu-item-has-children';
         }

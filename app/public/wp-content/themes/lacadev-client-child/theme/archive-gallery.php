@@ -27,8 +27,8 @@ $filter_cats = get_terms( [
 	'parent'     => 0,
 ] );
 
-// ── Active cat label ──────────────────────────────────────────────────────────
-$active_cat_label = __( 'Dự án', 'laca' );
+// ── Active cat label (default = "Tất cả") ───────────────────────────────────
+$active_cat_label = __( 'Tất cả', 'laca' );
 if ( $active_cat_slug && ! is_wp_error( $filter_cats ) ) {
 	foreach ( $filter_cats as $cat ) {
 		if ( $cat->slug === $active_cat_slug ) {
@@ -141,7 +141,7 @@ $ajax_config = wp_json_encode( [
 						<?php endif; ?>
 						<div class="laca-gallery-card__img-overlay">
 							<span class="laca-gallery-card__img-icon">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
 							</span>
 						</div>
 					</div>

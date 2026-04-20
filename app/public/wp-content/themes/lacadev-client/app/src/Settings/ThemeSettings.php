@@ -68,10 +68,25 @@ class ThemeSettings {
      */
     public function AddActiveClassToCurrentMenu() {
         add_filter('nav_menu_css_class', static function ($classes) {
-            if (in_array('current-menu-item', $classes, true)) {
-                $classes[] = 'current-menu-item';
+            if (in_array('current-menu-item', $classes, true)
+                || in_array('current-menu-parent', $classes, true)
+                || in_array('current-menu-ancestor', $classes, true)
+                || in_array('current_page_item', $classes, true)
+                || in_array('current_page_parent', $classes, true)
+                || in_array('current_page_ancestor', $classes, true)
+            ) {
+                $classes[] = 'actived-menu';
             }
-            return $classes;
+
+            // Remove default WP current classes, keep only project active class.
+            return array_values(array_diff($classes, [
+                'current-menu-item',
+                'current-menu-parent',
+                'current-menu-ancestor',
+                'current_page_item',
+                'current_page_parent',
+                'current_page_ancestor',
+            ]));
         }, 10, 2);
     }
 

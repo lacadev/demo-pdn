@@ -1,12 +1,5 @@
-// Admin Column Style
-// Styles cho cột custom trong post type list table (thumbnail, featured)
-// Tương ứng với AbstractPostType::adminCustomColumnStyle()
-
-.dashicons {
-  width: unset !important;
-  height: unset !important;
-  font-size: 30px;
-}
+// Custom list table columns (thumbnail + feature toggle).
+// Keep this file focused on post list table layout only.
 
 form#posts-filter {
   position: relative;
@@ -19,6 +12,10 @@ form#posts-filter {
 
 .column-is_feature a {
   padding: 2px;
+  // Ensure feature icons are large enough only inside this column.
+  width: unset !important;
+  height: unset !important;
+  font-size: 30px;
 }
 
 .column-is_feature a.dashicons-yes {

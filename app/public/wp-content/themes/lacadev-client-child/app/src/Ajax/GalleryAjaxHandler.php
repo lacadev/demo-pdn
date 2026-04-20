@@ -79,7 +79,7 @@ class GalleryAjaxHandler {
 		$pagination_html = ob_get_clean();
 
 		// ── Active cat label ─────────────────────────────────────────────────
-		$active_label = __( 'Dự án', 'laca' );
+		$active_label = __( 'Tất cả', 'laca' );
 		if ( $cat_slug ) {
 			$term = get_term_by( 'slug', $cat_slug, 'gallery-cat' );
 			if ( $term && ! is_wp_error( $term ) ) {

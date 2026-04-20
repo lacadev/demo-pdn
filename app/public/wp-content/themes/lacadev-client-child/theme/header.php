@@ -86,6 +86,11 @@ if (!defined('ABSPATH')) {
 			$menu_obj = isset($menu_locations[$menu_location]) ? wp_get_nav_menu_object($menu_locations[$menu_location]) : null;
 			$menu_items = $menu_obj ? wp_get_nav_menu_items($menu_obj->term_id) : [];
 
+			// Populate contextual classes like current-menu-item/current-menu-ancestor.
+			if (!empty($menu_items) && function_exists('_wp_menu_item_classes_by_context')) {
+				_wp_menu_item_classes_by_context($menu_items);
+			}
+
 			// Only top-level items (parent = 0) for the split
 			$top_items = array_values(array_filter($menu_items, fn($item) => (int) $item->menu_item_parent === 0));
 			$total = count($top_items);
@@ -127,10 +132,67 @@ if (!defined('ABSPATH')) {
 			}
 
 			// Allowed classes to keep on menu items
-			$allowed_item_classes = ['mega-menu', 'current-menu-item', 'current-menu-parent', 'current-menu-ancestor'];
+			$allowed_item_classes = ['mega-menu'];
 
 			// Helper: render <li> items for a set of top-level IDs
-			$render_items = function (array $ids) use ($menu_items, $lvl2, $lvl3, $allowed_item_classes): void {
+			$normalize_path = static function (string $url): string {
+				$url = trim($url);
+				if ($url === '') {
+					return '';
+				}
+				$parts = wp_parse_url($url);
+				$path = isset($parts['path']) ? untrailingslashit($parts['path']) : '';
+				if ($path === '') {
+					$path = '/';
+				}
+				return $path;
+			};
+			$current_request = $normalize_path(home_url((string) wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH)));
+			if ($current_request === '') {
+				$current_request = $normalize_path(home_url('/'));
+			}
+
+			$is_item_active = static function ($menu_item) use ($normalize_path, $current_request): bool {
+				$item_classes = is_array($menu_item->classes ?? null) ? $menu_item->classes : [];
+				$active_classes = [
+					'current-menu-item',
+					'current-menu-parent',
+					'current-menu-ancestor',
+					'current_page_item',
+					'current_page_parent',
+					'current_page_ancestor',
+				];
+				if (!empty(array_intersect($active_classes, $item_classes))) {
+					return true;
+				}
+
+				$item_url = $normalize_path((string) ($menu_item->url ?? ''));
+				if ($item_url !== '' && $item_url === $current_request) {
+					return true;
+				}
+
+				// Front page fallback: ensure "Home" item can be highlighted.
+				if (is_front_page()) {
+					$front_page_id = (int) get_option('page_on_front');
+					$item_object_id = isset($menu_item->object_id) ? (int) $menu_item->object_id : 0;
+
+					if (in_array('menu-item-home', $item_classes, true)) {
+						return true;
+					}
+
+					if ($front_page_id > 0 && $item_object_id === $front_page_id) {
+						return true;
+					}
+
+					if ($item_url === '/' || $item_url === '') {
+						return true;
+					}
+				}
+
+				return false;
+			};
+
+			$render_items = function (array $ids) use ($menu_items, $lvl2, $lvl3, $allowed_item_classes, $is_item_active): void {
 				foreach ($menu_items as $item) {
 					if (!in_array($item->ID, $ids, true))
 						continue;
@@ -140,9 +202,7 @@ if (!defined('ABSPATH')) {
 					$kids = $lvl2[$item->ID] ?? [];
 					if ($kids)
 						$raw[] = 'has-children';
-					$active = in_array('current-menu-item', (array) $item->classes)
-						|| in_array('current-menu-parent', (array) $item->classes)
-						|| in_array('current-menu-ancestor', (array) $item->classes);
+					$active = $is_item_active($item);
 					if ($active)
 						$raw[] = 'actived-menu';
 					$class_str = implode(' ', array_filter(array_unique($raw)));
@@ -155,13 +215,17 @@ if (!defined('ABSPATH')) {
 						foreach ($kids as $child) {
 							$grandkids = $lvl3[$child->ID] ?? [];
 							$child_raw = $grandkids ? ['has-children'] : [];
+							if ($is_item_active($child)) {
+								$child_raw[] = 'actived-menu';
+							}
 							$child_cls = implode(' ', array_filter($child_raw));
 							echo '<li class="menu-item' . ($child_cls ? ' ' . esc_attr($child_cls) : '') . '">';
 							echo '<a href="' . esc_url($child->url) . '">' . esc_html($child->title) . '</a>';
 							if ($grandkids) {
 								echo '<ul class="sub-menu">';
 								foreach ($grandkids as $grand) {
-									echo '<li class="menu-item"><a href="' . esc_url($grand->url) . '">' . esc_html($grand->title) . '</a></li>';
+									$grand_cls = $is_item_active($grand) ? ' actived-menu' : '';
+									echo '<li class="menu-item' . esc_attr($grand_cls) . '"><a href="' . esc_url($grand->url) . '">' . esc_html($grand->title) . '</a></li>';
 								}
 								echo '</ul>';
 							}

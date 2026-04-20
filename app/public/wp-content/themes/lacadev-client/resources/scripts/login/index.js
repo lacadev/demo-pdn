@@ -3,33 +3,73 @@
 import '@styles/login';
 
 document.addEventListener( 'DOMContentLoaded', () => {
+	const dynamicConfig = window.loginI18n || {};
 	const loginHeaderLink = document.querySelector( '#login h1 a' );
 	if ( loginHeaderLink ) {
-		loginHeaderLink.setAttribute( 'href', 'https://lacadev.com/' );
-		loginHeaderLink.setAttribute( 'target', '_blank' );
+		if ( dynamicConfig.homeUrl ) {
+			loginHeaderLink.setAttribute( 'href', dynamicConfig.homeUrl );
+		}
+		loginHeaderLink.removeAttribute( 'target' );
+		if ( dynamicConfig.logoUrl ) {
+			loginHeaderLink.style.backgroundImage = `url("${ dynamicConfig.logoUrl }")`;
+		}
 	}
 
 	// 1. DUAL TRANSLATIONS
+	const configuredLocales = dynamicConfig.locales || {};
 	const locales = {
 		vi: {
-			userLabel: 'Ai đang ghé trạm?',
-			userPlaceholder: 'Điền tên hoặc email vào đây nhé',
-			passLabel: 'Chìa khóa',
-			passPlaceholder: 'Nhập chìa khóa mở cửa',
+			userLabel:
+				( configuredLocales.vi && configuredLocales.vi.userLabel ) ||
+				dynamicConfig.userLabel ||
+				'Ai đang ghé trạm?',
+			userPlaceholder:
+				( configuredLocales.vi && configuredLocales.vi.userPlaceholder ) ||
+				dynamicConfig.userPlaceholder ||
+				'Điền tên hoặc email vào đây nhé',
+			passLabel:
+				( configuredLocales.vi && configuredLocales.vi.passLabel ) ||
+				dynamicConfig.passLabel ||
+				'Chìa khóa',
+			passPlaceholder:
+				( configuredLocales.vi && configuredLocales.vi.passPlaceholder ) ||
+				dynamicConfig.passPlaceholder ||
+				'Nhập chìa khóa mở cửa',
 			welcomeText:
+				( configuredLocales.vi && configuredLocales.vi.welcomeText ) ||
+				dynamicConfig.welcomeText ||
 				'Chào mừng về Trạm Laca!<br/>Cắm sạc, pha trà và bắt đầu nào!',
-			forgetPwd: 'Rớt chìa khoá?',
-			backToBlog: '← Rời khỏi Trạm',
+			forgetPwd:
+				( configuredLocales.vi && configuredLocales.vi.forgetPwd ) ||
+				dynamicConfig.forgetPwd ||
+				'Rớt chìa khoá?',
+			backToBlog:
+				( configuredLocales.vi && configuredLocales.vi.backToBlog ) ||
+				dynamicConfig.backToBlog ||
+				'← Rời khỏi Trạm',
 		},
 		en: {
-			userLabel: "Who's visiting the station?",
-			userPlaceholder: 'Enter name or email here',
-			passLabel: 'The Key',
-			passPlaceholder: 'Enter your key to open',
+			userLabel:
+				( configuredLocales.en && configuredLocales.en.userLabel ) ||
+				"Who's visiting the station?",
+			userPlaceholder:
+				( configuredLocales.en && configuredLocales.en.userPlaceholder ) ||
+				'Enter name or email here',
+			passLabel:
+				( configuredLocales.en && configuredLocales.en.passLabel ) ||
+				'The Key',
+			passPlaceholder:
+				( configuredLocales.en && configuredLocales.en.passPlaceholder ) ||
+				'Enter your key to open',
 			welcomeText:
+				( configuredLocales.en && configuredLocales.en.welcomeText ) ||
 				"Welcome to Laca Station!<br/>Charge up, brew some tea and let's go!",
-			forgetPwd: 'Lost your key?',
-			backToBlog: '← Leave the Station',
+			forgetPwd:
+				( configuredLocales.en && configuredLocales.en.forgetPwd ) ||
+				'Lost your key?',
+			backToBlog:
+				( configuredLocales.en && configuredLocales.en.backToBlog ) ||
+				'← Leave the Station',
 		},
 	};
 

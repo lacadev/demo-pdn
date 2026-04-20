@@ -1,0 +1,122 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "lacadev/blog-posts-block",
+    "version": "1.0.0",
+    "title": "Blog Posts Block",
+    "category": "lacadev-blocks",
+    "description": "Hiển thị danh sách bài viết dạng lưới — chọn post type, danh mục, số lượng và layout cột.",
+    "keywords": [
+        "blog",
+        "posts",
+        "journal",
+        "articles",
+        "grid"
+    ],
+    "textdomain": "laca",
+    "supports": {
+        "html": false,
+        "align": [
+            "wide",
+            "full"
+        ]
+    },
+    "example": {
+        "viewportWidth": 800,
+        "attributes": {
+            "__isPreview": true
+        }
+    },
+    "attributes": {
+        "__isPreview": {
+            "type": "boolean",
+            "default": false
+        },
+        "containerLayout": {
+            "type": "string",
+            "default": "container"
+        },
+        "sectionBadge": {
+            "type": "string",
+            "default": "Editorial Journal"
+        },
+        "sectionTitle": {
+            "type": "string",
+            "default": "Furniture Blog"
+        },
+        "postType": {
+            "type": "string",
+            "default": "post"
+        },
+        "selectedTerms": {
+            "type": "array",
+            "default": []
+        },
+        "taxonomy": {
+            "type": "string",
+            "default": "category"
+        },
+        "columns": {
+            "type": "number",
+            "default": 3
+        },
+        "postsCount": {
+            "type": "number",
+            "default": 3
+        },
+        "orderBy": {
+            "type": "string",
+            "default": "date"
+        },
+        "order": {
+            "type": "string",
+            "default": "DESC"
+        },
+        "mode": {
+            "type": "string",
+            "default": "auto"
+        },
+        "selectedPosts": {
+            "type": "array",
+            "default": []
+        },
+        "ctaText": {
+            "type": "string",
+            "default": "Read Story"
+        },
+        "bgColor": {
+            "type": "string",
+            "default": "#0f0f0f"
+        },
+        "bgOpacity": {
+            "type": "number",
+            "default": 100
+        },
+        "heading": {
+            "type": "string",
+            "default": ""
+        },
+        "subheading": {
+            "type": "string",
+            "default": ""
+        },
+        "marginTop": {
+            "type": "number",
+            "default": 0
+        },
+        "marginBottom": {
+            "type": "number",
+            "default": 0
+        },
+        "paddingTop": {
+            "type": "number",
+            "default": 60
+        },
+        "paddingBottom": {
+            "type": "number",
+            "default": 55
+        }
+    },
+    "editorScript": "lacadev-block-block-blog-posts-editor",
+    "style": "lacadev-block-block-blog-posts"
+}
