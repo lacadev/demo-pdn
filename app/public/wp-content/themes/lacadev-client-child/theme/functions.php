@@ -35,6 +35,9 @@ add_action('after_setup_theme', function () {
 
     // Load child assets
     require_once CHILD_THEME_SETUP_DIR . 'assets.php';
+    
+    // Load child theme options (Carbon Fields)
+    require_once CHILD_THEME_SETUP_DIR . 'theme-options.php';
 
 }, 20); // priority 20 — sau parent (10)
 

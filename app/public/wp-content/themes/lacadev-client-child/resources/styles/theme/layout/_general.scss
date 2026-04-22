@@ -12,6 +12,14 @@ body:not(.wp-admin) {
   max-width: $lg;
 }
 
+.container-fluid {
+  max-width: 95%;
+  margin: 0 auto;
+  padding: 0;
+  padding-right: 0.9375rem;
+  padding-left: 0.9375rem;
+}
+
 h1.page-title {
   color: $secondColor;
 }

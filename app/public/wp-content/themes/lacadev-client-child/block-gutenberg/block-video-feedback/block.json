@@ -5,8 +5,8 @@
     "title": "Video Feedback Slider",
     "category": "lacadev-blocks",
     "icon": "video-alt3",
-    "editorScript": "lacadev-block-block-video-feedback-editor",
-    "style": "lacadev-block-block-video-feedback",
+    "editorScript": "block-block-video-feedback-editor",
+    "style": "block-block-video-feedback",
     "textdomain": "laca",
     "supports": {
         "html": false,

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 // ── Sanitize attributes ────────────────────────────────────────────────────
 $attr          = $attributes;
-$section_title = esc_html( $attr['sectionTitle'] ?? 'Dự Án Sử Dụng Sản Phẩm' );
+$heading = esc_html( $attr['sectionTitle']);
 $cta_text      = esc_html( $attr['ctaText']      ?? 'Xem Thêm' );
 $heading_color = sanitize_hex_color( $attr['headingColor'] ?? '' );
 
@@ -41,25 +41,6 @@ $r = hexdec( substr( $bg_color, 1, 2 ) );
 $g = hexdec( substr( $bg_color, 3, 2 ) );
 $b = hexdec( substr( $bg_color, 5, 2 ) );
 $bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ( $bg_opacity / 100 ) . ')';
-
-// ── Enqueue Swiper CSS / JS ────────────────────────────────────────────────
-if ( ! wp_style_is( 'swiper', 'enqueued' ) ) {
-    wp_enqueue_style(
-        'swiper',
-        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
-        [],
-        '11'
-    );
-}
-if ( ! wp_script_is( 'swiper', 'enqueued' ) ) {
-    wp_enqueue_script(
-        'swiper',
-        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
-        [],
-        '11',
-        true
-    );
-}
 
 // ── Build WP_Query ─────────────────────────────────────────────────────────
 if ( $mode === 'manual' && ! empty( $selected_posts ) ) {
@@ -108,17 +89,21 @@ if ( $show_popup ) {
 <section <?php echo get_block_wrapper_attributes(); ?> <?php echo $section_extra_attrs; ?>>
 
     <div class="container">
-        <?php if ( $section_title ) : ?>
-            <div class="block-projects-slider__header">
-                <h2 class="block-projects-slider__heading"<?php echo $heading_color ? ' style="color:' . esc_attr( $heading_color ) . ';"' : ''; ?>><?php echo $section_title; ?></h2>
-            </div>
-        <?php endif; ?>
+        <!-- HEADER -->
+        <div class="header-section" data-aos="fade-up">
+            <?php 
+            if ( $heading ) :
+                echo '<h2 class="heading">' . $heading . '</h2>';
+            endif;
+            ?>
+        </div>
     </div>
 
     <?php if ( $query->have_posts() ) : ?>
 
-        <div class="swiper block-projects-slider__swiper" id="<?php echo esc_attr( $swiper_id ); ?>">
-            <div class="swiper-wrapper">
+        <div class="block-projects-slider__viewport" id="<?php echo esc_attr( $swiper_id ); ?>">
+            <div class="block-projects-slider__track" data-speed="80">
+                <?php $slide_index = 0; ?>
                 <?php while ( $query->have_posts() ) : $query->the_post(); ?>
                     <?php
                     $post_id    = get_the_ID();
@@ -144,7 +129,7 @@ if ( $show_popup ) {
                         }
                     }
                     ?>
-                    <div class="swiper-slide block-projects-slider__slide">
+                    <div class="block-projects-slider__slide<?php echo 0 === $slide_index ? ' is-active' : ''; ?>" data-origin-index="<?php echo esc_attr( $slide_index ); ?>">
                         <a href="<?php echo $post_link; ?>"
                            class="block-projects-slider__image-link"
                            aria-label="<?php echo esc_attr( $post_title ); ?>">
@@ -180,26 +165,28 @@ if ( $show_popup ) {
 
                         </a>
                     </div>
+                    <?php $slide_index++; ?>
                 <?php endwhile; ?>
                 <?php wp_reset_postdata(); ?>
             </div>
 
-            <button class="swiper-button-prev block-projects-slider__nav block-projects-slider__nav--prev"
+            <button type="button" class="button-prev block-projects-slider__nav block-projects-slider__nav--prev"
                     aria-label="<?php esc_attr_e( 'Dự án trước', 'laca' ); ?>">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     fill="none" stroke="#fff" stroke-width="1.5"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
             </button>
-            <button class="swiper-button-next block-projects-slider__nav block-projects-slider__nav--next"
+            <button type="button" class="button-next block-projects-slider__nav block-projects-slider__nav--next"
                     aria-label="<?php esc_attr_e( 'Dự án tiếp theo', 'laca' ); ?>">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     fill="none" stroke="#fff" stroke-width="1.5"
                      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="9 18 15 12 9 6"/>
                 </svg>
             </button>
+            
         </div>
 
     <?php else : ?>
@@ -211,76 +198,228 @@ if ( $show_popup ) {
 </section>
 
 <?php
-// ── Inline Swiper init ─────────────────────────────────────────────────────
+// ── Inline JS init (Vanilla marquee carousel, no Swiper) ───────────────────
 $js = sprintf( '
 (function () {
     function init_%1$s() {
-        if (typeof Swiper === "undefined") { setTimeout(init_%1$s, 80); return; }
-        var SLOW = 6000, FAST = 400;
-        var swiper = new Swiper("#%2$s", {
-            slidesPerView: 1.3,
-            centeredSlides: true,
-            spaceBetween: 5,
-            loop: true,
-            speed: SLOW,
-            autoplay: {
-                delay: 0,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: true,
-            },
-            navigation: {
-                nextEl: "#%2$s .swiper-button-next",
-                prevEl: "#%2$s .swiper-button-prev"
-            },
-            breakpoints: {
-                600: { slidesPerView: 1.8},
-                900: { slidesPerView: 2.4},
-                1200: { slidesPerView: 2.8}
-            }
-        });
-        /* Nav: interrupt mid-animation, slide fast, restore slow autoplay */
-        var el = document.getElementById("%2$s");
+        var viewport = document.getElementById("%2$s");
+        if (!viewport) return;
+        var track = viewport.querySelector(".block-projects-slider__track");
+        if (!track) return;
+        var sourceSlides = Array.prototype.slice.call(track.querySelectorAll(".block-projects-slider__slide"));
+        if (sourceSlides.length < 2) return;
+
+        var nextBtn = viewport.querySelector(".button-next");
+        var prevBtn = viewport.querySelector(".button-prev");
         var hovering = false;
-        function navGo(dir) {
-            swiper.autoplay.stop();
-            swiper.animating = false;
-            var w = swiper.wrapperEl;
-            var cur = getComputedStyle(w).transform;
-            w.style.transitionDuration = "0ms";
-            w.style.transform = cur;
-            w.offsetHeight;
-            swiper.params.speed = FAST;
-            if (dir === "next") swiper.slideNext(FAST);
-            else swiper.slidePrev(FAST);
+        var offset = 0;
+        var setWidth = 0;
+        var baseSpeed = parseFloat(track.dataset.speed || "52");
+        var running = true;
+        var inView = true;
+        var rafId = null;
+        var lastTs = performance.now();
+
+        function cloneSet(slides, marker) {
+            var frag = document.createDocumentFragment();
+            slides.forEach(function(slide) {
+                var clone = slide.cloneNode(true);
+                clone.dataset.cloneSet = marker;
+                frag.appendChild(clone);
+            });
+            return frag;
         }
-        el.querySelector(".swiper-button-next").addEventListener("mousedown", function(e){ e.stopPropagation(); navGo("next"); }, true);
-        el.querySelector(".swiper-button-prev").addEventListener("mousedown", function(e){ e.stopPropagation(); navGo("prev"); }, true);
-        swiper.on("transitionEnd", function(){
-            if (swiper.params.speed === FAST) {
-                swiper.params.speed = SLOW;
-                if (!hovering) swiper.autoplay.start();
-            }
+
+        sourceSlides.forEach(function(slide) {
+            slide.dataset.cloneSet = "base";
         });
+        track.insertBefore(cloneSet(sourceSlides, "prepend"), track.firstChild);
+        track.appendChild(cloneSet(sourceSlides, "append"));
+
+        function baseSlides() {
+            return Array.prototype.slice.call(track.querySelectorAll(".block-projects-slider__slide[data-clone-set=\"base\"]"));
+        }
+
+        function allSlides() {
+            return Array.prototype.slice.call(track.querySelectorAll(".block-projects-slider__slide"));
+        }
+
+        function computeSetWidth() {
+            var base = baseSlides();
+            setWidth = base.reduce(function(total, slide) {
+                return total + slide.getBoundingClientRect().width;
+            }, 0);
+            if (!setWidth) return;
+            offset = setWidth;
+            applyTransform();
+            updateActiveSlide();
+        }
+
+        function applyTransform() {
+            track.style.transform = "translate3d(" + (-offset) + "px,0,0)";
+        }
+
+        function normalizeOffset() {
+            if (!setWidth) return;
+            if (offset >= setWidth * 2) offset -= setWidth;
+            if (offset < setWidth) offset += setWidth;
+        }
+
+        function updateActiveSlide() {
+            var slides = allSlides();
+            if (!slides.length) return;
+            var viewportRect = viewport.getBoundingClientRect();
+            var centerX = viewportRect.left + viewportRect.width / 2;
+            var minDist = Infinity;
+            var active = null;
+
+            slides.forEach(function(slide) {
+                var rect = slide.getBoundingClientRect();
+                var slideCenter = rect.left + rect.width / 2;
+                var dist = Math.abs(slideCenter - centerX);
+                if (dist < minDist) {
+                    minDist = dist;
+                    active = slide;
+                }
+            });
+
+            slides.forEach(function(slide) {
+                slide.classList.remove("is-active");
+            });
+            if (active) {
+                active.classList.add("is-active");
+            }
+        }
+
+        function step(ts) {
+            var dt = (ts - lastTs) / 1000;
+            lastTs = ts;
+            if (running && !hovering && inView) {
+                offset += baseSpeed * dt;
+                normalizeOffset();
+                applyTransform();
+            }
+            updateActiveSlide();
+            rafId = requestAnimationFrame(step);
+        }
+
+        function freezeNow() {
+            hovering = true;
+        }
+
+        function resumeNow() {
+            hovering = false;
+            lastTs = performance.now();
+        }
+
+        function findActiveOriginIndex() {
+            var active = track.querySelector(".block-projects-slider__slide.is-active");
+            if (!active) return 0;
+            return parseInt(active.dataset.originIndex || "0", 10);
+        }
+
+        function findBaseSlideByIndex(index) {
+            return track.querySelector(".block-projects-slider__slide[data-clone-set=\"base\"][data-origin-index=\"" + index + "\"]");
+        }
+
+        function animateToTarget(targetOffset, duration, onDone) {
+            var startOffset = offset;
+            var delta = targetOffset - startOffset;
+            var startTime = performance.now();
+
+            function easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+
+            function tick(now) {
+                var t = Math.min(1, (now - startTime) / duration);
+                offset = startOffset + delta * easeOutCubic(t);
+                normalizeOffset();
+                applyTransform();
+                updateActiveSlide();
+                if (t < 1) {
+                    requestAnimationFrame(tick);
+                } else if (typeof onDone === "function") {
+                    onDone();
+                }
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        function navGo(direction) {
+            if (!setWidth) return;
+            freezeNow();
+            var current = findActiveOriginIndex();
+            var total = sourceSlides.length;
+            var target = direction === "next" ? (current + 1) %% total : (current - 1 + total) %% total;
+            var targetSlide = findBaseSlideByIndex(target);
+            if (!targetSlide) return;
+
+            var viewportRect = viewport.getBoundingClientRect();
+            var centerX = viewportRect.left + viewportRect.width / 2;
+            var targetRect = targetSlide.getBoundingClientRect();
+            var targetCenter = targetRect.left + targetRect.width / 2;
+            var dx = targetCenter - centerX;
+
+            animateToTarget(offset + dx, 320, function() {
+                if (!hovering) resumeNow();
+            });
+        }
+
+        function bindNav(btn, dir) {
+            if (!btn) return;
+            btn.addEventListener("click", function(e){
+                e.preventDefault();
+                e.stopPropagation();
+                navGo(dir);
+            }, true);
+        }
+        bindNav(nextBtn, "next");
+        bindNav(prevBtn, "prev");
+
         if (%3$s) {
-            var section = el.closest("section");
+            var section = viewport.closest("section");
             if (section) {
                 section.addEventListener("mouseenter", function () {
-                    hovering = true;
-                    swiper.autoplay.stop();
-                    swiper.animating = false;
-                    var w = swiper.wrapperEl;
-                    var cur = getComputedStyle(w).transform;
-                    w.style.transitionDuration = "0ms";
-                    w.style.transform = cur;
-                    w.offsetHeight;
+                    freezeNow();
                 });
                 section.addEventListener("mouseleave", function () {
-                    hovering = false;
-                    swiper.params.speed = SLOW;
-                    swiper.autoplay.start();
+                    resumeNow();
                 });
             }
         }
+
+        window.addEventListener("resize", function() {
+            computeSetWidth();
+        }, { passive: true });
+
+        var imgs = track.querySelectorAll("img");
+        imgs.forEach(function(img) {
+            if (!img.complete) {
+                img.addEventListener("load", computeSetWidth, { once: true });
+            }
+        });
+
+        window.addEventListener("load", function() {
+            computeSetWidth();
+            updateActiveSlide();
+        }, { once: true });
+
+        var io = new IntersectionObserver(function(entries) {
+            if (!entries.length) return;
+            inView = entries[0].isIntersecting;
+            if (inView) {
+                updateActiveSlide();
+            }
+        }, { threshold: 0.2 });
+        io.observe(viewport);
+
+        computeSetWidth();
+        requestAnimationFrame(updateActiveSlide);
+        setTimeout(updateActiveSlide, 120);
+        lastTs = performance.now();
+        rafId = requestAnimationFrame(step);
     }
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", init_%1$s);
@@ -292,7 +431,7 @@ $js = sprintf( '
     $swiper_id,
     $pause_hover ? 'true' : 'false'
 );
-wp_add_inline_script( 'swiper', $js );
+wp_add_inline_script( 'theme-js-bundle', $js );
 
 // ── Popup Contact Form (scroll-triggered) ──────────────────────────────────
 if ( $show_popup ) :

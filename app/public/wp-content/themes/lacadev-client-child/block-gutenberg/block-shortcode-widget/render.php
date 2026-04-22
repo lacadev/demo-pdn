@@ -10,11 +10,18 @@ $is_valid = fn($sc) => preg_match('/^\[[\w\-]/', $sc);
 ?>
 <section <?php echo get_block_wrapper_attributes(['class' => 'block-shortcode-widget']); ?> style="background:<?php echo esc_attr($bg_rgba); ?>;">
     <div class="container">
-        <?php if ($heading): ?>
-            <div class="block-shortcode-widget__header">
-                <h2 class="block-shortcode-widget__heading"><?php echo $heading; ?></h2>
-            </div>
-        <?php endif; ?>
+        <!-- HEADER -->
+        <div class="header-section">
+            <?php 
+            if ( $heading ) :
+                echo '<h2 class="heading">' . $heading . '</h2>';
+            endif;
+            
+            if ( $subheading ) :
+                echo '<p class="subheading">' . $subheading . '</p>';
+            endif;
+            ?>
+        </div>
 
         <div class="block-shortcode-widget__cols">
             <?php if ($is_valid($shortcode1)): ?>

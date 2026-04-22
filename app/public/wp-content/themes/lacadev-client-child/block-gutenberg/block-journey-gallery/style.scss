@@ -7,170 +7,224 @@
 // Mobile  : flex-column zigzag + đường dọc bên phải
 // ─────────────────────────────────────────────────────────────────────────────
 
-.block-journey-gallery {
-    background: #1e1e1e;
-    padding: 6rem 0 5.5rem;
+.journey-gallery {
+    margin-top: var(--journey-margin-top, 0px);
+    margin-right: var(--journey-margin-right, 0px);
+    margin-bottom: var(--journey-margin-bottom, 0px);
+    margin-left: var(--journey-margin-left, 0px);
+    padding-top: var(--journey-padding-top, 60px);
+    padding-right: var(--journey-padding-right, 0px);
+    padding-bottom: var(--journey-padding-bottom, 55px);
+    padding-left: var(--journey-padding-left, 0px);
     overflow: hidden;
 
-    @include maxWidth($md) { padding: 5rem 0 4rem; }
-    @include maxWidth($sm) { padding: 3.5rem 0 3rem; }
-
-    // ── Heading ────────────────────────────────────────────────────────────
-    &__header {
-        margin-bottom: 5rem;
+    @include maxWidth($md) {
+        margin-top: var(--journey-margin-top-tablet, var(--journey-margin-top, 0px));
+        margin-right: var(--journey-margin-right-tablet, var(--journey-margin-right, 0px));
+        margin-bottom: var(--journey-margin-bottom-tablet, var(--journey-margin-bottom, 0px));
+        margin-left: var(--journey-margin-left-tablet, var(--journey-margin-left, 0px));
+        padding-top: var(--journey-padding-top-tablet, var(--journey-padding-top, 60px));
+        padding-right: var(--journey-padding-right-tablet, var(--journey-padding-right, 0px));
+        padding-bottom: var(--journey-padding-bottom-tablet, var(--journey-padding-bottom, 55px));
+        padding-left: var(--journey-padding-left-tablet, var(--journey-padding-left, 0px));
     }
-
-    &__heading {
-        margin-bottom: 2rem;
-        color: $secondColor;
-        font-weight: $regular;
-
-        @include resFont(1.2, 2.4);
-    }
-
-    &__subheading {
-        margin: 0;
-        color: rgba(255, 255, 255, .7);
-        line-height: 1.7;
-        max-width: 72rem;
-
-        @include resFont(.9, 1.1);
+    @include maxWidth($sm) {
+        margin-top: var(--journey-margin-top-mobile, var(--journey-margin-top-tablet, var(--journey-margin-top, 0px)));
+        margin-right: var(--journey-margin-right-mobile, var(--journey-margin-right-tablet, var(--journey-margin-right, 0px)));
+        margin-bottom: var(--journey-margin-bottom-mobile, var(--journey-margin-bottom-tablet, var(--journey-margin-bottom, 0px)));
+        margin-left: var(--journey-margin-left-mobile, var(--journey-margin-left-tablet, var(--journey-margin-left, 0px)));
+        padding-top: var(--journey-padding-top-mobile, var(--journey-padding-top-tablet, var(--journey-padding-top, 60px)));
+        padding-right: var(--journey-padding-right-mobile, var(--journey-padding-right-tablet, var(--journey-padding-right, 0px)));
+        padding-bottom: var(--journey-padding-bottom-mobile, var(--journey-padding-bottom-tablet, var(--journey-padding-bottom, 55px)));
+        padding-left: var(--journey-padding-left-mobile, var(--journey-padding-left-tablet, var(--journey-padding-left, 0px)));
     }
 
     // ── Track (CSS Grid on desktop) ────────────────────────────────────────
     &__track {
-        display: grid;
-        // số cột = var(--jg-cols) được set inline từ PHP
-        grid-template-columns: repeat(var(--jg-cols, 2), 1fr);
-        grid-template-rows: auto auto auto; // top-steps / timeline / bottom-steps
-        column-gap: 2rem;
         position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        justify-content: space-between;
+        gap: 2rem;
 
-        @include maxWidth($md) {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
+        &::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            transform: translateY(-50%);
+            background: #fff;
+            pointer-events: none;
 
-            // Đường dọc bên phải (mobile timeline)
-            &::after {
-                content: '';
-                position: absolute;
-                right: 0;
-                top: 2rem;
-                bottom: 2rem;
+            @include maxWidth($xxl) {
+                top: 0;
+                right: 50%;
+                transform: translate(50%, 0);
                 width: 1px;
-                background: rgba(255, 255, 255, .2);
-                pointer-events: none;
-
-                @include maxWidth($md) { content: none; }
+                height: 100%;
             }
+
+            @include maxWidth($md) {
+                content: none;
+            }
+        }
+
+        @include maxWidth($xxl) {
+            grid-template-columns: repeat(1, 1fr);
         }
     }
 
     // ── Step ──────────────────────────────────────────────────────────────
     &__step {
-        // Desktop: vị trí grid từ CSS custom properties
-        grid-column: var(--jg-col, 1);
-        grid-row:    var(--jg-row, 1);
-
+        position: relative;
         display: flex;
-        align-items: flex-start;
-        gap: 2rem;
-        padding-bottom: 3rem;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 10rem;
 
-        // Bước chẵn → đảo chiều: ảnh trái, text phải
-        &--even {
-            flex-direction: row-reverse;
-            padding-top: 3rem;
-            padding-bottom: 0;
+        @include maxWidth($xxl) {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: flex-start;
+            gap: 5rem;
         }
 
-        // Mobile: chấm tròn trên đường dọc
+        @include maxWidth($xl) {
+            gap: 3rem;
+        }
+
         @include maxWidth($md) {
-            padding-bottom: 3.5rem;
-            position: relative;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto auto;
+            gap: 2rem;
+        }
 
-            flex-wrap: wrap;
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #fff;
+            z-index: 1;
 
-            &::after {
-                content: '';
-                position: absolute;
-                right: -.5rem;
-                top: 2.5rem;
-                width: 1rem;
-                height: 1rem;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, .45);
-                border: 2px solid rgba(255, 255, 255, .75);
-                z-index: 1;
-
-                display: none;
+            @include maxWidth($md) {
+                content: none;
             }
         }
 
-        @include maxWidth($sm) {
-            gap: 1.2rem;
-            padding-bottom: 2.8rem;
+        &--even {
+            flex-direction: column-reverse;
+
+            @include maxWidth($xxl) {
+                .journey-gallery__content {
+                    order: 2;
+                }
+
+                .journey-gallery__image {
+                    order: 1;
+                }
+            }
+
+            @include maxWidth($md) {
+                flex-direction: unset;
+
+                .journey-gallery__content {
+                    order: 1;
+                }
+
+                .journey-gallery__image {
+                    order: 2;
+                }
+            }
         }
     }
 
     // ── Content ────────────────────────────────────────────────────────────
     &__content {
-        flex: 1 1 0;
-        min-width: 0;
         display: flex;
+        align-items: center;
+
+        @include maxWidth($xxl) {
+            width: 100%;
+            max-width: none;
+            align-self: center;
+            align-items: start;
+        }
 
         @include maxWidth($md) {
-            width: 100%;
+            flex-basis: 100%;
+            max-width: 100%;
         }
     }
 
-    // Số thứ tự (vàng, rất lớn)
     &__number {
         font-weight: $black;
-        line-height: .85;
+        line-height: .8;
         color: $secondColor;
         margin-bottom: .6rem;
 
-        @include resFont(12, 18);
+        @include resFont(12rem, 18rem);
     }
 
-    // Tiêu đề bước (trắng, uppercase)
     &__title {
+        margin: 0 0 1.4rem;
+        display: inline-block;
+        font-size: rem(24);
+        line-height: 1.35;
         font-weight: $bold;
         text-transform: uppercase;
         color: $secondColor;
-        line-height: 1.35;
-        display: inline-block;
         border-bottom: 1px solid $secondColor;
 
-        margin: 0 0 1.4rem;
-
-        @include resFont(1, 1.5);
+        @include maxWidth($xxl) {
+            font-size: rem(18);
+            margin-bottom: 1rem;
+        }
+    
+        @include maxWidth($lg) {
+            font-size: rem(16);
+        }
+    
+        @include maxWidth($sm) {
+            font-size: rem(14);
+        }
     }
 
-    // Mô tả (xám nhạt)
     &__desc {
-        color: rgba(255, 255, 255, .65);
-        line-height: 1.8;
+        color: #fff;
+        line-height: 1.5;
         margin: 0;
         text-align: justify;
-
-        @include resFont(.8, 1);
+        font-size: rem(16);
+        
+        @include maxWidth($xl) {
+            font-size: rem(14);
+        }
     }
 
     // ── Image ─────────────────────────────────────────────────────────────
     &__image {
-        flex: 0 0 40%;
-        border-radius: 1rem;
-        overflow: hidden;
+        @include maxWidth($xxl) {
+            width: 100%;
+            max-width: none;
+        }
 
-        @include maxWidth($md) { flex-basis: 100%; }
+        @include maxWidth($md) {
+            flex-basis: 100%;
+            max-width: 100%;
+        }
 
         img {
             display: block;
             width: 100%;
-            aspect-ratio: 4 / 3;
+            aspect-ratio: 325 / 196;
             object-fit: cover;
             border-radius: 1rem;
 
@@ -179,88 +233,73 @@
     }
 
     // ── Timeline ngang (desktop) ─────────────────────────────────────────
-    &__timeline {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        padding: 1rem 0;
-        margin: 0 0 .5rem;
+    // &__timeline {
+    //     grid-column: 1 / -1;
+    //     grid-row: 2;
+    //     position: relative;
+    //     display: flex;
+    //     align-items: center;
+    //     justify-content: space-around;
+    //     padding: 1rem 0;
+    //     margin: 0 0 .5rem;
 
-        @include maxWidth($md) { display: none; } // ẩn trên mobile (dùng đường dọc CSS)
-    }
+    //     @include maxWidth($md) { display: none; } // ẩn trên mobile (dùng đường dọc CSS)
+    // }
 
-    &__timeline-line {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        height: 1px;
-        background: #fff;
+    // &__timeline-line {
+    //     position: absolute;
+    //     left: 0;
+    //     right: 0;
+    //     top: 50%;
+    //     transform: translateY(-50%);
+    //     height: 1px;
+    //     background: #fff;
 
-        @include maxWidth($md) { display: none; }
-    }
+    //     @include maxWidth($md) { display: none; }
+    // }
 
-    &__timeline-dot {
-        position: relative;
-        z-index: 1;
-        display: inline-block;
-        width: .9rem;
-        height: .9rem;
-        border-radius: 50%;
-        background: #fff;
-        border: 2px solid #fff;
+    // &__timeline-dot {
+    //     position: relative;
+    //     z-index: 1;
+    //     display: inline-block;
+    //     width: .9rem;
+    //     height: .9rem;
+    //     border-radius: 50%;
+    //     background: #fff;
+    //     border: 2px solid #fff;
 
-        @include maxWidth($md) { display: none; }
-    }
+    //     @include maxWidth($md) { display: none; }
+    // }
 }
 
-// ── Editor canvas preview ─────────────────────────────────────────────────────
-.block-editor-block-list__block .block-journey-gallery__preview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-    gap: 1.6rem;
-    padding: 2rem;
-}
-
-.block-journey-gallery__preview-step {
-    display: flex;
-    flex-direction: column;
-    gap: .6rem;
-    background: #2a2a2a;
-    border-radius: .8rem;
-    padding: 1.2rem;
-}
-
-.block-journey-gallery__preview-number {
-    font-size: 4rem;
-    font-weight: 900;
-    color: var(--second-color, #c9a84c);
-    line-height: 1;
-}
-
-.block-journey-gallery__preview-img {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: .6rem;
-    display: block;
-}
-
-.block-journey-gallery__preview-title {
-    font-size: 1.4rem;
-    font-weight: 700;
+// ── Editor: đồng bộ màu + typography với frontend ─────────────────────────────
+.editor-styles-wrapper .wp-block-journey-gallery-block.journey-gallery {
+    --second-color: #F0C11B;
     color: #fff;
-    text-transform: uppercase;
-    display: block;
-}
+    font-family: $themeFont;
 
-.block-journey-gallery__preview-desc {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, .6);
-    margin: 0;
-    line-height: 1.6;
+    .block-journey-gallery__heading {
+        color: $secondColor;
+        @include resFont(1.2, 2.4);
+    }
+
+    .block-journey-gallery__subheading {
+        color: rgba(255, 255, 255, .7);
+        @include resFont(.9, 1.1);
+    }
+
+    .block-journey-gallery__title {
+        color: $secondColor;
+        @include resFont(1, 1.5);
+    }
+
+    .block-journey-gallery__desc {
+        color: rgba(255, 255, 255, .65);
+        @include resFont(.8, 1);
+    }
+
+    .block-journey-gallery__number {
+        color: $secondColor;
+        @include resFont(12, 18);
+    }
 }

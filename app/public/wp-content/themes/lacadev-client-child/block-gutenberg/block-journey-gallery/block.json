@@ -5,8 +5,8 @@
     "title": "Journey Gallery",
     "category": "lacadev-blocks",
     "icon": "editor-ol",
-    "editorScript": "lacadev-block-block-journey-gallery-editor",
-    "style": "lacadev-block-block-journey-gallery",
+    "editorScript": "block-block-journey-gallery-editor",
+    "style": "block-block-journey-gallery",
     "textdomain": "laca",
     "supports": {
         "html": false,
@@ -35,6 +35,53 @@
         "bgOpacity": {
             "type": "number",
             "default": 100
+        },
+        "spacing": {
+            "type": "object",
+            "default": {
+                "desktop": {
+                    "margin": {
+                        "top": "",
+                        "left": "",
+                        "bottom": "",
+                        "right": ""
+                    },
+                    "padding": {
+                        "top": "",
+                        "left": "",
+                        "bottom": "",
+                        "right": ""
+                    }
+                },
+                "tablet": {
+                    "margin": {
+                        "top": "",
+                        "left": "",
+                        "bottom": "",
+                        "right": ""
+                    },
+                    "padding": {
+                        "top": "",
+                        "left": "",
+                        "bottom": "",
+                        "right": ""
+                    }
+                },
+                "mobile": {
+                    "margin": {
+                        "top": "",
+                        "left": "",
+                        "bottom": "",
+                        "right": ""
+                    },
+                    "padding": {
+                        "top": "",
+                        "left": "",
+                        "bottom": "",
+                        "right": ""
+                    }
+                }
+            }
         },
         "marginTop": {
             "type": "number",

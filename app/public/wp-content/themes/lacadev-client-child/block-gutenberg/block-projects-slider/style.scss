@@ -43,19 +43,22 @@
         @include resFont(1.2, 2.4);
     }
 
-    // ── Swiper override ──────────────────────────────────────────────────────
-    // LINEAR là chìa khóa cho smooth marquee — bắt buộc override Swiper default
-    &__swiper {
-        overflow: visible !important;
-        padding-bottom: 0 !important;
+    // ── Vanilla carousel viewport + track ───────────────────────────────────
+    &__viewport {
+        overflow: hidden;
+        padding-bottom: 0;
+        position: relative;
+    }
 
-        .swiper-wrapper {
-            transition-timing-function: linear !important;
-        }
+    &__track {
+        display: flex;
+        gap: 0.6rem;
+        will-change: transform;
     }
 
     // ── Slide ────────────────────────────────────────────────────────────────
     &__slide {
+        flex: 0 0 clamp(32rem, 44vw, 58rem);
         position: relative;
         height: 52vh;
         min-height: 28rem;
@@ -69,7 +72,7 @@
         opacity: 0.45;
         transition: opacity 0.8s ease;
 
-        &.swiper-slide-active {
+        &.is-active {
             opacity: 1;
 
             .block-projects-slider__overlay {
@@ -183,33 +186,54 @@
         top: 50%;
         transform: translateY(-50%);
         z-index: 10;
-        width: 4.8rem;
-        height: 4.8rem;
+        width: 3rem;
+        height: 3rem;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.2), rgba(20, 20, 20, 0.5) 60%, rgba(10, 10, 10, 0.65));
+        border: 1px solid #fff;
         color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: background 0.2s ease, border-color 0.2s ease;
-        backdrop-filter: blur(4px);
+        transition: background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 
-        // Hide default Swiper ::after arrows
-        &::after { display: none; }
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.22);
-            border-color: rgba(255, 255, 255, 0.55);
+        svg {
+            width: 2rem;
+            height: 2rem;
+            stroke-width: 2.2;
+            opacity: 0.95;
         }
 
-        &--prev { left: 2rem; }
-        &--next { right: 2rem; }
+        &:hover {
+            background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.32), rgba(22, 22, 22, 0.55) 62%, rgba(10, 10, 10, 0.72));
+            border-color: rgba(255, 255, 255, 0.55);
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+            transform: translateY(-50%) scale(1.03);
+        }
+
+        &:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.9);
+            outline-offset: 2px;
+        }
+
+        &:active {
+            transform: translateY(-50%) scale(0.98);
+        }
+
+        &--prev { left: 1.2rem; }
+        &--next { right: 1.2rem; }
 
         @include maxWidth($sm) {
-            width: 3.6rem;
-            height: 3.6rem;
+            width: 6.2rem;
+            height: 6.2rem;
+            svg {
+                width: 2.8rem;
+                height: 2.8rem;
+            }
             &--prev { left: 0.8rem; }
             &--next { right: 0.8rem; }
         }

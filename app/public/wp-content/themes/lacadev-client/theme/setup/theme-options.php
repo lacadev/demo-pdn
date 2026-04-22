@@ -115,3 +115,8 @@ $optionsPage = Container::make('theme_options', __('Laca Theme', 'laca'))
 			])
 			->set_default_value('gemini'),
 	]);
+
+/**
+ * Allow child theme to append tabs to the same Laca Theme options page.
+ */
+do_action('lacadev/theme_options/register_child_tabs', $optionsPage);

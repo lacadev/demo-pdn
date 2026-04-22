@@ -3,28 +3,25 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import {
     TextareaControl,
     Button,
-    TextControl
+    TextControl,
+    PanelBody
 } from '@wordpress/components';
 import {
-    BlockConfigPanel,
-    TitlePanel,
-    SubtitlePanel,
-    AppearancePanel,
-    SpacingPanel
+    BlockBasePanels
 } from '../utils/inspector-panels';
 import { useInserterPreview, BlockPreviewMock } from '../utils/preview';
+import { hexToRgba, getSpacingVars } from '../utils/style';
 
-function hexToRgba( hex, opacity = 100 ) {
-    if ( ! hex || ! /^#[0-9A-Fa-f]{6}$/.test( hex ) ) {
-        return `rgba(15,15,15,${ Math.max( 0, Math.min( 100, opacity ) ) / 100 })`;
-    }
+function hasResponsiveSpacingValue( spacing = {} ) {
+    const devices = [ 'desktop', 'tablet', 'mobile' ];
+    const types = [ 'margin', 'padding' ];
+    const sides = [ 'top', 'left', 'bottom', 'right' ];
 
-    const normalizedOpacity = Math.max( 0, Math.min( 100, opacity ) ) / 100;
-    const r = Number.parseInt( hex.slice( 1, 3 ), 16 );
-    const g = Number.parseInt( hex.slice( 3, 5 ), 16 );
-    const b = Number.parseInt( hex.slice( 5, 7 ), 16 );
-
-    return `rgba(${ r },${ g },${ b },${ normalizedOpacity })`;
+    return devices.some( ( device ) =>
+        types.some( ( type ) =>
+            sides.some( ( side ) => `${ spacing?.[ device ]?.[ type ]?.[ side ] ?? '' }`.trim() !== '' )
+        )
+    );
 }
 
 export default function Edit( { attributes, setAttributes } ) {
@@ -45,19 +42,26 @@ export default function Edit( { attributes, setAttributes } ) {
         steps,
         bgColor,
         bgOpacity,
+        spacing,
         marginTop,
         marginBottom,
         paddingTop,
         paddingBottom
     } = attributes;
     const backgroundColor = hexToRgba( bgColor || '#0f0f0f', bgOpacity );
+    const useResponsiveSpacing = hasResponsiveSpacingValue( spacing );
     const blockProps = useBlockProps( {
+        className: 'block-journey-gallery',
         style: {
             background: backgroundColor,
-            marginTop: `${ marginTop }px`,
-            marginBottom: `${ marginBottom }px`,
-            paddingTop: `${ paddingTop }px`,
-            paddingBottom: `${ paddingBottom }px`
+            ...( useResponsiveSpacing
+                ? getSpacingVars( spacing, '--laca-journey' )
+                : {
+                    marginTop: `${ marginTop }px`,
+                    marginBottom: `${ marginBottom }px`,
+                    paddingTop: `${ paddingTop }px`,
+                    paddingBottom: `${ paddingBottom }px`
+                } ),
         },
     } );
 
@@ -90,11 +94,24 @@ export default function Edit( { attributes, setAttributes } ) {
     };
     const addStep    = () => setAttributes( { steps: [ ...steps, { title: '', description: '', imageId: 0, imageUrl: '', imageAlt: '' } ] } );
     const removeStep = ( index ) => setAttributes( { steps: steps.filter( ( _, i ) => i !== index ) } );
+    const displaySteps = steps.filter( ( step ) => ( step?.title || '' ).trim() || ( step?.imageUrl || '' ).trim() );
+    const cols = Math.max( 1, Math.ceil( displaySteps.length / 2 ) );
 
     return (
         <>
             <InspectorControls>
-                <BlockConfigPanel textdomain="laca">
+                <BlockBasePanels
+                    attributes={ attributes }
+                    setAttributes={ setAttributes }
+                    textdomain="laca"
+                    titleLabel="Tiêu đề section"
+                    subtitleLabel="Phụ đề section"
+                    titlePlaceholder="HÀNH TRÌNH XÂY NHÀ"
+                    subtitlePlaceholder="Mô tả ngắn cho section"
+                    spacingAttributeKey="spacing"
+                />
+
+                <PanelBody title={ __( 'Nội dung block', 'laca' ) } initialOpen={ true }>
                     <p style={ { marginTop: 0, marginBottom: '0.8rem' } }>
                         { __( 'Thiết lập nội dung chính của block ở đây.', 'laca' ) }
                     </p>
@@ -173,79 +190,71 @@ export default function Edit( { attributes, setAttributes } ) {
                     <Button variant="primary" onClick={ addStep }>
                         { __( '+ Thêm bước', 'laca' ) }
                     </Button>
-                </BlockConfigPanel>
-
-                <TitlePanel
-                    value={ heading }
-                    onChange={ ( value ) => setAttributes( { heading: value } ) }
-                    textdomain="laca"
-                    label="Tiêu đề section"
-                    placeholder="HÀNH TRÌNH XÂY NHÀ"
-                />
-
-                <SubtitlePanel
-                    value={ subheading }
-                    onChange={ ( value ) => setAttributes( { subheading: value } ) }
-                    textdomain="laca"
-                    label="Phụ đề section"
-                    placeholder="Mô tả ngắn cho section"
-                />
-
-                <AppearancePanel
-                    textdomain="laca"
-                    bgColor={ bgColor || '#0f0f0f' }
-                    bgOpacity={ bgOpacity }
-                    setAttributes={ setAttributes }
-                />
-
-                <SpacingPanel
-                    textdomain="laca"
-                    marginTop={ marginTop }
-                    marginBottom={ marginBottom }
-                    paddingTop={ paddingTop }
-                    paddingBottom={ paddingBottom }
-                    setAttributes={ setAttributes }
-                />
+                </PanelBody>
 
             </InspectorControls>
 
             {/* ── Canvas preview ── */}
             <div { ...blockProps }>
-                { heading && (
-                    <div className="block-journey-gallery__header">
-                        <h2 className="block-journey-gallery__heading">{ heading }</h2>
-                        { subheading && (
-                            <p className="block-journey-gallery__subheading">{ subheading }</p>
-                        ) }
-                    </div>
-                ) }
+                <div className="container-fluid">
+                    { heading && (
+                        <div className="block-journey-gallery__header">
+                            <h2 className="block-journey-gallery__heading">{ heading }</h2>
+                            { subheading && (
+                                <p className="block-journey-gallery__subheading">{ subheading }</p>
+                            ) }
+                        </div>
+                    ) }
 
-                { steps.length > 0 ? (
-                    <div className="block-journey-gallery__preview-grid">
-                        { steps.map( ( step, index ) => (
-                            <div key={ index } className="block-journey-gallery__preview-step">
-                                <span className="block-journey-gallery__preview-number">{ index + 1 }</span>
-                                { step.imageUrl && (
-                                    <img
-                                        src={ step.imageUrl }
-                                        alt={ step.imageAlt }
-                                        className="block-journey-gallery__preview-img"
-                                    />
-                                ) }
-                                { step.title && (
-                                    <strong className="block-journey-gallery__preview-title">{ step.title }</strong>
-                                ) }
-                                { step.description && (
-                                    <p className="block-journey-gallery__preview-desc">{ step.description }</p>
-                                ) }
+                    { displaySteps.length > 0 ? (
+                        <div className="block-journey-gallery__track" style={ { '--jg-cols': cols } }>
+                            { displaySteps.map( ( step, index ) => {
+                                const stepNumber = index + 1;
+                                const col = Math.floor( index / 2 ) + 1;
+                                const row = index % 2 === 0 ? 1 : 3;
+                                const isEven = index % 2 !== 0;
+
+                                return (
+                                    <article
+                                        key={ index }
+                                        className={ `block-journey-gallery__step${ isEven ? ' block-journey-gallery__step--even' : '' }` }
+                                        style={ { '--jg-col': col, '--jg-row': row } }
+                                    >
+                                        <div className="block-journey-gallery__content">
+                                            <span className="block-journey-gallery__number">{ stepNumber }</span>
+
+                                            <div className="block-journey-gallery__text">
+                                                { step.title && (
+                                                    <h3 className="block-journey-gallery__title">{ step.title }</h3>
+                                                ) }
+                                                { step.description && (
+                                                    <p className="block-journey-gallery__desc">{ step.description }</p>
+                                                ) }
+                                            </div>
+                                        </div>
+
+                                        { step.imageUrl && (
+                                            <div className="block-journey-gallery__image">
+                                                <img src={ step.imageUrl } alt={ step.imageAlt || step.title || '' } />
+                                            </div>
+                                        ) }
+                                    </article>
+                                );
+                            } ) }
+
+                            <div className="block-journey-gallery__timeline">
+                                <div className="block-journey-gallery__timeline-line"></div>
+                                { displaySteps.map( ( _, index ) => (
+                                    <span key={ `timeline-${ index }` } className="block-journey-gallery__timeline-dot"></span>
+                                ) ) }
                             </div>
-                        ) ) }
-                    </div>
-                ) : (
-                    <p style={ { textAlign: 'center', color: '#888', padding: '3rem 2rem' } }>
-                        { __( 'Thêm các bước hành trình trong sidebar →', 'laca' ) }
-                    </p>
-                ) }
+                        </div>
+                    ) : (
+                        <p style={ { textAlign: 'center', color: '#888', padding: '3rem 2rem' } }>
+                            { __( 'Thêm các bước hành trình trong sidebar →', 'laca' ) }
+                        </p>
+                    ) }
+                </div>
             </div>
         </>
     );

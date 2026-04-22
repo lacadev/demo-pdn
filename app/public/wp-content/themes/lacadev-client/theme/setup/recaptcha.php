@@ -16,11 +16,13 @@ class Laca_Recaptcha {
     private $site_key;
     private $secret_key;
     private $score_threshold;
+    private $expected_hostname;
 
     public function __construct() {
         $this->site_key = getOption('recaptcha_site_key');
         $this->secret_key = getOption('recaptcha_secret_key');
         $this->score_threshold = (float) getOption('recaptcha_score') ?: 0.5;
+        $this->expected_hostname = strtolower((string) wp_parse_url(home_url('/'), PHP_URL_HOST));
 
         // Skip if keys are missing
         if (empty($this->site_key) || empty($this->secret_key)) {
@@ -100,12 +102,14 @@ class Laca_Recaptcha {
      */
     public function print_hidden_field() {
         echo '<input type="hidden" name="laca_recaptcha_response" class="laca-recaptcha-response" value="">';
+        echo '<input type="text" name="laca_hp_email" class="laca-hp-email" value="" autocomplete="off" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;pointer-events:none;">';
+        echo '<input type="hidden" name="laca_form_ts" value="' . esc_attr((string) time()) . '">';
     }
 
     /**
      * Verify Token Logic
      */
-    private function verify_token($token) {
+    private function verify_token($token, $expected_action = 'submit') {
         if (empty($token)) {
             return new WP_Error('recaptcha_error', __('Vui lòng tải lại trang để xác thực reCAPTCHA.', 'laca'));
         }
@@ -125,12 +129,56 @@ class Laca_Recaptcha {
         $body = wp_remote_retrieve_body($response);
         $result = json_decode($body, true);
 
+        if (!is_array($result)) {
+            return new WP_Error('recaptcha_error', __('Phản hồi xác thực không hợp lệ.', 'laca'));
+        }
+
         if (empty($result['success']) || !$result['success']) {
             return new WP_Error('recaptcha_error', __('Xác thực reCAPTCHA thất bại. Bạn có phải là robot?', 'laca'));
         }
 
-        if ($result['score'] < $this->score_threshold) {
+        if (empty($result['score']) || !is_numeric($result['score']) || (float) $result['score'] < $this->score_threshold) {
              return new WP_Error('recaptcha_low_score', __('Hệ thống nghi ngờ bạn là robot. Điểm tín nhiệm thấp.', 'laca'));
+        }
+
+        if (!empty($expected_action) && (!isset($result['action']) || $result['action'] !== $expected_action)) {
+            return new WP_Error('recaptcha_action_mismatch', __('Phiên xác thực không hợp lệ (action).', 'laca'));
+        }
+
+        if (!empty($this->expected_hostname) && !empty($result['hostname'])) {
+            $result_hostname = strtolower((string) $result['hostname']);
+            if ($result_hostname !== $this->expected_hostname) {
+                return new WP_Error('recaptcha_hostname_mismatch', __('Phiên xác thực không hợp lệ (hostname).', 'laca'));
+            }
+        }
+
+        if (!empty($result['challenge_ts'])) {
+            $challenge_time = strtotime((string) $result['challenge_ts']);
+            if ($challenge_time !== false && (time() - $challenge_time) > 180) {
+                return new WP_Error('recaptcha_timeout', __('Mã xác thực đã hết hạn, vui lòng thử lại.', 'laca'));
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Validate anti-bot context fields.
+     */
+    private function validate_submission_context() {
+        $honeypot = isset($_POST['laca_hp_email']) ? sanitize_text_field(wp_unslash($_POST['laca_hp_email'])) : '';
+        if ($honeypot !== '') {
+            return new WP_Error('bot_detected', __('Yêu cầu không hợp lệ.', 'laca'));
+        }
+
+        $form_ts = isset($_POST['laca_form_ts']) ? (int) $_POST['laca_form_ts'] : 0;
+        if ($form_ts <= 0) {
+            return new WP_Error('invalid_form_context', __('Phiên gửi biểu mẫu không hợp lệ.', 'laca'));
+        }
+
+        $elapsed = time() - $form_ts;
+        if ($elapsed < 2 || $elapsed > 7200) {
+            return new WP_Error('invalid_form_timing', __('Thời gian gửi biểu mẫu không hợp lệ.', 'laca'));
         }
 
         return true;
@@ -140,12 +188,17 @@ class Laca_Recaptcha {
      * Validate Login
      */
     public function verify_login($user, $username, $password) {
-        if (isset($_POST['laca_recaptcha_response'])) {
-            $verify = $this->verify_token($_POST['laca_recaptcha_response']);
-            if (is_wp_error($verify)) {
-                return $verify;
-            }
+        $context_check = $this->validate_submission_context();
+        if (is_wp_error($context_check)) {
+            return $context_check;
         }
+
+        $token = isset($_POST['laca_recaptcha_response']) ? sanitize_text_field(wp_unslash($_POST['laca_recaptcha_response'])) : '';
+        $verify = $this->verify_token($token, 'submit');
+        if (is_wp_error($verify)) {
+            return $verify;
+        }
+
         return $user;
     }
 
@@ -153,12 +206,18 @@ class Laca_Recaptcha {
      * Validate Registration
      */
     public function verify_registration($errors, $sanitized_user_login, $user_email) {
-        if (isset($_POST['laca_recaptcha_response'])) {
-            $verify = $this->verify_token($_POST['laca_recaptcha_response']);
-            if (is_wp_error($verify)) {
-                $errors->add('recaptcha_error', $verify->get_error_message());
-            }
+        $context_check = $this->validate_submission_context();
+        if (is_wp_error($context_check)) {
+            $errors->add('recaptcha_error', $context_check->get_error_message());
+            return $errors;
         }
+
+        $token = isset($_POST['laca_recaptcha_response']) ? sanitize_text_field(wp_unslash($_POST['laca_recaptcha_response'])) : '';
+        $verify = $this->verify_token($token, 'submit');
+        if (is_wp_error($verify)) {
+            $errors->add('recaptcha_error', $verify->get_error_message());
+        }
+
         return $errors;
     }
 
@@ -166,8 +225,14 @@ class Laca_Recaptcha {
      * Validate Comment
      */
     public function verify_comment($commentdata) {
-        if (!is_user_logged_in() && isset($_POST['laca_recaptcha_response'])) {
-            $verify = $this->verify_token($_POST['laca_recaptcha_response']);
+        if (!is_user_logged_in()) {
+            $context_check = $this->validate_submission_context();
+            if (is_wp_error($context_check)) {
+                wp_die($context_check->get_error_message());
+            }
+
+            $token = isset($_POST['laca_recaptcha_response']) ? sanitize_text_field(wp_unslash($_POST['laca_recaptcha_response'])) : '';
+            $verify = $this->verify_token($token, 'submit');
             if (is_wp_error($verify)) {
                 wp_die($verify->get_error_message());
             }

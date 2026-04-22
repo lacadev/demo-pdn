@@ -83,8 +83,8 @@
             "default": 55
         }
     },
-    "editorScript": "lacadev-block-block-team-leaders-editor",
-    "style": "lacadev-block-block-team-leaders",
+    "editorScript": "block-block-team-leaders-editor",
+    "style": "block-block-team-leaders",
     "example": {
         "viewportWidth": 800,
         "attributes": {

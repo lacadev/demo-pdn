@@ -103,8 +103,8 @@
             "default": 55
         }
     },
-    "editorScript": "lacadev-block-block-featured-projects-editor",
-    "style": "lacadev-block-block-featured-projects",
+    "editorScript": "block-block-featured-projects-editor",
+    "style": "block-block-featured-projects",
     "example": {
         "viewportWidth": 800,
         "attributes": {

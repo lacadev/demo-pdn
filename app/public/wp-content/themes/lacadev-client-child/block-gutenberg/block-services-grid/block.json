@@ -125,8 +125,8 @@
             "default": 55
         }
     },
-    "editorScript": "lacadev-block-block-services-grid-editor",
-    "style": "lacadev-block-block-services-grid",
+    "editorScript": "block-block-services-grid-editor",
+    "style": "block-block-services-grid",
     "example": {
         "viewportWidth": 800,
         "attributes": {

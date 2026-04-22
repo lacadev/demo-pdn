@@ -70,6 +70,7 @@ if ( ! $has_video ) {
 
 $style_vars = [];
 $spacing    = is_array( $attributes['spacing'] ?? null ) ? $attributes['spacing'] : [];
+$raw_attrs  = is_array( $block->parsed_block['attrs'] ?? null ) ? $block->parsed_block['attrs'] : [];
 $devices    = [ 'desktop', 'tablet', 'mobile' ];
 $types      = [ 'margin', 'padding' ];
 $sides      = [ 'top', 'left', 'bottom', 'right' ];
@@ -91,17 +92,17 @@ foreach ( $devices as $device ) {
 }
 
 if ( empty( $style_vars ) ) {
-	// Backward compatibility for old block attributes.
-	if ( isset( $attributes['marginTop'] ) ) {
+	// Backward compatibility: only use legacy spacing when values were explicitly saved in block attrs.
+	if ( array_key_exists( 'marginTop', $raw_attrs ) ) {
 		$style_vars[] = '--laca-video-margin-top:' . intval( $attributes['marginTop'] ) . 'px';
 	}
-	if ( isset( $attributes['marginBottom'] ) ) {
+	if ( array_key_exists( 'marginBottom', $raw_attrs ) ) {
 		$style_vars[] = '--laca-video-margin-bottom:' . intval( $attributes['marginBottom'] ) . 'px';
 	}
-	if ( isset( $attributes['paddingTop'] ) ) {
+	if ( array_key_exists( 'paddingTop', $raw_attrs ) ) {
 		$style_vars[] = '--laca-video-padding-top:' . intval( $attributes['paddingTop'] ) . 'px';
 	}
-	if ( isset( $attributes['paddingBottom'] ) ) {
+	if ( array_key_exists( 'paddingBottom', $raw_attrs ) ) {
 		$style_vars[] = '--laca-video-padding-bottom:' . intval( $attributes['paddingBottom'] ) . 'px';
 	}
 }
@@ -138,7 +139,6 @@ if ( ! function_exists( 'lacadev_parse_video_url' ) ) {
 		return $result;
 	}
 }
-
 ?>
 
 <section <?php echo $wrapper_attrs; ?>>
@@ -152,8 +152,8 @@ if ( ! function_exists( 'lacadev_parse_video_url' ) ) {
 
                 // Thêm params autoplay / loop
                 $params = [];
-                if ( $autoplay ) $params[] = ( 'youtube' === $parsed['type'] ) ? 'autoplay=1' : 'autoplay=1';
-                if ( $loop )     $params[] = ( 'youtube' === $parsed['type'] ) ? 'loop=1' : 'loop=1';
+                if ( $autoplay ) $params[] = 'autoplay=1';
+                if ( $loop )     $params[] = 'loop=1';
                 if ( $muted )    $params[] = ( 'youtube' === $parsed['type'] ) ? 'mute=1' : 'muted=1';
                 if ( $params )   $embed_url .= '?' . implode( '&', $params );
             ?>
@@ -213,4 +213,3 @@ if ( ! function_exists( 'lacadev_parse_video_url' ) ) {
         </div><!-- .laca-video-block__media-wrap -->
     </div><!-- .laca-video-block__inner -->
 </section>
-

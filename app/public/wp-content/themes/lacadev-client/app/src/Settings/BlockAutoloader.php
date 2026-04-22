@@ -19,7 +19,8 @@ class BlockAutoloader
     {
         $childRoot = dirname(get_stylesheet_directory());
         $blockDir  = $childRoot . '/block-gutenberg';
-        $childUri  = dirname(get_stylesheet_directory_uri());
+        $childUri = get_stylesheet_directory_uri();
+        $childUri = preg_replace('#/theme/?$#', '', $childUri);
 
         if (!is_dir($blockDir)) {
             return;
@@ -84,6 +85,12 @@ class BlockAutoloader
                     require $renderPhp;
                     return ob_get_clean();
                 };
+            }
+
+            // Skip if block is already registered (by lacadev_child_register_synced_blocks at priority 15)
+            $fullName = $blockData['name'];
+            if (\WP_Block_Type_Registry::get_instance()->is_registered($fullName)) {
+                continue;
             }
 
             register_block_type($blockFolder, $blockArgs);

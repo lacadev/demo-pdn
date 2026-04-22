@@ -135,6 +135,6 @@
             "default": 55
         }
     },
-    "editorScript": "lacadev-block-block-projects-slider-editor",
-    "style": "lacadev-block-block-projects-slider"
+    "editorScript": "block-block-projects-slider-editor",
+    "style": "block-block-projects-slider"
 }

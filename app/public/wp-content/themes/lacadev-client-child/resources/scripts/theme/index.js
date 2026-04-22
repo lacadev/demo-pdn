@@ -1,5 +1,6 @@
-// Child theme custom scripts only
-// (parent theme JS đã bundle trong dist/theme.js)
+// Child theme custom scripts only.
+// Parent theme core JS đã được enqueue trước qua handle `theme-js-bundle`.
 import './components/stats-counter.js';
-import './components/mobile-menu.js';
 import './components/archive-gallery.js';
+import './components/footer-contact-form.js';
+import './components/aos-global.js';

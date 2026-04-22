@@ -13,6 +13,7 @@
 @use "./theme/base/fonts";
 
 // === Layout ===
+@use "./theme/layout/common-blocks";
 @use "./theme/layout/general";
 @use "./theme/layout/header";
 @use "./theme/layout/footer";

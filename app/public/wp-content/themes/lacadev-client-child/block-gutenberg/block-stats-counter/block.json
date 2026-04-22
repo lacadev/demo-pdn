@@ -94,8 +94,8 @@
             "default": 0
         }
     },
-    "editorScript": "lacadev-block-block-stats-counter-editor",
-    "style": "lacadev-block-block-stats-counter",
+    "editorScript": "block-block-stats-counter-editor",
+    "style": "block-block-stats-counter",
     "example": {
         "viewportWidth": 800,
         "attributes": {

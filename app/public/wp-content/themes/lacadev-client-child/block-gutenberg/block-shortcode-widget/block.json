@@ -5,8 +5,8 @@
     "title": "Shortcode Widget",
     "category": "lacadev-blocks",
     "icon": "shortcode",
-    "editorScript": "lacadev-block-block-shortcode-widget-editor",
-    "style": "lacadev-block-block-shortcode-widget",
+    "editorScript": "block-block-shortcode-widget-editor",
+    "style": "block-block-shortcode-widget",
     "textdomain": "laca",
     "supports": {
         "html": false

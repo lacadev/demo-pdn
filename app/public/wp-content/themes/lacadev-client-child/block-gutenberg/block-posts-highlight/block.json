@@ -5,8 +5,8 @@
     "title": "Posts Highlight Block",
     "category": "lacadev-blocks",
     "icon": "layout",
-    "editorScript": "lacadev-block-block-posts-highlight-editor",
-    "style": "lacadev-block-block-posts-highlight",
+    "editorScript": "block-block-posts-highlight-editor",
+    "style": "block-block-posts-highlight",
     "textdomain": "laca",
     "supports": {
         "html": false,

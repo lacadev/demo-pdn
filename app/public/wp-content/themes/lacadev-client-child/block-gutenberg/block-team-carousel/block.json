@@ -5,8 +5,8 @@
     "title": "Team Carousel",
     "category": "lacadev-blocks",
     "icon": "groups",
-    "editorScript": "lacadev-block-block-team-carousel-editor",
-    "style": "lacadev-block-block-team-carousel",
+    "editorScript": "block-block-team-carousel-editor",
+    "style": "block-block-team-carousel",
     "textdomain": "laca",
     "supports": {
         "html": false,
