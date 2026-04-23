@@ -65,11 +65,14 @@ $swiper_id = 'video-feedback-' . $vf_instance;
 <section <?php echo get_block_wrapper_attributes(['class' => 'block-video-feedback']); ?> style="background:<?php echo esc_attr($bg_rgba); ?>;">
     <div class="container">
 
-        <?php if ($heading): ?>
-            <div class="block-video-feedback__header">
-                <h2 class="block-video-feedback__heading"><?php echo $heading; ?></h2>
-            </div>
-        <?php endif; ?>
+        <!-- HEADER -->
+        <div class="header-section" data-aos="fade-up">
+            <?php 
+            if ( $heading ) :
+                echo '<h2 class="heading">' . $heading . '</h2>';
+            endif;
+            ?>
+        </div>
 
         <div class="swiper block-video-feedback__swiper" id="<?php echo esc_attr($swiper_id); ?>">
             <div class="swiper-wrapper">

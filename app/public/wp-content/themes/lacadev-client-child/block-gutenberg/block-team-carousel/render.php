@@ -96,13 +96,13 @@ $scale_ratio_css = round( $inactive_scale / 100, 2 );
             <?php endforeach; ?>
         </div>
 
-        <button class="swiper-button-prev" aria-label="<?php esc_attr_e( 'Trước', 'laca' ); ?>">
+        <button type="button" class="swiper-button-prev" aria-label="<?php esc_attr_e( 'Trước', 'laca' ); ?>">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="15 18 9 12 15 6"/>
             </svg>
         </button>
-        <button class="swiper-button-next" aria-label="<?php esc_attr_e( 'Tiếp theo', 'laca' ); ?>">
+        <button type="button" class="swiper-button-next" aria-label="<?php esc_attr_e( 'Tiếp theo', 'laca' ); ?>">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6"/>
@@ -123,6 +123,7 @@ wp_add_inline_style( 'swiper', $instance_style );
 
 // ── Inline Swiper init ─────────────────────────────────────────────────────
 // Scale effect is handled by CSS .swiper-slide-active selector.
+// Use rewind to keep order deterministic without loop clones.
 // If inactiveScale differs from CSS default (62%), inject a custom property.
 $scale_override = '';
 if ( $inactive_scale !== 62 ) {
@@ -160,31 +161,28 @@ $js = sprintf( '
         swiperInstance = new Swiper("#%2$s", {
             slidesPerView: 1.35,
             centeredSlides: true,
-            centeredSlidesBounds: true,
             spaceBetween: %4$d,
-            loop: %5$s,
-            loopedSlides: %6$d,
-            loopAdditionalSlides: %6$d,
-            loopedSlidesLimit: false,
+            loop: false,
+            rewind: %5$s,
             watchOverflow: false,
             observer: true,
             observeParents: true,
             speed: 500,
             initialSlide: 0,
             breakpoints: {
-                768:  { slidesPerView: 2.2, centeredSlides: true, centeredSlidesBounds: true },
-                1200: { slidesPerView: 3,   centeredSlides: true, centeredSlidesBounds: true }
+                768:  { slidesPerView: 2.2, centeredSlides: true },
+                1200: { slidesPerView: 3,   centeredSlides: true }
             },
-            %7$s
+            %6$s
             navigation: {
                 nextEl: "#%2$s .swiper-button-next",
                 prevEl: "#%2$s .swiper-button-prev"
             }
         });
 
-        // Always anchor on first real slide to keep order deterministic.
-        if (forceFirstSlide && %8$s && typeof swiperInstance.slideToLoop === "function") {
-            swiperInstance.slideToLoop(0, 0, false);
+        // Always anchor on first slide to keep order deterministic.
+        if (forceFirstSlide) {
+            swiperInstance.slideTo(0, 0, false);
         }
     }
 
@@ -221,11 +219,9 @@ $js = sprintf( '
     $swiper_id,                                    // %2$s — swiper id
     $scale_override,                               // %3$s — optional CSS var override
     $space_between,                                // %4$d — spaceBetween
-    $loop ? 'true' : 'false',                      // %5$s — loop
-    max( 3, $slides_count ),                       // %6$d — loopedSlides
-    $autoplay                                      // %7$s — optional autoplay
+    $loop ? 'true' : 'false',                      // %5$s — rewind
+    $autoplay                                      // %6$s — optional autoplay
         ? sprintf( 'autoplay:{delay:%d,disableOnInteraction:false,pauseOnMouseEnter:true},', $autoplay_delay )
-        : '',
-    $loop ? 'true' : 'false'                       // %8$s — loop flag for slideToLoop
+        : ''
 );
 wp_add_inline_script( 'swiper', $js );

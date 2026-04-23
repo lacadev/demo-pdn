@@ -9,8 +9,6 @@
  * @package WPEmergeTheme
  */
 
-theBreadcrumb();
-
 // ── Query context ─────────────────────────────────────────────────────────────
 global $wp_query;
 
@@ -54,7 +52,17 @@ $ajax_config = wp_json_encode( [
 ] );
 ?>
 
-<div class="laca-gallery-archive" data-archive-config='<?php echo $ajax_config; ?>'>
+<!-- <div class="breadcumb">
+	<div class="container-fluid">
+		<?php
+		// if ( function_exists('rank_math_the_breadcrumbs') ) :
+		// 	rank_math_the_breadcrumbs();
+		// endif;
+		?>
+	</div>
+</div> -->
+
+<div id="laca-gallery-archive" class="laca-gallery-archive" data-archive-config='<?php echo $ajax_config; ?>'>
 	<?php get_template_part( 'template-parts/page-hero' ); ?>
 
 	<div class="container-fluid">

@@ -17,6 +17,7 @@ $bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ( $bg_opacity / 100 ) . ')
  * @package lacadev-client-child
  */
 
+$heading = esc_html( $attributes['sectionTitle'] ?? '' );
 
 $service_groups = $attributes['serviceGroups']   ?? [];
 
@@ -44,83 +45,84 @@ $wrapper_attrs = get_block_wrapper_attributes( [
 
 <section <?php echo $wrapper_attrs; ?>>
     <div class="container">
-    <?php if ( ! empty( $attributes['sectionTitle'] ) ) : ?>
-        <h2 class="block-services-grid__section-title"><?php echo esc_html( $attributes['sectionTitle'] ); ?></h2>
-    <?php endif; ?>
-
-    <?php foreach ( $service_groups as $group ) :
-        $layout = sanitize_key( $group['layout'] ?? 'left-main-right-grid' );
-        $title  = esc_html( $group['title'] ?? '' );
-        $link   = esc_url( $group['link']   ?? '' );
-    ?>
-
-    <div class="block-services-grid__group block-services-grid__group--<?php echo $layout; ?>">
-        <?php if ( $layout === 'top-title-3cols' ) : ?>
-            <?php if ( $title ) : ?>
-                <p class="block-services-grid__group-title text-end"><?php echo $title; ?></p>
-            <?php endif; ?>
-
-            <div class="block-services-grid__cols">
-                <?php foreach ( $group['items'] ?? [] as $item ) : ?>
-                    <div class="block-services-grid__col-item">
-                        <?php lcdc_services_render_img( $item['imageUrl'] ?? '', $item['label'] ?? '', $item['link'] ?? '' ); ?>
-                        <?php if ( ! empty( $item['label'] ) ) : ?>
-                            <span class="block-services-grid__label"><?php echo esc_html( $item['label'] ); ?></span>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-
-        <?php else : ?>
-
-            <div class="block-services-grid__main-layout">
-                <?php
-                $main_url = $group['mainImageUrl'] ?? '';
-                $sub_imgs = $group['subImages']    ?? [];
-
-                if ( $layout === 'right-main-left-grid' ) :
-                ?>
-                    <div class="block-services-grid__side-content">
-                        <?php if ( $title ) : ?>
-                            <p class="block-services-grid__group-title"><?php echo $title; ?></p>
-                        <?php endif; ?>
-                        <div class="block-services-grid__sub-imgs">
-                            <?php foreach ( $sub_imgs as $sub ) : ?>
-                                <div class="block-services-grid__sub-img">
-                                    <?php lcdc_services_render_img( $sub['imageUrl'] ?? '', $title, '' ); ?>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                    <div class="block-services-grid__main-img">
-                        <?php lcdc_services_render_img( $main_url, $title, $link ); ?>
-                    </div>
-
-                <?php else : ?>
-                    <?php // left-main-right-grid ?>
-                    <div class="block-services-grid__main-img">
-                        <?php lcdc_services_render_img( $main_url, $title, $link ); ?>
-                    </div>
-                    <div class="block-services-grid__side-content">
-                        <?php if ( $title ) : ?>
-                            <p class="block-services-grid__group-title"><?php echo $title; ?></p>
-                        <?php endif; ?>
-                        <div class="block-services-grid__sub-imgs">
-                            <?php foreach ( $sub_imgs as $sub ) : ?>
-                                <div class="block-services-grid__sub-img">
-                                    <?php lcdc_services_render_img( $sub['imageUrl'] ?? '', $title, '' ); ?>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-        <?php endif; ?>
+        <!-- HEADER -->
+        <div class="header-section" data-aos="fade-up">
+            <?php 
+            if ( $heading ) :
+                echo '<h2 class="heading">' . $heading . '</h2>';
+            endif;
+            ?>
         </div>
 
-        
+        <?php foreach ( $service_groups as $group ) :
+            $layout = sanitize_key( $group['layout'] ?? 'left-main-right-grid' );
+            $title  = esc_html( $group['title'] ?? '' );
+            $link   = esc_url( $group['link']   ?? '' );
+        ?>
+
+        <div class="block-services-grid__group block-services-grid__group--<?php echo $layout; ?>">
+            <?php if ( $layout === 'top-title-3cols' ) : ?>
+                <?php if ( $title ) : ?>
+                    <p class="block-services-grid__group-title text-end"><?php echo $title; ?></p>
+                <?php endif; ?>
+
+                <div class="block-services-grid__cols">
+                    <?php foreach ( $group['items'] ?? [] as $item ) : ?>
+                        <div class="block-services-grid__col-item">
+                            <?php lcdc_services_render_img( $item['imageUrl'] ?? '', $item['label'] ?? '', $item['link'] ?? '' ); ?>
+                            <?php if ( ! empty( $item['label'] ) ) : ?>
+                                <span class="block-services-grid__label"><?php echo esc_html( $item['label'] ); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+            <?php else : ?>
+
+                <div class="block-services-grid__main-layout">
+                    <?php
+                    $main_url = $group['mainImageUrl'] ?? '';
+                    $sub_imgs = $group['subImages']    ?? [];
+
+                    if ( $layout === 'right-main-left-grid' ) :
+                    ?>
+                        <div class="block-services-grid__side-content">
+                            <?php if ( $title ) : ?>
+                                <p class="block-services-grid__group-title"><?php echo $title; ?></p>
+                            <?php endif; ?>
+                            <div class="block-services-grid__sub-imgs">
+                                <?php foreach ( $sub_imgs as $sub ) : ?>
+                                    <div class="block-services-grid__sub-img">
+                                        <?php lcdc_services_render_img( $sub['imageUrl'] ?? '', $title, '' ); ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <div class="block-services-grid__main-img">
+                            <?php lcdc_services_render_img( $main_url, $title, $link ); ?>
+                        </div>
+
+                    <?php else : ?>
+                        <?php // left-main-right-grid ?>
+                        <div class="block-services-grid__main-img">
+                            <?php lcdc_services_render_img( $main_url, $title, $link ); ?>
+                        </div>
+                        <div class="block-services-grid__side-content">
+                            <?php if ( $title ) : ?>
+                                <p class="block-services-grid__group-title"><?php echo $title; ?></p>
+                            <?php endif; ?>
+                            <div class="block-services-grid__sub-imgs">
+                                <?php foreach ( $sub_imgs as $sub ) : ?>
+                                    <div class="block-services-grid__sub-img">
+                                        <?php lcdc_services_render_img( $sub['imageUrl'] ?? '', $title, '' ); ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        </div>
         <?php endforeach; ?>
-        
     </div>
 </section>

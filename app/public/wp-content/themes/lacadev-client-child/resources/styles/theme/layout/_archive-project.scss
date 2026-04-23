@@ -11,6 +11,26 @@
 
 // ── Wrapper ───────────────────────────────────────────────────────────────────
 .laca-project-archive {
+	.laca-gallery-card__link {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		color: inherit;
+		text-decoration: none;
+		transition: transform 0.3s ease;
+	}
+
+	.laca-gallery-card__title {
+		transition: color 0.25s ease;
+	}
+
+	.laca-gallery-card:hover .laca-gallery-card__title {
+		color: $secondColor;
+	}
+
+	.laca-gallery-card:hover .laca-gallery-card__img img {
+		transform: scale(1.06);
+	}
 
 	// ── Filter tabs ────────────────────────────────────────────────────────
 	&__filter {

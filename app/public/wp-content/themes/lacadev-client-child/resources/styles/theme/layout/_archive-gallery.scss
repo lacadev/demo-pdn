@@ -26,7 +26,7 @@
 	}
 
 	&__title {
-		font-size: 2.4rem;
+		font-size: rem(24);
 		font-weight: $semiBold;
 		text-transform: uppercase;
 		color: #fff;
@@ -47,12 +47,12 @@
 		justify-content: space-between;
 		gap: 1.2rem;
 		width: 100%;
-		padding: 1.2rem 1.6rem;
+		padding: .8rem 1rem;
 		background: transparent;
 		border: 1.5px solid rgba(255, 255, 255, 0.25);
 		border-radius: 5rem;
 		color: #fff;
-		font-size: 1.4rem;
+		font-size: rem(24);
 		font-weight: $medium;
 		cursor: pointer;
 		transition: border-color 0.2s ease;
@@ -345,4 +345,51 @@
 #gallery-pagination {
 	margin-top: 4rem;
 	text-align: center;
+}
+
+.laca-tv-archive {
+	.laca-gallery-card__link {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		height: 100%;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.laca-gallery-card__title-wrap {
+		display: flex;
+		align-items: center;
+		gap: 1.2rem;
+		margin-bottom: 1.2rem;
+	}
+
+	.laca-gallery-card__yt-icon {
+		flex: 0 0 auto;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 4.2rem;
+		height: 2.9rem;
+		border-radius: 0.6rem;
+		background: #2a2a2a;
+		transition: background-color 0.25s ease;
+
+		svg {
+			width: 2.4rem;
+			height: 2.4rem;
+		}
+
+		svg path {
+			fill: #fff;
+		}
+	}
+
+	.laca-gallery-card__title {
+		margin-bottom: 0;
+	}
+
+	.laca-gallery-card:hover .laca-gallery-card__yt-icon {
+		background: #ff0000;
+	}
 }

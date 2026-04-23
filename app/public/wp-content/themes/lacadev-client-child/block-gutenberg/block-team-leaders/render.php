@@ -17,7 +17,7 @@ $bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ( $bg_opacity / 100 ) . ')
  * @package lacadev-client-child
  */
 
-$section_title = esc_html( $attributes['sectionTitle'] ?? 'CON NGƯỜI PHÚC ĐẠI NAM' );
+$heading = esc_html( $attributes['sectionTitle'] ?? 'CON NGƯỜI PHÚC ĐẠI NAM' );
 
 $leaders       = $attributes['leaders'] ?? [];
 ?>
@@ -25,13 +25,19 @@ $leaders       = $attributes['leaders'] ?? [];
 <section <?php echo get_block_wrapper_attributes( [ 'class' => 'block-team-leaders' ] ); ?> style="background:<?php echo esc_attr($bg_rgba); ?>;" >
     <div class="block-team-leaders__inner">
 
-        <?php if ( $section_title ) : ?>
-            <h2 class="block-team-leaders__title"><?php echo $section_title; ?></h2>
-        <?php endif; ?>
+        <!-- HEADER -->
+        <div class="header-section" data-aos="fade-up">
+            <?php 
+            if ( $heading ) :
+                echo '<h2 class="heading">' . $heading . '</h2>';
+            endif;
+            ?>
+        </div>
 
         <div class="block-team-leaders__grid">
-            <?php foreach ( $leaders as $leader ) : ?>
-                <div class="block-team-leaders__card">
+            <?php foreach ( $leaders as $leader_index => $leader ) : ?>
+                <?php $leader_aos = ( ( $leader_index + 1 ) % 2 === 1 ) ? 'fade-right' : 'fade-left'; ?>
+                <div class="block-team-leaders__card" data-aos="<?php echo esc_attr( $leader_aos ); ?>">
 
                     <figure class="block-team-leaders__figure">
                         <?php if ( ! empty( $leader['imageUrl'] ) ) : ?>
@@ -50,7 +56,7 @@ $leaders       = $attributes['leaders'] ?? [];
                             <span class="block-team-leaders__prefix"><?php echo esc_html( $leader['prefix'] ?? '' ); ?></span>
                             <strong class="block-team-leaders__name"><?php echo esc_html( $leader['name'] ?? '' ); ?></strong>
                         </div>
-                        <div class="block-team-leaders__badge"><?php echo esc_html( $leader['position'] ?? '' ); ?></div>
+                        <div class="block-team-leaders__badge" data-aos="<?php echo esc_attr( $leader_aos ); ?>"><?php echo esc_html( $leader['position'] ?? '' ); ?></div>
                     </div>
 
                     <?php if ( ! empty( $leader['quote'] ) ) : ?>

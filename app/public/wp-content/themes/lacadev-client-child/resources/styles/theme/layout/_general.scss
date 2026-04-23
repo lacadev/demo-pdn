@@ -22,6 +22,21 @@ body:not(.wp-admin) {
 
 h1.page-title {
   color: $secondColor;
+  font-size: rem(32);
+  text-transform: uppercase;
+
+  @include maxWidth($xxl) {
+    font-size: rem(24);
+  }
+
+  @include maxWidth($lg) {
+    margin-bottom: 4rem;
+    font-size: rem(18);
+  }
+
+  @include maxWidth($xs) {
+    margin-bottom: 3rem;
+  }
 }
 
 figcaption {

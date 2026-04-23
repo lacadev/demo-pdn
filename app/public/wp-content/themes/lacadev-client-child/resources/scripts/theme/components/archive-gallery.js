@@ -11,7 +11,7 @@
 import '@fancyapps/ui/dist/fancybox/fancybox.css';
 import { Fancybox } from '@fancyapps/ui';
 
-const ROOT_SELECTOR   = '.laca-gallery-archive';
+const ROOT_SELECTOR   = '#laca-gallery-archive';
 const GRID_ID         = 'gallery-grid';
 const PAGINATION_ID   = 'gallery-pagination';
 const FILTER_SELECTOR = '.laca-gallery-filter';

@@ -16,7 +16,7 @@ $g = hexdec( substr( $bg_color, 3, 2 ) );
 $b = hexdec( substr( $bg_color, 5, 2 ) );
 $bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ( $bg_opacity / 100 ) . ')';
 // ── Attributes ─────────────────────────────────────────────────────────────────
-$section_title   = esc_html( $attributes['sectionTitle']   ?? 'Tin Mới Nhất' );
+$heading   = esc_html( $attributes['sectionTitle']   ?? 'Tin Mới Nhất' );
 $cta_text        = esc_html( $attributes['ctaText']        ?? 'Đọc thêm' );
 $post_type       = sanitize_key( $attributes['postType']   ?? 'post' );
 $taxonomy        = sanitize_key( $attributes['taxonomy']   ?? '' );
@@ -88,12 +88,14 @@ $wrapper_attrs = get_block_wrapper_attributes( [ 'class' => 'block-posts-highlig
 
 <section <?php echo $wrapper_attrs; ?>>
     <div class="container">
-
-        <?php if ( $section_title ) : ?>
-        <div class="phb__header">
-            <h2 class="phb__heading"><?php echo $section_title; ?></h2>
+        <!-- HEADER -->
+        <div class="header-section" data-aos="fade-up">
+            <?php 
+            if ( $heading ) :
+                echo '<h2 class="heading">' . $heading . '</h2>';
+            endif;
+            ?>
         </div>
-        <?php endif; ?>
 
         <div class="phb__grid">
             <?php foreach ( $posts as $post ) :
@@ -102,8 +104,9 @@ $wrapper_attrs = get_block_wrapper_attributes( [ 'class' => 'block-posts-highlig
                 $title     = esc_html( get_the_title( $post ) );
                 $thumb_id  = get_post_thumbnail_id( $post->ID );
                 $thumb_url = $thumb_id ? esc_url( get_the_post_thumbnail_url( $post->ID, 'medium_large' ) ) : '';
+                $post_index = $loop->current_post;
             ?>
-            <a href="<?php echo $post_url; ?>" class="phb__card">
+            <a href="<?php echo $post_url; ?>" class="phb__card" data-aos="fade-up" data-aos-delay="<?php echo $post_index * 100; ?>">
                 <div class="phb__card-inner">
                     <div class="phb__thumb">
                         <?php if ( $thumb_url ) : ?>
