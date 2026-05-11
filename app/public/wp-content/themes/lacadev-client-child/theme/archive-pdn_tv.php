@@ -54,26 +54,27 @@ $ajax_config = wp_json_encode( [
 	'max_pages'      => (int) $wp_query->max_num_pages,
 	'archive_url'    => esc_url( $archive_url ),
 	'query_param'    => 'tv-cat',
+	'pretty_paged'   => (bool) get_option( 'permalink_structure' ),
 ] );
 ?>
 
-<!-- <div class="breadcumb">
+<div class="breadcumb">
 	<div class="container-fluid">
 		<?php
-		// if ( function_exists('rank_math_the_breadcrumbs') ) :
-		// 	rank_math_the_breadcrumbs();
-		// endif;
+		if ( function_exists('rank_math_the_breadcrumbs') ) :
+			rank_math_the_breadcrumbs();
+		endif;
 		?>
 	</div>
-</div> -->
+</div>
 
 <div id="laca-tv-archive" class="laca-gallery-archive laca-tv-archive" data-archive-config='<?php echo $ajax_config; ?>'>
-	<?php get_template_part( 'template-parts/page-hero' ); ?>
+	<?php //get_template_part( 'template-parts/page-hero' ); ?>
 
 	<div class="container-fluid">
 		<?php if ( ! is_wp_error( $filter_cats ) && ! empty( $filter_cats ) ) : ?>
 			<div class="laca-gallery-toolbar">
-				<h2 class="laca-gallery-toolbar__title"><?php echo esc_html( $active_cat_label ); ?></h2>
+			<h1 class="laca-gallery-toolbar__title-page" data-aos="fade-up"><?php echo getPageTitle(); ?></h1>
 				<div class="laca-gallery-filter" aria-label="<?php esc_attr_e( 'Lọc danh mục', 'laca' ); ?>">
 					<button type="button" class="laca-gallery-filter__trigger" aria-expanded="false" aria-haspopup="listbox">
 						<span class="laca-gallery-filter__label"><?php echo esc_html( $active_cat_label ); ?></span>
@@ -94,11 +95,15 @@ $ajax_config = wp_json_encode( [
 
 		<?php if ( have_posts() ) : ?>
 			<div id="gallery-grid" class="laca-gallery-list__grid" aria-live="polite" aria-atomic="true">
-				<?php while ( have_posts() ) : the_post();
+				<?php
+				while ( have_posts() ) : the_post();
 					$post_id      = get_the_ID();
 					$youtube_url  = lacadev_get_pdn_tv_youtube_url( $post_id );
 				?>
-				<article class="laca-gallery-card">
+				<article
+					class="laca-gallery-card"
+					data-aos="fade-up"
+				>
 					<?php if ( $youtube_url ) : ?>
 						<a class="laca-gallery-card__link" href="<?php echo esc_url( $youtube_url ); ?>" target="_blank" rel="noopener noreferrer">
 					<?php else : ?>

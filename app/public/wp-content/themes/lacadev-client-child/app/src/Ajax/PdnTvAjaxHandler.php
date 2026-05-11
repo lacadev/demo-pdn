@@ -51,26 +51,19 @@ class PdnTvAjaxHandler {
 
 		ob_start();
 		if ( $query->have_posts() ) {
+			$item_index = 0;
 			while ( $query->have_posts() ) {
 				$query->the_post();
-				$this->render_card( get_the_ID() );
+				$this->render_card( get_the_ID(), $item_index );
+				++$item_index;
 			}
 		} else {
 			echo '<div class="laca-gallery-list__empty"><p>' . esc_html__( 'Chưa có video nào.', 'laca' ) . '</p></div>';
 		}
 		$cards_html = ob_get_clean();
 
-		ob_start();
-		echo paginate_links( [
-			'base'      => '%_%',
-			'format'    => '?paged=%#%',
-			'current'   => $paged,
-			'total'     => $query->max_num_pages,
-			'prev_text' => '&lsaquo;',
-			'next_text' => '&rsaquo;',
-			'type'      => 'plain',
-		] ); // phpcs:ignore WordPress.Security.EscapeOutput
-		$pagination_html = ob_get_clean();
+		$archive_url      = get_post_type_archive_link( 'pdn_tv' ) ?: '';
+		$pagination_html = $this->render_pagination_html( $paged, (int) $query->max_num_pages, (string) $archive_url );
 
 		$active_label = __( 'Tất cả', 'laca' );
 		if ( $cat_slug ) {
@@ -90,19 +83,60 @@ class PdnTvAjaxHandler {
 		] );
 	}
 
+	/**
+	 * Pagination for pdn_tv archive.
+	 *
+	 * @param int    $paged       Current page.
+	 * @param int    $total_pages Total pages.
+	 * @param string $archive_url From get_post_type_archive_link( 'pdn_tv' ).
+	 */
+	private function render_pagination_html( int $paged, int $total_pages, string $archive_url ): string {
+		if ( $total_pages <= 1 ) {
+			return '';
+		}
+		if ( $archive_url === '' ) {
+			$archive_url = home_url( '/' );
+		}
+		$archive_url = untrailingslashit( $archive_url );
+		if ( get_option( 'permalink_structure' ) ) {
+			$base   = trailingslashit( $archive_url ) . 'page/%#%/';
+			$format = '';
+		} else {
+			$base   = esc_url( add_query_arg( 'paged', '%#%', $archive_url ) );
+			$format = '';
+		}
+		return lacadev_child_pagination_markup(
+			[
+				'base'    => $base,
+				'format'  => $format,
+				'current' => $paged,
+				'total'   => $total_pages,
+			]
+		);
+	}
+
 	private function get_youtube_url( int $post_id ): string {
 		$ytb_url = trim( (string) carbon_get_post_meta( $post_id, 'ytb_url' ) );
 		return $ytb_url ? esc_url_raw( $ytb_url ) : '';
 	}
 
-	private function render_card( int $post_id ): void {
+	/**
+	 * @param int $post_id    Post ID.
+	 * @param int $item_index Stagger AOS delay (0-based).
+	 */
+	private function render_card( int $post_id, int $item_index = 0 ): void {
 		$investor    = carbon_get_post_meta( $post_id, 'investor' );
 		$floors      = carbon_get_post_meta( $post_id, 'floors' );
 		$location    = carbon_get_post_meta( $post_id, 'location' );
 		$area        = carbon_get_post_meta( $post_id, 'total_area' );
 		$youtube_url = $this->get_youtube_url( $post_id );
+		$delay_ms    = $item_index * 100;
 		?>
-		<article class="laca-gallery-card">
+		<article
+			class="laca-gallery-card"
+			data-aos="fade-up"
+			data-aos-delay="<?php echo esc_attr( (string) $delay_ms ); ?>"
+		>
 			<?php if ( $youtube_url ) : ?>
 				<a class="laca-gallery-card__link" href="<?php echo esc_url( $youtube_url ); ?>" target="_blank" rel="noopener noreferrer">
 			<?php else : ?>

@@ -9,8 +9,6 @@
 	 * @package WPEmergeTheme
 	 */
 
-	theBreadcrumb();
-
 // ── Query context ────────────────────────────────────────────────────────────
 global $wp_query;
 
@@ -56,6 +54,16 @@ $ajax_config = wp_json_encode( [
 ] );
 ?>
 
+<div class="breadcumb">
+	<div class="container-fluid">
+		<?php
+		if ( function_exists( 'rank_math_the_breadcrumbs' ) ) :
+			rank_math_the_breadcrumbs();
+		endif;
+		?>
+	</div>
+</div>
+
 <div class="archive-post laca-news-list-archive" data-archive-config='<?php echo $ajax_config; ?>'>
 	<?php get_template_part( 'template-parts/page-hero' ); ?>
 
@@ -65,7 +73,8 @@ $ajax_config = wp_json_encode( [
 
 			<?php /* Grid bài viết – JS sẽ replace nội dung khi đổi trang */ ?>
 			<div id="archive-grid" class="laca-news-list__grid" aria-live="polite" aria-atomic="true">
-				<?php while ( have_posts() ) : the_post();
+				<?php
+				while ( have_posts() ) : the_post();
 					$post_id    = get_the_ID();
 					$post_url   = get_permalink();
 					$post_title = get_the_title();
@@ -84,7 +93,10 @@ $ajax_config = wp_json_encode( [
 						: wp_strip_all_tags( get_the_content() );
 					$excerpt = wp_trim_words( $excerpt_raw, 18, '…' );
 				?>
-				<article class="laca-news-list__item">
+				<article
+					class="laca-news-list__item"
+					data-aos="fade-up"
+				>
 					<a href="<?php echo esc_url( $post_url ); ?>" class="laca-news-list__thumb-link" tabindex="-1" aria-hidden="true">
 						<div class="laca-news-list__thumb">
 							<?php if ( $thumb_id ) : ?>
@@ -112,11 +124,13 @@ $ajax_config = wp_json_encode( [
 							<p class="laca-news-list__excerpt"><?php echo esc_html( $excerpt ); ?></p>
 						<?php endif; ?>
 
-						<a href="<?php echo esc_url( $post_url ); ?>" class="laca-news-list__read-more">
-							<?php esc_html_e( 'Xem thêm', 'laca' ); ?>
-						</a>
+						<!-- <a href="<?php echo esc_url( $post_url ); ?>" class="laca-news-list__read-more">
+							<?php //esc_html_e( 'Xem thêm', 'laca' ); ?>
+						</a> -->
 					</div>
 				</article>
+					<?php
+					?>
 				<?php endwhile; ?>
 			</div><!-- #archive-grid -->
 

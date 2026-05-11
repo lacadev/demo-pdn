@@ -49,29 +49,30 @@ $ajax_config = wp_json_encode( [
 	'current_page'   => $paged,
 	'max_pages'      => (int) $wp_query->max_num_pages,
 	'archive_url'    => esc_url( $archive_url ),
+	'query_param'    => 'gallery-cat',
+	'pretty_paged'   => (bool) get_option( 'permalink_structure' ),
 ] );
 ?>
 
-<!-- <div class="breadcumb">
+<div class="breadcumb">
 	<div class="container-fluid">
 		<?php
-		// if ( function_exists('rank_math_the_breadcrumbs') ) :
-		// 	rank_math_the_breadcrumbs();
-		// endif;
+		if ( function_exists('rank_math_the_breadcrumbs') ) :
+			rank_math_the_breadcrumbs();
+		endif;
 		?>
 	</div>
-</div> -->
+</div>
 
 <div id="laca-gallery-archive" class="laca-gallery-archive" data-archive-config='<?php echo $ajax_config; ?>'>
-	<?php get_template_part( 'template-parts/page-hero' ); ?>
+	<?php //get_template_part( 'template-parts/page-hero' ); ?>
 
 	<div class="container-fluid">
 
 		<?php /* ── Toolbar: filter dropdown ── */ ?>
 		<?php if ( ! is_wp_error( $filter_cats ) && ! empty( $filter_cats ) ) : ?>
 			<div class="laca-gallery-toolbar">
-				<!-- bổ sung hiển thị tên danh mục ở đây -->
-				<h2 class="laca-gallery-toolbar__title"><?php echo esc_html( $active_cat_label ); ?></h2>
+				<h1 class="laca-gallery-toolbar__title-page" data-aos="fade-up"><?php echo getPageTitle(); ?></h1>
 				<div class="laca-gallery-filter" aria-label="<?php esc_attr_e( 'Lọc danh mục', 'laca' ); ?>">
 
 					<button
@@ -109,7 +110,8 @@ $ajax_config = wp_json_encode( [
 		<?php if ( have_posts() ) : ?>
 
 			<div id="gallery-grid" class="laca-gallery-list__grid" aria-live="polite" aria-atomic="true">
-				<?php while ( have_posts() ) : the_post();
+				<?php
+				while ( have_posts() ) : the_post();
 					$post_id  = get_the_ID();
 					$investor = carbon_get_post_meta( $post_id, 'investor' );
 					$floors   = carbon_get_post_meta( $post_id, 'floors' );
@@ -138,6 +140,7 @@ $ajax_config = wp_json_encode( [
 				?>
 				<article
 					class="laca-gallery-card"
+					data-aos="fade-up"
 					data-gallery-id="<?php echo esc_attr( $post_id ); ?>"
 					data-gallery-items='<?php echo esc_attr( wp_json_encode( $lg_items ) ); ?>'
 				>

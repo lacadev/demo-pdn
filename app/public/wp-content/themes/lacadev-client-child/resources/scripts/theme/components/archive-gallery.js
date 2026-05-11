@@ -17,6 +17,62 @@ const PAGINATION_ID   = 'gallery-pagination';
 const FILTER_SELECTOR = '.laca-gallery-filter';
 const CARD_SELECTOR   = '.laca-gallery-card';
 
+/**
+ * Pretty permalinks use /page/2/; plain may use ?paged=2. searchParams alone misses /page/N/.
+ * @param {HTMLAnchorElement} link
+ * @returns {number}
+ */
+function getPagedFromLink( link ) {
+	if ( ! link || ! link.href ) {
+		return 1;
+	}
+	let url;
+	try {
+		url = new URL( link.href );
+	} catch {
+		return 1;
+	}
+	const fromQuery = url.searchParams.get( 'paged' );
+	if ( fromQuery !== null && fromQuery !== '' ) {
+		const n = parseInt( fromQuery, 10 );
+		return Number.isFinite( n ) && n > 0 ? n : 1;
+	}
+	const pathMatch = url.pathname.match( /\/page\/(\d+)\/?$/i );
+	if ( pathMatch ) {
+		const n = parseInt( pathMatch[ 1 ], 10 );
+		return Number.isFinite( n ) && n > 0 ? n : 1;
+	}
+	return 1;
+}
+
+/**
+ * Align history URL with WP pretty permalinks (/archive/page/N/) so Barba/layout stay correct.
+ */
+function buildArchiveBrowserUrl( archiveUrl, queryParam, catSlug, paged, prettyPaged ) {
+	const url = new URL( archiveUrl, window.location.origin );
+	if ( catSlug ) {
+		url.searchParams.set( queryParam, catSlug );
+	} else {
+		url.searchParams.delete( queryParam );
+	}
+	if ( prettyPaged ) {
+		url.searchParams.delete( 'paged' );
+		let path = url.pathname.replace( /\/?page\/\d+\/?$/i, '' );
+		if ( ! path.endsWith( '/' ) ) {
+			path += '/';
+		}
+		if ( paged > 1 ) {
+			path = path.replace( /\/+$/, '' ) + '/page/' + String( paged ) + '/';
+		}
+		url.pathname = path;
+	} else if ( paged > 1 ) {
+		url.searchParams.set( 'paged', String( paged ) );
+	} else {
+		url.searchParams.delete( 'paged' );
+	}
+	return url.toString();
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 //  Fancybox options
 // ─────────────────────────────────────────────────────────────────────────────
@@ -96,7 +152,7 @@ async function fetchGallery( { config, catSlug, paged } ) {
 /**
  * Update grid + pagination + URL sau AJAX.
  */
-function updatePage( { gridEl, paginationEl, filterEl, html, pagination, activeLabel, catSlug, paged, archiveUrl } ) {
+function updatePage( { gridEl, paginationEl, filterEl, html, pagination, activeLabel, catSlug, paged, archiveUrl, queryParam = 'gallery-cat', prettyPaged } ) {
 	gridEl.innerHTML       = html;
 	paginationEl.innerHTML = pagination;
 
@@ -104,19 +160,23 @@ function updatePage( { gridEl, paginationEl, filterEl, html, pagination, activeL
 	const titleEl = document.querySelector( '.laca-gallery-toolbar__title' );
 	if ( titleEl ) titleEl.textContent = activeLabel;
 
-	const labelEl = filterEl.querySelector( '.laca-gallery-filter__label' );
-	if ( labelEl ) labelEl.textContent = activeLabel;
+	if ( filterEl ) {
+		const labelEl = filterEl.querySelector( '.laca-gallery-filter__label' );
+		if ( labelEl ) labelEl.textContent = activeLabel;
 
-	filterEl.querySelectorAll( '[data-cat-slug]' ).forEach( item => {
-		item.classList.toggle( 'is-active', item.dataset.catSlug === catSlug );
-	} );
+		filterEl.querySelectorAll( '[data-cat-slug]' ).forEach( ( item ) => {
+			item.classList.toggle( 'is-active', item.dataset.catSlug === catSlug );
+		} );
+	}
 
-	const url = new URL( archiveUrl );
-	if ( catSlug ) url.searchParams.set( 'gallery-cat', catSlug );
-	else           url.searchParams.delete( 'gallery-cat' );
-	if ( paged > 1 ) url.searchParams.set( 'paged', paged );
-	else             url.searchParams.delete( 'paged' );
-	history.pushState( { catSlug, paged }, '', url.toString() );
+	history.pushState(
+		{ catSlug, paged },
+		'',
+		buildArchiveBrowserUrl( archiveUrl, queryParam, catSlug, paged, !! prettyPaged ),
+	);
+	if ( typeof window.lacadevRefreshAOS === 'function' ) {
+		window.lacadevRefreshAOS();
+	}
 }
 
 /**
@@ -141,6 +201,8 @@ function init() {
 
 	const paginationEl = document.getElementById( PAGINATION_ID );
 	const filterEl     = root.querySelector( FILTER_SELECTOR );
+	const queryParam   = config.query_param || 'gallery-cat';
+	const prettyPaged  = !! config.pretty_paged;
 	let currentCat     = config.cat_slug || '';
 
 	// ── Dropdown filter ──
@@ -186,6 +248,8 @@ function init() {
 							activeLabel: res.data.active_label,
 							catSlug, paged: 1,
 							archiveUrl : config.archive_url,
+							queryParam,
+							prettyPaged,
 						} );
 					}
 				} finally {
@@ -203,7 +267,7 @@ function init() {
 			if ( ! link ) return;
 			e.preventDefault();
 
-			const paged = parseInt( new URL( link.href ).searchParams.get( 'paged' ) || '1', 10 );
+			const paged = getPagedFromLink( link );
 			gridEl.classList.add( 'is-loading' );
 			try {
 				const res = await fetchGallery( { config, catSlug: currentCat, paged } );
@@ -215,6 +279,8 @@ function init() {
 						activeLabel: res.data.active_label,
 						catSlug    : currentCat, paged,
 						archiveUrl : config.archive_url,
+						queryParam,
+						prettyPaged,
 					} );
 					window.scrollTo( { top: root.offsetTop - 80, behavior: 'smooth' } );
 				}

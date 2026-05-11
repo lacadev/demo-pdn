@@ -44,6 +44,7 @@ $ajax_config = wp_json_encode( [
 	'max_pages'      => (int) $wp_query->max_num_pages,
 	'archive_url'    => esc_url( $archive_url ),
 	'query_param'    => 'project_cat',
+	'pretty_paged'   => (bool) get_option( 'permalink_structure' ),
 ] );
 ?>
 
@@ -58,12 +59,13 @@ $ajax_config = wp_json_encode( [
 </div>
 
 <div id="laca-project-archive" class="laca-gallery-archive laca-project-archive" data-archive-config='<?php echo $ajax_config; ?>'>
-	<?php get_template_part( 'template-parts/page-hero' ); ?>
+	<?php //get_template_part( 'template-parts/page-hero' ); ?>
 
 	<div class="container-fluid">
 		<?php if ( ! is_wp_error( $filter_cats ) && ! empty( $filter_cats ) ) : ?>
 			<div class="laca-gallery-toolbar">
-				<h2 class="laca-gallery-toolbar__title"><?php echo esc_html( $active_cat_label ); ?></h2>
+				<!-- <h2 class="laca-gallery-toolbar__title"><?php //echo esc_html( $active_cat_label ); ?></h2> -->
+				<h1 class="laca-gallery-toolbar__title-page" data-aos="fade-up"><?php echo getPageTitle(); ?></h1>
 				<div class="laca-gallery-filter" aria-label="<?php esc_attr_e( 'Lọc danh mục', 'laca' ); ?>">
 					<button type="button" class="laca-gallery-filter__trigger" aria-expanded="false" aria-haspopup="listbox">
 						<span class="laca-gallery-filter__label"><?php echo esc_html( $active_cat_label ); ?></span>
@@ -84,14 +86,18 @@ $ajax_config = wp_json_encode( [
 
 		<?php if ( have_posts() ) : ?>
 			<div id="project-grid" class="laca-gallery-list__grid" aria-live="polite" aria-atomic="true">
-				<?php while ( have_posts() ) : the_post();
+				<?php
+				while ( have_posts() ) : the_post();
 					$post_id    = get_the_ID();
 					$investor   = get_post_meta( $post_id, '_investor', true );
 					$location   = get_post_meta( $post_id, '_location', true );
 					$floors     = get_post_meta( $post_id, '_floors', true );
 					$front_area = get_post_meta( $post_id, '_front_area', true );
 				?>
-					<article class="laca-gallery-card">
+					<article
+						class="laca-gallery-card"
+						data-aos="fade-up"
+					>
 						<a class="laca-gallery-card__link" href="<?php echo esc_url( get_permalink( $post_id ) ); ?>" aria-label="<?php echo esc_attr( get_the_title( $post_id ) ); ?>">
 							<div class="laca-gallery-card__img">
 								<?php if ( has_post_thumbnail( $post_id ) ) : ?>
@@ -103,6 +109,7 @@ $ajax_config = wp_json_encode( [
 
 							<div class="laca-gallery-card__body">
 								<h3 class="laca-gallery-card__title"><?php echo esc_html( get_the_title( $post_id ) ); ?></h3>
+								<?php if ( $investor || $location || $floors || $front_area ) : ?>
 								<ul class="laca-gallery-card__meta">
 									<?php if ( $investor ) : ?>
 										<li><span class="laca-gallery-card__meta-label"><?php esc_html_e( 'Chủ đầu tư:', 'laca' ); ?></span><span class="laca-gallery-card__meta-value"><?php echo esc_html( $investor ); ?></span></li>
@@ -117,6 +124,7 @@ $ajax_config = wp_json_encode( [
 										<li><span class="laca-gallery-card__meta-label"><?php esc_html_e( 'Mặt tiền:', 'laca' ); ?></span><span class="laca-gallery-card__meta-value"><?php echo esc_html( $front_area ); ?></span></li>
 									<?php endif; ?>
 								</ul>
+								<?php endif; ?>
 							</div>
 						</a>
 					</article>

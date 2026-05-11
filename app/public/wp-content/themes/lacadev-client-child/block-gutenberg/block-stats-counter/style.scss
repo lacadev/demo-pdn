@@ -1,4 +1,5 @@
 @use "@parent/styles/theme/abstracts/variables" as *;
+@use "@parent/styles/theme/abstracts/mixin" as *;
 
 .block-stats-counter {
     width: 100%;
@@ -22,11 +23,19 @@
     }
 
     &__number {
-        font-size: clamp(5rem, 8vw, 10rem);
+        font-size: rem(130);
         font-weight: 900;
         line-height: 1;
         color: $primaryColor;
         display: block;
+
+        @include maxWidth($md) {
+            font-size: rem(80);
+        }
+
+        @include maxWidth($sm) {
+            font-size: rem(60);
+        }
     }
 
     &__label {
@@ -36,15 +45,19 @@
         color: #fff;
         margin-top: 1rem;
         display: block;
+
+        @include maxWidth($md) {
+            font-size: rem(20);
+        }
+
+        @include maxWidth($sm) {
+            font-size: rem(16);
+        }
     }
 
     @media (max-width: 768px) {
         &__inner {
             gap: 4rem;
-        }
-
-        &__number {
-            font-size: clamp(4rem, 10vw, 6rem);
         }
     }
 

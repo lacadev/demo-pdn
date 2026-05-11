@@ -31,8 +31,8 @@ export function initHeaderScroll() {
 }
 
 /**
- * Đồng bộ lại trạng thái header sau Barba navigation.
- * Gọi trong barba.hooks.after để tránh header bị kẹt ở trạng thái trang cũ.
+ * Đồng bộ lại trạng thái header sau khi khởi tạo trang.
+ * Giúp tránh header bị kẹt ở trạng thái trang cũ.
  */
 export function resetHeaderState() {
 	const header = document.getElementById( 'header' );

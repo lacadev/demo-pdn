@@ -3,6 +3,61 @@ const GRID_ID = 'project-grid';
 const PAGINATION_ID = 'project-pagination';
 const FILTER_SELECTOR = '.laca-gallery-filter';
 
+/**
+ * WordPress archive pagination uses pretty permalinks (/page/2/) or ?paged=2.
+ * Read page number from a pagination link href (searchParams alone misses /page/N/).
+ */
+function getPagedFromLink(link) {
+	if (!link || !link.href) {
+		return 1;
+	}
+	let url;
+	try {
+		url = new URL(link.href);
+	} catch {
+		return 1;
+	}
+	const fromQuery = url.searchParams.get('paged');
+	if (fromQuery !== null && fromQuery !== '') {
+		const n = parseInt(fromQuery, 10);
+		return Number.isFinite(n) && n > 0 ? n : 1;
+	}
+	const pathMatch = url.pathname.match(/\/page\/(\d+)\/?$/i);
+	if (pathMatch) {
+		const n = parseInt(pathMatch[1], 10);
+		return Number.isFinite(n) && n > 0 ? n : 1;
+	}
+	return 1;
+}
+
+/**
+ * Match WordPress front URL: /archive/page/N/ when permalinks are enabled (avoids ?paged= breaking Barba/CSS).
+ */
+function buildArchiveBrowserUrl(archiveUrl, queryParam, catSlug, paged, prettyPaged) {
+	const url = new URL(archiveUrl, window.location.origin);
+	if (catSlug) {
+		url.searchParams.set(queryParam, catSlug);
+	} else {
+		url.searchParams.delete(queryParam);
+	}
+	if (prettyPaged) {
+		url.searchParams.delete('paged');
+		let path = url.pathname.replace(/\/?page\/\d+\/?$/i, '');
+		if (!path.endsWith('/')) {
+			path += '/';
+		}
+		if (paged > 1) {
+			path = path.replace(/\/+$/, '') + '/page/' + String(paged) + '/';
+		}
+		url.pathname = path;
+	} else if (paged > 1) {
+		url.searchParams.set('paged', String(paged));
+	} else {
+		url.searchParams.delete('paged');
+	}
+	return url.toString();
+}
+
 async function fetchArchive({ config, catSlug, paged }) {
 	const body = new URLSearchParams({
 		action: config.action,
@@ -16,35 +71,34 @@ async function fetchArchive({ config, catSlug, paged }) {
 	return response.json();
 }
 
-function updatePage({ gridEl, paginationEl, filterEl, html, pagination, activeLabel, catSlug, paged, archiveUrl, queryParam }) {
+function updatePage({ gridEl, paginationEl, filterEl, html, pagination, activeLabel, catSlug, paged, archiveUrl, queryParam, prettyPaged }) {
 	gridEl.innerHTML = html;
 	paginationEl.innerHTML = pagination;
 
 	const titleEl = document.querySelector('.laca-gallery-toolbar__title');
 	if (titleEl) titleEl.textContent = activeLabel;
 
-	const labelEl = filterEl.querySelector('.laca-gallery-filter__label');
-	if (labelEl) labelEl.textContent = activeLabel;
+	if (filterEl) {
+		const labelEl = filterEl.querySelector('.laca-gallery-filter__label');
+		if (labelEl) labelEl.textContent = activeLabel;
 
-	filterEl.querySelectorAll('[data-cat-slug]').forEach((item) => {
-		item.classList.toggle('is-active', item.dataset.catSlug === catSlug);
-	});
+		filterEl.querySelectorAll('[data-cat-slug]').forEach((item) => {
+			item.classList.toggle('is-active', item.dataset.catSlug === catSlug);
+		});
+	}
 
-	const url = new URL(archiveUrl);
-	if (catSlug) url.searchParams.set(queryParam, catSlug);
-	else url.searchParams.delete(queryParam);
-	if (paged > 1) url.searchParams.set('paged', paged);
-	else url.searchParams.delete('paged');
-	history.pushState({ catSlug, paged }, '', url.toString());
+	history.pushState(
+		{ catSlug, paged },
+		'',
+		buildArchiveBrowserUrl(archiveUrl, queryParam, catSlug, paged, !!prettyPaged),
+	);
+	if (typeof window.lacadevRefreshAOS === 'function') {
+		window.lacadevRefreshAOS();
+	}
 }
 
-function buildArchiveUrl({ archiveUrl, queryParam, catSlug, paged }) {
-	const url = new URL(archiveUrl);
-	if (catSlug) url.searchParams.set(queryParam, catSlug);
-	else url.searchParams.delete(queryParam);
-	if (paged > 1) url.searchParams.set('paged', paged);
-	else url.searchParams.delete('paged');
-	return url.toString();
+function buildArchiveUrl({ archiveUrl, queryParam, catSlug, paged, prettyPaged }) {
+	return buildArchiveBrowserUrl(archiveUrl, queryParam, catSlug, paged, !!prettyPaged);
 }
 
 function init() {
@@ -60,6 +114,7 @@ function init() {
 	const paginationEl = document.getElementById(PAGINATION_ID);
 	const filterEl = root.querySelector(FILTER_SELECTOR);
 	const queryParam = config.query_param || 'project_cat';
+	const prettyPaged = !!config.pretty_paged;
 	let currentCat = config.cat_slug || '';
 
 	if (filterEl && !filterEl.dataset.bound) {
@@ -108,6 +163,7 @@ function init() {
 							paged: 1,
 							archiveUrl: config.archive_url,
 							queryParam,
+							prettyPaged,
 						});
 					} else {
 						window.location.href = buildArchiveUrl({
@@ -115,6 +171,7 @@ function init() {
 							queryParam,
 							catSlug,
 							paged: 1,
+							prettyPaged,
 						});
 					}
 				} catch (error) {
@@ -123,6 +180,7 @@ function init() {
 						queryParam,
 						catSlug,
 						paged: 1,
+						prettyPaged,
 					});
 				} finally {
 					gridEl.classList.remove('is-loading');
@@ -138,7 +196,7 @@ function init() {
 			if (!link) return;
 			e.preventDefault();
 
-			const paged = parseInt(new URL(link.href).searchParams.get('paged') || '1', 10);
+			const paged = getPagedFromLink(link);
 			gridEl.classList.add('is-loading');
 			try {
 				const result = await fetchArchive({ config, catSlug: currentCat, paged });
@@ -154,6 +212,7 @@ function init() {
 						paged,
 						archiveUrl: config.archive_url,
 						queryParam,
+						prettyPaged,
 					});
 					window.scrollTo({ top: root.offsetTop - 80, behavior: 'smooth' });
 				} else {
@@ -162,6 +221,7 @@ function init() {
 						queryParam,
 						catSlug: currentCat,
 						paged,
+						prettyPaged,
 					});
 				}
 			} catch (error) {
@@ -170,6 +230,7 @@ function init() {
 					queryParam,
 					catSlug: currentCat,
 					paged,
+					prettyPaged,
 				});
 			} finally {
 				gridEl.classList.remove('is-loading');

@@ -77,7 +77,7 @@ if (!defined('ABSPATH')) {
 	endif;
 	?>
 
-	<div class="wrapper" data-barba="wrapper">
+	<div class="wrapper">
 		<?php if (!is_404()): ?>
 			<?php
 			// ── Get menu items once, split into two halves ─────────────
@@ -152,8 +152,44 @@ if (!defined('ABSPATH')) {
 				$current_request = $normalize_path(home_url('/'));
 			}
 
-			$is_item_active = static function ($menu_item) use ($normalize_path, $current_request): bool {
-				$item_classes = is_array($menu_item->classes ?? null) ? $menu_item->classes : [];
+			// Match parent Laca_Menu_Walker / menus.php: strip WP false-positive current_* on CPT views for unrelated menu items (e.g. blog page marked parent on project archive).
+			$cpt_for_menu = get_query_var('post_type');
+			if (is_array($cpt_for_menu)) {
+				$cpt_for_menu = reset($cpt_for_menu);
+			}
+			if (!$cpt_for_menu && is_post_type_archive()) {
+				$qo_archive = get_queried_object();
+				$cpt_for_menu = ($qo_archive instanceof WP_Post_Type) ? $qo_archive->name : '';
+			}
+			if (!$cpt_for_menu && is_singular()) {
+				$cpt_for_menu = get_post_type();
+			}
+
+			$strip_false_cpt_active = static function ($menu_item) use ($cpt_for_menu): array {
+				$classes = is_array($menu_item->classes ?? null) ? array_values((array) $menu_item->classes) : [];
+				if (!$cpt_for_menu || $cpt_for_menu === 'post' || $cpt_for_menu === 'page') {
+					return $classes;
+				}
+				$belongs = ($menu_item->type === 'post_type_archive' && $menu_item->object === $cpt_for_menu);
+				if (!$belongs && $menu_item->type === 'taxonomy') {
+					$tax = get_taxonomy($menu_item->object);
+					$belongs = $tax && in_array($cpt_for_menu, (array) $tax->object_type, true);
+				}
+				if (!$belongs) {
+					$classes = array_diff($classes, [
+						'current_page_parent',
+						'current_page_ancestor',
+						'current-menu-parent',
+						'current-menu-ancestor',
+						'current_page_item',
+						'current-menu-item',
+					]);
+				}
+				return $classes;
+			};
+
+			$is_item_active = static function ($menu_item) use ($normalize_path, $current_request, $strip_false_cpt_active): bool {
+				$item_classes = $strip_false_cpt_active($menu_item);
 				$active_classes = [
 					'current-menu-item',
 					'current-menu-parent',

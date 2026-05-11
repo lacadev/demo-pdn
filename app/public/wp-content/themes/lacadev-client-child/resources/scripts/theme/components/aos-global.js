@@ -16,3 +16,10 @@ if (document.readyState === 'loading') {
 } else {
   initAos();
 }
+
+// Re-scan after archive AJAX / dynamic HTML (innerHTML) so new data-aos nodes animate.
+if (typeof window !== 'undefined') {
+  window.lacadevRefreshAOS = () => {
+    AOS.refresh();
+  };
+}

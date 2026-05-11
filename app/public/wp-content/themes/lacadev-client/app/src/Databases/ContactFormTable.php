@@ -13,7 +13,7 @@ class ContactFormTable
 {
     const FORMS_TABLE       = 'laca_contact_forms';
     const SUBMISSIONS_TABLE = 'laca_contact_submissions';
-    const TABLE_VERSION     = '1.0.0';
+    const TABLE_VERSION     = '1.1.0';
     const VERSION_KEY       = 'laca_contact_form_table_version';
 
     // -------------------------------------------------------------------------
@@ -41,9 +41,10 @@ class ContactFormTable
         global $wpdb;
 
         $currentVersion = get_option(self::VERSION_KEY, '0');
-        if (version_compare($currentVersion, self::TABLE_VERSION, '>=')) {
-            return;
-        }
+        // Force run dbDelta to ensure tables exist in case they were dropped but option remained
+        // if (version_compare($currentVersion, self::TABLE_VERSION, '>=')) {
+        //     return;
+        // }
 
         $charsetCollate = $wpdb->get_charset_collate();
 
@@ -51,7 +52,7 @@ class ContactFormTable
 
         // --- Table: laca_contact_forms ---
         $formsTable = self::getFormsTable();
-        $sqlForms   = "CREATE TABLE IF NOT EXISTS {$formsTable} (
+        $sqlForms   = "CREATE TABLE {$formsTable} (
             id                   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             name                 VARCHAR(255) NOT NULL DEFAULT '',
             fields               LONGTEXT NOT NULL COMMENT 'JSON array of field definitions',
@@ -60,6 +61,7 @@ class ContactFormTable
             email_admin_body     LONGTEXT NOT NULL,
             email_customer_subject VARCHAR(500) NOT NULL DEFAULT 'Cảm ơn bạn đã liên hệ',
             email_customer_body  LONGTEXT NOT NULL,
+            style_settings       LONGTEXT NULL COMMENT 'JSON: custom CSS variables (primary_color, border_radius, etc.)',
             is_active            TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
             created_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at           DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -70,7 +72,7 @@ class ContactFormTable
 
         // --- Table: laca_contact_submissions ---
         $subTable = self::getSubmissionsTable();
-        $sqlSubs  = "CREATE TABLE IF NOT EXISTS {$subTable} (
+        $sqlSubs  = "CREATE TABLE {$subTable} (
             id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             form_id    BIGINT(20) UNSIGNED NOT NULL,
             data       LONGTEXT NOT NULL COMMENT 'JSON key-value của toàn bộ fields submit',
@@ -139,6 +141,7 @@ class ContactFormTable
             'email_admin_body'       => wp_kses_post($data['email_admin_body'] ?? ''),
             'email_customer_subject' => sanitize_text_field($data['email_customer_subject'] ?? ''),
             'email_customer_body'    => wp_kses_post($data['email_customer_body'] ?? ''),
+            'style_settings'         => wp_json_encode($data['style_settings'] ?? []),
             'is_active'              => 1,
         ]);
         return (int) $wpdb->insert_id;
@@ -160,6 +163,7 @@ class ContactFormTable
                 'email_admin_body'       => wp_kses_post($data['email_admin_body'] ?? ''),
                 'email_customer_subject' => sanitize_text_field($data['email_customer_subject'] ?? ''),
                 'email_customer_body'    => wp_kses_post($data['email_customer_body'] ?? ''),
+                'style_settings'         => wp_json_encode($data['style_settings'] ?? []),
             ],
             ['id' => $id]
         );

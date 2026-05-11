@@ -55,7 +55,7 @@ $scale_ratio_css = round( $inactive_scale / 100, 2 );
 <section <?php echo get_block_wrapper_attributes( [
     'class' => 'block-team-carousel',
     'style' => 'background:' . esc_attr( $bg_color ) . ';',
-] ); ?>>
+] ); ?> data-aos="fade-up">
 
     <?php if ( $section_title ) : ?>
         <div class="container">

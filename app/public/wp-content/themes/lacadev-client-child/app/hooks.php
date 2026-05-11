@@ -16,6 +16,9 @@ if (!defined('ABSPATH')) {
 // CHILD HOOKS — thêm hooks của bạn bên dưới
 // =============================================================================
 
+// ── AJAX pagination markup (matches parent thePagination() BEM) ──────────────
+require_once CHILD_APP_DIR . 'helpers/ajax-pagination-markup.php';
+
 // ── Gallery Archive AJAX Handler ─────────────────────────────────────────────
 require_once CHILD_APP_DIR . 'src/Ajax/GalleryAjaxHandler.php';
 require_once CHILD_APP_DIR . 'src/Ajax/PdnTvAjaxHandler.php';

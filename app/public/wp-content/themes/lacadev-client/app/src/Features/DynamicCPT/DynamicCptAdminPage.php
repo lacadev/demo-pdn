@@ -5,7 +5,7 @@ namespace App\Features\DynamicCPT;
 /**
  * DynamicCptAdminPage
  *
- * Tạo trang admin tại Appearance > Custom Post Types.
+ * Tạo trang admin tại Laca Admin > Custom Post Types.
  * Cho phép thêm / sửa / xoá CPT động, hỗ trợ taxonomy category, tag, custom.
  * Khi tạo mới sẽ tự sinh archive-{slug}.php + single-{slug}.php.
  */
@@ -15,7 +15,7 @@ class DynamicCptAdminPage
     const NONCE_FIELD  = '_laca_cpt_nonce';
     const CAP          = 'manage_options';
     const MENU_SLUG    = 'laca-dynamic-cpt';
-    const PARENT_SLUG  = 'themes.php';
+    const PARENT_SLUG  = 'laca-admin';
 
     private DynamicCptMetaEditor $metaEditor;
 
@@ -23,7 +23,7 @@ class DynamicCptAdminPage
     {
         $this->metaEditor = new DynamicCptMetaEditor();
 
-        add_action('admin_menu', [$this, 'registerMenu']);
+        add_action('admin_menu', [$this, 'registerMenu'], 20);
         add_action('admin_post_laca_cpt_save',   [$this, 'handleSave']);
         add_action('admin_post_laca_cpt_delete', [$this, 'handleDelete']);
         add_action('admin_post_laca_cpt_regen',  [$this, 'handleRegen']);
@@ -80,7 +80,7 @@ class DynamicCptAdminPage
 
         $message   = $this->getFlashMessage();
         $msg_type  = sanitize_key($_GET['laca_cpt_msg'] ?? '');
-        $page_url  = admin_url('themes.php?page=' . self::MENU_SLUG);
+        $page_url  = admin_url('admin.php?page=' . self::MENU_SLUG);
         $generator = new DynamicCptTemplateGenerator();
 
         $this->renderStyles();
@@ -590,7 +590,7 @@ class DynamicCptAdminPage
         $supports = array_map('sanitize_key', (array)($_POST['cpt_supports'] ?? ['title', 'editor']));
         $index    = (int)($_POST['cpt_index'] ?? -1);
 
-        $page_url = admin_url('themes.php?page=' . self::MENU_SLUG);
+        $page_url = admin_url('admin.php?page=' . self::MENU_SLUG);
 
         if (!$slug || !$singular || !$plural) {
             wp_redirect(add_query_arg('laca_cpt_msg', 'error', $page_url));
@@ -668,7 +668,7 @@ class DynamicCptAdminPage
         check_admin_referer(self::NONCE_ACTION, self::NONCE_FIELD);
 
         $slug     = sanitize_key($_POST['cpt_slug'] ?? '');
-        $page_url = admin_url('themes.php?page=' . self::MENU_SLUG);
+        $page_url = admin_url('admin.php?page=' . self::MENU_SLUG);
 
         if (!$slug) {
             wp_redirect(add_query_arg('laca_cpt_msg', 'error', $page_url));
@@ -699,7 +699,7 @@ class DynamicCptAdminPage
 
         $index = absint($_POST['cpt_index'] ?? 0);
         $cpts  = DynamicCptManager::getAll();
-        $page_url = admin_url('themes.php?page=' . self::MENU_SLUG);
+        $page_url = admin_url('admin.php?page=' . self::MENU_SLUG);
 
         if (!isset($cpts[$index])) {
             wp_redirect(add_query_arg('laca_cpt_msg', 'error', $page_url));

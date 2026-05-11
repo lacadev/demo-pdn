@@ -92,26 +92,3 @@ function child_enqueue_admin_assets()
     }
 }
 add_action('admin_enqueue_scripts', 'child_enqueue_admin_assets', 20);
-
-/**
- * Enqueue child theme block editor assets to inject custom CSS variables.
- */
-function child_enqueue_block_editor_assets()
-{
-    $primary = carbon_get_theme_option('primary_color');
-    $second  = carbon_get_theme_option('secondary_color');
-    $bg      = carbon_get_theme_option('bg_color');
-
-    $custom_css = "
-        :root, .editor-styles-wrapper {
-            --primary-color: {$primary};
-            --second-color: {$second};
-            --bg-color: {$bg};
-            font-family: 'ShopeeDisplay', sans-serif !important;
-        }
-    ";
-    wp_register_style('lacadev-child-editor-inline', false);
-    wp_enqueue_style('lacadev-child-editor-inline');
-    wp_add_inline_style('lacadev-child-editor-inline', $custom_css);
-}
-add_action('enqueue_block_editor_assets', 'child_enqueue_block_editor_assets', 20);

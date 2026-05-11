@@ -293,7 +293,7 @@ PHP;
         $this->saveMetaFile($slug, $code);
 
         wp_safe_redirect(admin_url(
-            'themes.php?page=laca-dynamic-cpt&meta=' . $slug . '&laca_meta_msg=saved'
+            'admin.php?page=laca-dynamic-cpt&meta=' . $slug . '&laca_meta_msg=saved'
         ));
         exit;
     }
@@ -348,7 +348,7 @@ PHP;
         $this->saveMetaFile($slug, $code);
 
         wp_safe_redirect(admin_url(
-            'themes.php?page=laca-dynamic-cpt&meta=' . $slug . '&laca_meta_msg=generated'
+            'admin.php?page=laca-dynamic-cpt&meta=' . $slug . '&laca_meta_msg=generated'
         ));
         exit;
     }
@@ -362,7 +362,7 @@ PHP;
         $code     = $this->getMetaFileContent($slug);
         $filePath = $this->getMetaFilePath($slug);
         $exists   = file_exists($filePath);
-        $pageUrl  = admin_url('themes.php?page=laca-dynamic-cpt');
+        $pageUrl  = admin_url('admin.php?page=laca-dynamic-cpt');
         $msgType  = sanitize_key($_GET['laca_meta_msg'] ?? '');
 
         $messages = [

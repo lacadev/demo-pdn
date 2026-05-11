@@ -54,29 +54,19 @@ class GalleryAjaxHandler {
 		// ── Render cards HTML ─────────────────────────────────────────────────
 		ob_start();
 		if ( $query->have_posts() ) {
+			$item_index = 0;
 			while ( $query->have_posts() ) {
 				$query->the_post();
-				$this->render_card( get_the_ID() );
+				$this->render_card( get_the_ID(), $item_index );
+				++$item_index;
 			}
 		} else {
-			echo '<div class="laca-gallery-list__empty"><p>' . esc_html__( 'Chưa có dự án nào.', 'laca' ) . '</p></div>';
+			echo '<div class="laca-gallery-list__empty"><p>' . esc_html__( 'Chưa có thư viện thiết kế nào.', 'laca' ) . '</p></div>';
 		}
 		$cards_html = ob_get_clean();
 
-		// ── Pagination HTML ───────────────────────────────────────────────────
-		ob_start();
-		$big        = 999999;
-		$pagination = paginate_links( [
-			'base'      => '%_%',
-			'format'    => '?paged=%#%',
-			'current'   => $paged,
-			'total'     => $query->max_num_pages,
-			'prev_text' => '&lsaquo;',
-			'next_text' => '&rsaquo;',
-			'type'      => 'plain',
-		] );
-		echo $pagination; // phpcs:ignore WordPress.Security.EscapeOutput
-		$pagination_html = ob_get_clean();
+		$archive_url      = get_post_type_archive_link( 'gallery' ) ?: '';
+		$pagination_html = $this->render_pagination_html( $paged, (int) $query->max_num_pages, (string) $archive_url );
 
 		// ── Active cat label ─────────────────────────────────────────────────
 		$active_label = __( 'Tất cả', 'laca' );
@@ -98,9 +88,44 @@ class GalleryAjaxHandler {
 	}
 
 	/**
-	 * Render một card item.
+	 * Pagination links for gallery archive (pretty / plain permalinks).
+	 *
+	 * @param int    $paged       Current page.
+	 * @param int    $total_pages Total pages.
+	 * @param string $archive_url From get_post_type_archive_link( 'gallery' ).
 	 */
-	private function render_card( int $post_id ): void {
+	private function render_pagination_html( int $paged, int $total_pages, string $archive_url ): string {
+		if ( $total_pages <= 1 ) {
+			return '';
+		}
+		if ( $archive_url === '' ) {
+			$archive_url = home_url( '/' );
+		}
+		$archive_url = untrailingslashit( $archive_url );
+		if ( get_option( 'permalink_structure' ) ) {
+			$base   = trailingslashit( $archive_url ) . 'page/%#%/';
+			$format = '';
+		} else {
+			$base   = esc_url( add_query_arg( 'paged', '%#%', $archive_url ) );
+			$format = '';
+		}
+		return lacadev_child_pagination_markup(
+			[
+				'base'    => $base,
+				'format'  => $format,
+				'current' => $paged,
+				'total'   => $total_pages,
+			]
+		);
+	}
+
+	/**
+	 * Render một card item.
+	 *
+	 * @param int $post_id    Post ID.
+	 * @param int $item_index Stagger AOS delay (0-based).
+	 */
+	private function render_card( int $post_id, int $item_index = 0 ): void {
 		$investor  = carbon_get_post_meta( $post_id, 'investor' );
 		$floors    = carbon_get_post_meta( $post_id, 'floors' );
 		$location  = carbon_get_post_meta( $post_id, 'location' );
@@ -131,9 +156,16 @@ class GalleryAjaxHandler {
 			];
 		}
 
-		$lg_data = wp_json_encode( $lg_items );
+		$lg_data  = wp_json_encode( $lg_items );
+		$delay_ms = $item_index * 100;
 		?>
-		<article class="laca-gallery-card" data-gallery-id="<?php echo esc_attr( $post_id ); ?>" data-gallery-items='<?php echo esc_attr( $lg_data ); ?>'>
+		<article
+			class="laca-gallery-card"
+			data-aos="fade-up"
+			data-aos-delay="<?php echo esc_attr( (string) $delay_ms ); ?>"
+			data-gallery-id="<?php echo esc_attr( $post_id ); ?>"
+			data-gallery-items='<?php echo esc_attr( $lg_data ); ?>'
+		>
 			<div class="laca-gallery-card__img">
 				<?php if ( has_post_thumbnail( $post_id ) ) : ?>
 					<?php echo get_the_post_thumbnail( $post_id, 'large', [ 'loading' => 'lazy', 'alt' => get_the_title( $post_id ) ] ); ?>

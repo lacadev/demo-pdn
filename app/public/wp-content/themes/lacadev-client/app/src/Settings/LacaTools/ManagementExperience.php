@@ -7,6 +7,8 @@ use App\Settings\LacaTools\Management\MediaService;
 use App\Settings\LacaTools\Management\DashboardWidgets;
 use App\Settings\LacaTools\Management\ListTableEnhancements;
 use App\Settings\LacaTools\Management\AdminUxService;
+use App\Settings\LacaTools\Management\DatabaseCleaner;
+use App\Settings\LacaTools\Management\QuickNotesWidget;
 
 /**
  * ManagementExperience
@@ -53,12 +55,21 @@ class ManagementExperience
         // 6. Media orphan filtering
         $mediaService->register();
 
-        // 7. AI Translation Manager
+        // 7. Quick Notes dashboard widget
+        (new QuickNotesWidget())->register();
+
+        // 8. Database Cleaner (Appearance > Dọn dẹp DB)
+        (new DatabaseCleaner())->register();
+
+        // 9. AI Translation Manager
         add_action('init', function () {
             new AITranslationManager();
         });
 
-        // 8. Dynamic CPT admin page (Appearance > Custom Post Types)
+        // 10. Dynamic CPT admin page (Appearance > Custom Post Types)
         new \App\Features\DynamicCPT\DynamicCptAdminPage();
+
+        // 11. Contact Form Manager (Appearance > Form Liên Hệ)
+        new \App\Features\ContactForm\ContactFormManager();
     }
 }

@@ -168,12 +168,7 @@ window.registerFunction = {
 						'Đăng ký tài khoản thành công!',
 						'success'
 					).then( () => {
-						// Use Swup to load new page if available, or fallback to window.location
-						if ( window.barba ) {
-							window.barba.go( response.data.redirect_to );
-						} else {
-							window.location.href = response.data.redirect_to;
-						}
+						window.location.href = response.data.redirect_to;
 					} );
 				}
 			} )

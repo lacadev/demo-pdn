@@ -1,5 +1,6 @@
 import '@styles/admin';
 import './custom_thumbnail_support.js';
+import './contact-form.js';
 
 
 import Swal from 'sweetalert2';

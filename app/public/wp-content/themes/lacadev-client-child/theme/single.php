@@ -32,13 +32,6 @@
 			<!-- ── MAIN ───────────────────────────────────────── -->
 			<div class="single-post__main">
 
-				<!-- Table of Contents -->
-				<?php if ( shortcode_exists( 'ez-toc' ) ) : ?>
-				<div class="single-post__toc">
-					<?php echo do_shortcode( '[ez-toc]' ); ?>
-				</div>
-				<?php endif; ?>
-
 				<!-- Content Body -->
 				<div class="single-post__content">
 					<?php theContent(); ?>

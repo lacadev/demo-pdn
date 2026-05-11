@@ -8,6 +8,14 @@ body:not(.wp-admin) {
   line-height: 1.2 !important;
 }
 
+main#main_content {
+  padding-top: rem(90);
+
+  @include maxWidth($md) {
+    padding-top: rem(30);
+  }
+}
+
 .container {
   max-width: $lg;
 }
@@ -21,22 +29,15 @@ body:not(.wp-admin) {
 }
 
 h1.page-title {
-  color: $secondColor;
-  font-size: rem(32);
-  text-transform: uppercase;
+    color: $secondColor;
+    text-transform: uppercase;
+    font-size: rem(30);
+    font-weight: $semiBold;
 
-  @include maxWidth($xxl) {
-    font-size: rem(24);
-  }
-
-  @include maxWidth($lg) {
-    margin-bottom: 4rem;
-    font-size: rem(18);
-  }
-
-  @include maxWidth($xs) {
-    margin-bottom: 3rem;
-  }
+    @include maxWidth($md) {
+			font-size: rem(24);
+      text-align: center;
+		}
 }
 
 figcaption {
@@ -45,4 +46,8 @@ figcaption {
 
 .page-hero {
   padding: 3rem 0;
+
+  @include maxWidth($md) {
+    padding: 0 0 2rem;
+  }
 }

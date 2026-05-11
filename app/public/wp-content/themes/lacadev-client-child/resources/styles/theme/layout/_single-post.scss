@@ -18,6 +18,14 @@ $post-color-bg-light:   #f8f8f8;
 .single-post {
     padding-bottom: 8rem;
 
+   @include maxWidth($xl) {
+        padding-bottom: 5rem;
+    }
+
+    @include maxWidth($sm) {
+        padding-bottom: 3rem;
+    }
+
     .post-meta {
         padding: 1rem 0;
         display: flex;
@@ -53,6 +61,10 @@ $post-color-bg-light:   #f8f8f8;
         @include minWidth($md) {
             flex-direction: row;
             align-items: flex-start;
+        }
+
+        @include maxWidth($sm) {
+            gap: 1rem;
         }
     }
 
@@ -107,7 +119,6 @@ $post-color-bg-light:   #f8f8f8;
     &__content {
         color: $post-color-text;
         line-height: 1.85;
-        font-size: 1.6rem;
 
         h2, h3, h4 {
             margin: 2.4rem 0 1.2rem;
@@ -125,6 +136,19 @@ $post-color-bg-light:   #f8f8f8;
             border-radius: 0.4rem;
             display: block;
             margin: 0 auto 1.6rem;
+
+            @include maxWidth($sm) {
+                margin: 0 auto 1rem;
+            }
+        }
+
+        figcaption {
+            font-size: rem(16);
+
+            @include maxWidth($sm) {
+                font-size: rem(14);
+                margin: 0;
+            }
         }
 
         a {
@@ -297,11 +321,21 @@ $post-color-bg-light:   #f8f8f8;
     border-radius: 0.8rem;
     background: $post-color-bg-light;
     border-left: 4px solid $primaryColor;
+    color: #333;
 
     @include maxWidth($sm) {
+        margin: 1rem 0;
+        padding: 1rem;
         flex-direction: column;
-        gap: 1.6rem;
-        padding: 2rem;
+        gap: 1rem;
+        align-items: center;
+        text-align: center;
+
+        .kk-star-ratings {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.25rem;
+        }
     }
 
     // ── Icon ──────────────────────────────────────────────────────────────
@@ -314,7 +348,6 @@ $post-color-bg-light:   #f8f8f8;
         justify-content: center;
         border-radius: 50%;
         background: $primaryColor;
-        color: #fff;
 
         svg {
             width: 2.4rem;

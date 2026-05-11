@@ -118,15 +118,6 @@ add_action('init', function () {
 });
 
 /**
- * Mobile Sticky CTA Bar
- */
-// add_action('init', function () {
-//     if (class_exists('\App\Features\MobileStickyCta')) {
-//         (new \App\Features\MobileStickyCta())->init();
-//     }
-// });
-
-/**
  * Related Posts
  */
 add_action('init', function () {

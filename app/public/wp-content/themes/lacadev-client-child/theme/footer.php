@@ -39,7 +39,7 @@ $footer_contact_image_alt = $footer_contact_image_id ? get_post_meta($footer_con
 <section class="footer-contact-form">
   <div class="container">
     <div class="bcf__inner">
-      <div class="bcf__left">
+      <div class="bcf__left" data-aos="fade-right">
         <?php if ($footer_contact_heading): ?>
           <h2 class="bcf__heading"><?php echo esc_html($footer_contact_heading); ?></h2>
         <?php endif; ?>
@@ -118,7 +118,7 @@ $footer_contact_image_alt = $footer_contact_image_id ? get_post_meta($footer_con
         </form>
       </div>
 
-      <div class="bcf__right">
+      <div class="bcf__right" data-aos="fade-left">
         <?php if ($footer_contact_image_url): ?>
           <div class="bcf__img-wrap">
             <img
@@ -134,7 +134,7 @@ $footer_contact_image_alt = $footer_contact_image_id ? get_post_meta($footer_con
   </div>
 </section>
 
-<footer class="footer" role="contentinfo">
+<footer class="footer" role="contentinfo" data-aos="fade-up">
   <div class="footer__main">
     <div class="container">
       <div class="footer__grid">

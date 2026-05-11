@@ -68,7 +68,7 @@ if (is_post_type_archive('project')) {
 <div class="page-hero">
     <div class="container-fluid">
         <div class="hero-content">
-            <h1 class="<?php echo esc_attr($title_class); ?>"><?php echo esc_html($title); ?></h1>
+            <h1 class="<?php echo esc_attr($title_class); ?>" data-aos="fade-up"><?php echo esc_html($title); ?></h1>
             <?php if ($excerpt) : ?>
                 <div class="page-excerpt">
                     <?php echo wp_kses_post($excerpt); ?>

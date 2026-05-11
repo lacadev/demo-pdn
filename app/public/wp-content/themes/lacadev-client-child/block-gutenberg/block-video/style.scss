@@ -2,6 +2,7 @@
 @use "@parent/styles/theme/abstracts/mixin" as *;
 
 .laca-video-block {
+    padding: 0 !important;
 
     &__inner {
         width: 100%;

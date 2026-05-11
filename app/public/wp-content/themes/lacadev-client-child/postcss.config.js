@@ -5,8 +5,8 @@
  * resources/build/postcss.js riêng (không đọc file này).
  */
 module.exports = {
-	plugins: {
-		tailwindcss: {},
-		autoprefixer: {},
-	},
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
 };
