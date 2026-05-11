@@ -158,6 +158,8 @@ return array(
     'RankMath\\Json_Manager' => $baseDir . '/includes/class-json-manager.php',
     'RankMath\\KB' => $baseDir . '/includes/class-kb.php',
     'RankMath\\LLMS\\LLMS_Txt' => $baseDir . '/includes/modules/llms/class-llms-txt.php',
+    'RankMath\\Links\\Admin\\Admin' => $baseDir . '/includes/modules/links/Admin/class-admin.php',
+    'RankMath\\Links\\Api\\Controller' => $baseDir . '/includes/modules/links/Api/class-controller.php',
     'RankMath\\Links\\ContentProcessor' => $baseDir . '/includes/modules/links/class-contentprocessor.php',
     'RankMath\\Links\\Link' => $baseDir . '/includes/modules/links/class-link.php',
     'RankMath\\Links\\Links' => $baseDir . '/includes/modules/links/class-links.php',

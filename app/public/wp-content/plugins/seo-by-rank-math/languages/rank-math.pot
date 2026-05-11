@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-3.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Rank Math SEO 1.0.265\n"
+"Project-Id-Version: Rank Math SEO 1.0.268\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/seo-by-rank-math\n"
 "Last-Translator: Rank Math <support@rankmath.com>\n"
 "Language-Team: Rank Math <support@rankmath.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-04T05:00:15+00:00\n"
+"POT-Creation-Date: 2026-04-15T04:03:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: rank-math\n"
@@ -3324,6 +3324,49 @@ msgstr ""
 
 #. Translators: %s is the words "Check Key".
 msgid "Use the %1$s button to verify that the key is accessible for search engines. Clicking on it should open the key file in your browser and show the API key."
+msgstr ""
+
+msgid "New!"
+msgstr ""
+
+#. Translators: placeholder is the new label.
+msgid "Link Genius %s"
+msgstr ""
+
+msgid "You do not have permission to access this resource."
+msgstr ""
+
+msgid "Items per page."
+msgstr ""
+
+msgid "Search in post title."
+msgstr ""
+
+msgid "Filter by post type. Supports multiple values."
+msgstr ""
+
+msgid "Filter by orphan status (orphan, linked)."
+msgstr ""
+
+msgid "Filter by SEO score range (great, good, bad, no-score)."
+msgstr ""
+
+msgid "Order by field."
+msgstr ""
+
+msgid "Order direction (ASC, DESC)."
+msgstr ""
+
+msgid "Search in URL."
+msgstr ""
+
+msgid "Filter by source post ID."
+msgstr ""
+
+msgid "Filter by target post ID."
+msgstr ""
+
+msgid "Filter by link type (1 = internal, 0 = external)."
 msgstr ""
 
 msgid "Links: "
@@ -6657,6 +6700,30 @@ msgstr ""
 msgid "Search &hellip;"
 msgstr ""
 
+msgid "Select / Deselect All"
+msgstr ""
+
+msgid "I just installed @RankMathSEO #WordPress Plugin. It looks great! %s"
+msgstr ""
+
+msgid "I just installed Rank Math SEO WordPress Plugin. It looks promising!"
+msgstr ""
+
+msgid "SEO by Rank Math"
+msgstr ""
+
+msgid "Tweet"
+msgstr ""
+
+msgid "Share"
+msgstr ""
+
+msgid "Use this file"
+msgstr ""
+
+msgid "Add or Upload File"
+msgstr ""
+
 msgid "Search …"
 msgstr ""
 
@@ -6723,6 +6790,9 @@ msgstr ""
 msgid "Security"
 msgstr ""
 
+msgid "Complete"
+msgstr ""
+
 msgid "SEO Titles & Meta"
 msgstr ""
 
@@ -6741,31 +6811,226 @@ msgstr ""
 msgid "Nothing found."
 msgstr ""
 
-msgid "Select / Deselect All"
+msgid "Select options"
 msgstr ""
 
-msgid "I just installed @RankMathSEO #WordPress Plugin. It looks great! %s"
+msgid "other"
 msgstr ""
 
-msgid "I just installed Rank Math SEO WordPress Plugin. It looks promising!"
+msgid "others"
 msgstr ""
 
-msgid "SEO by Rank Math"
+msgid "Table filters"
 msgstr ""
 
-msgid "Tweet"
+msgid "Apply selected filters"
 msgstr ""
 
-msgid "Share"
+msgid "Apply Filters"
 msgstr ""
 
-msgid "Use this file"
+msgid "Clear all filters"
 msgstr ""
 
-msgid "Add or Upload File"
+msgid "Clear All"
 msgstr ""
 
-msgid "Complete"
+msgid "Select row"
+msgstr ""
+
+msgid "Hide row details"
+msgstr ""
+
+msgid "View row details"
+msgstr ""
+
+msgid "Hide Details"
+msgstr ""
+
+msgid "View Details"
+msgstr ""
+
+msgid "for row"
+msgstr ""
+
+msgid "Processing…"
+msgstr ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+msgid "of"
+msgstr ""
+
+msgid "Go to Page"
+msgstr ""
+
+msgid "Page number"
+msgstr ""
+
+msgid "🔒 This is a PRO-Only Feature"
+msgstr ""
+
+msgid "We are sorry, but this feature is only available to Rank Math PRO/Business/Agency users. Upgrade to a Rank Math plan to unlock this feature and many more powerful SEO tools, including:"
+msgstr ""
+
+msgid "Automatic Link Audit to Identify SEO Issues"
+msgstr ""
+
+msgid "AI-Powered Keyword Mapping"
+msgstr ""
+
+msgid "Free Content AI Trial"
+msgstr ""
+
+msgid "Built-in Keyword Rank Tracker"
+msgstr ""
+
+msgid "SEO Performance Email Reports"
+msgstr ""
+
+msgid "Get PRO Now →"
+msgstr ""
+
+msgid "⛔️ Update Required"
+msgstr ""
+
+msgid "Update Now"
+msgstr ""
+
+msgid "🚀 Supercharge Your Content With AI"
+msgstr ""
+
+msgid "Start using Content AI by connecting your RankMath.com Account"
+msgstr ""
+
+msgid "To access this Content AI feature, you need to have an active subscription plan."
+msgstr ""
+
+msgid "To access this Content AI feature, you have to purchase a Content AI Subscription."
+msgstr ""
+
+msgid "You are one step away from unlocking this premium feature along with many more."
+msgstr ""
+
+msgid "1-Click Article Generation"
+msgstr ""
+
+msgid "Bulk Update Your SEO Meta using AI"
+msgstr ""
+
+msgid "Get Access to 40+ AI SEO Tools"
+msgstr ""
+
+msgid "125+ Expert-Written Prompts"
+msgstr ""
+
+msgid "1-Click Competitor Content Research"
+msgstr ""
+
+msgid "1-Click WooCommerce Product Descriptions"
+msgstr ""
+
+msgid "1-Click Competitor Research"
+msgstr ""
+
+msgid "On-Page SEO Suggestions"
+msgstr ""
+
+msgid "1-Click Bulk SEO Meta"
+msgstr ""
+
+msgid "125+ Pre-Built Prompts"
+msgstr ""
+
+msgid "Multiple RankBot Sessions"
+msgstr ""
+
+msgid "1-Click SEO Content"
+msgstr ""
+
+msgid "1-Click SEO Meta"
+msgstr ""
+
+msgid "40+ Specialized AI Tools"
+msgstr ""
+
+msgid "Gain access to 40+ advanced AI tools, empowering your content strategy."
+msgstr ""
+
+msgid "Experience the revolutionary AI-powered Content Editor for unparalleled efficiency."
+msgstr ""
+
+msgid "Engage with RankBot, your personal AI Chat Assistant, for real-time assistance."
+msgstr ""
+
+msgid "Connect Now"
+msgstr ""
+
+msgid "Server Maintenance Underway"
+msgstr ""
+
+msgid "We are working on improving your Content AI experience. Please wait for 5 minutes and then refresh to start using the optimized Content AI. If you see this for more than 5 minutes, please "
+msgstr ""
+
+msgid "reach out to the support team."
+msgstr ""
+
+msgid " We are sorry for the inconvenience."
+msgstr ""
+
+msgid "⛔️ Content AI Credit Alert!"
+msgstr ""
+
+msgid "Your monthly Content AI credits have been fully utilized. You can wait till %s for your credits to refresh or upgrade to continue enjoying seamless content creation"
+msgstr ""
+
+msgid "Your monthly Content AI credits have been fully utilized. To continue enjoying seamless content creation, simply click the button below to upgrade your plan and access more credits."
+msgstr ""
+
+msgid "Missing Credits?"
+msgstr ""
+
+msgid "Export table data"
+msgstr ""
+
+msgid "item"
+msgstr ""
+
+msgid "items"
+msgstr ""
+
+msgid "selected"
+msgstr ""
+
+msgid "Recheck"
+msgstr ""
+
+msgid "Mark as Not Broken"
+msgstr ""
+
+msgid "Bulk actions"
+msgstr ""
+
+msgid "Select all %d matching items"
+msgstr ""
+
+msgid "Select all"
+msgstr ""
+
+msgid "matching items"
+msgstr ""
+
+msgid "Select bulk action"
+msgstr ""
+
+msgid "Select all on page"
+msgstr ""
+
+msgid "No data available"
 msgstr ""
 
 msgid "Please enable Redirections module"
@@ -6804,9 +7069,6 @@ msgstr ""
 msgid "Edit your robots.txt file to control what bots see."
 msgstr ""
 
-msgid "Share anonymous usage data to help us improve Rank Math. No personal info is collected. %s"
-msgstr ""
-
 msgid "%AUTHORLINK%"
 msgstr ""
 
@@ -6820,6 +7082,9 @@ msgid "%BLOGDESCLINK%"
 msgstr ""
 
 msgid "%FEATUREDIMAGE%"
+msgstr ""
+
+msgid "Share anonymous usage data to help us improve Rank Math. No personal info is collected. %s"
 msgstr ""
 
 msgid "Change some uncommon but essential settings here."
@@ -6981,9 +7246,6 @@ msgstr ""
 msgid "your email account."
 msgstr ""
 
-msgid "Connect Now"
-msgstr ""
-
 msgid "You have successfully activated Rank Math. If you find the plugin useful, "
 msgstr ""
 
@@ -7062,9 +7324,6 @@ msgstr ""
 msgid "Latest Stable Version"
 msgstr ""
 
-msgid "Update Now"
-msgstr ""
-
 msgid "This is the latest version of the plugin."
 msgstr ""
 
@@ -7081,117 +7340,6 @@ msgid "Reinstalling, please wait…"
 msgstr ""
 
 msgid "Are you sure? You want to reset settings."
-msgstr ""
-
-msgid "🔒 This is a PRO-Only Feature"
-msgstr ""
-
-msgid "We are sorry but this feature is only available to Rank Math PRO/Business/Agency Users. Unlock this feature and many more by getting a Rank Math plan."
-msgstr ""
-
-msgid "Bulk Edit SEO Tags"
-msgstr ""
-
-msgid "Advanced Google Analytics 4 Integration"
-msgstr ""
-
-msgid "Free Content AI Trial"
-msgstr ""
-
-msgid "SEO Performance Email Reports"
-msgstr ""
-
-msgid "⛔️ Update Required"
-msgstr ""
-
-msgid "🚀 Supercharge Your Content With AI"
-msgstr ""
-
-msgid "Start using Content AI by connecting your RankMath.com Account"
-msgstr ""
-
-msgid "To access this Content AI feature, you need to have an active subscription plan."
-msgstr ""
-
-msgid "To access this Content AI feature, you have to purchase a Content AI Subscription."
-msgstr ""
-
-msgid "You are one step away from unlocking this premium feature along with many more."
-msgstr ""
-
-msgid "1-Click Article Generation"
-msgstr ""
-
-msgid "Bulk Update Your SEO Meta using AI"
-msgstr ""
-
-msgid "Get Access to 40+ AI SEO Tools"
-msgstr ""
-
-msgid "125+ Expert-Written Prompts"
-msgstr ""
-
-msgid "1-Click Competitor Content Research"
-msgstr ""
-
-msgid "1-Click WooCommerce Product Descriptions"
-msgstr ""
-
-msgid "1-Click Competitor Research"
-msgstr ""
-
-msgid "On-Page SEO Suggestions"
-msgstr ""
-
-msgid "1-Click Bulk SEO Meta"
-msgstr ""
-
-msgid "125+ Pre-Built Prompts"
-msgstr ""
-
-msgid "Multiple RankBot Sessions"
-msgstr ""
-
-msgid "1-Click SEO Content"
-msgstr ""
-
-msgid "1-Click SEO Meta"
-msgstr ""
-
-msgid "40+ Specialized AI Tools"
-msgstr ""
-
-msgid "Gain access to 40+ advanced AI tools, empowering your content strategy."
-msgstr ""
-
-msgid "Experience the revolutionary AI-powered Content Editor for unparalleled efficiency."
-msgstr ""
-
-msgid "Engage with RankBot, your personal AI Chat Assistant, for real-time assistance."
-msgstr ""
-
-msgid "Server Maintenance Underway"
-msgstr ""
-
-msgid "We are working on improving your Content AI experience. Please wait for 5 minutes and then refresh to start using the optimized Content AI. If you see this for more than 5 minutes, please "
-msgstr ""
-
-msgid "reach out to the support team."
-msgstr ""
-
-msgid " We are sorry for the inconvenience."
-msgstr ""
-
-msgid "⛔️ Content AI Credit Alert!"
-msgstr ""
-
-msgid "Your monthly Content AI credits have been fully utilized. You can wait till %s for your credits to refresh or upgrade to continue enjoying seamless content creation"
-msgstr ""
-
-msgid "Your monthly Content AI credits have been fully utilized. To continue enjoying seamless content creation, simply click the button below to upgrade your plan and access more credits."
-msgstr ""
-
-msgid "Missing Credits?"
 msgstr ""
 
 msgid "Bulk Edit This Field"
@@ -7674,6 +7822,33 @@ msgstr ""
 msgid "The following active plugins on your site may cause conflict issues when used alongside this plugin: "
 msgstr ""
 
+msgid "Your PHP Version: %s | Recommended version: 7.4 | Minimal required: 7.2"
+msgstr ""
+
+msgid "Your PHP Version: %s"
+msgstr ""
+
+msgid "Rank Math is compatible with your PHP version but we recommend updating to PHP 7.4 for increased speed and security. "
+msgstr ""
+
+msgid "More information"
+msgstr ""
+
+msgid "This plugin is compatible with your PHP version but we recommend updating to PHP 7.4 for increased speed and security."
+msgstr ""
+
+msgid " | Recommended: PHP 7.4 or later"
+msgstr ""
+
+msgid "available"
+msgstr ""
+
+msgid "installed"
+msgstr ""
+
+msgid "missing"
+msgstr ""
+
 msgid "You are using the recommended WordPress version."
 msgstr ""
 
@@ -7695,33 +7870,6 @@ msgstr ""
 msgid "Base64 encode & decode functions"
 msgstr ""
 
-msgid "available"
-msgstr ""
-
-msgid "installed"
-msgstr ""
-
-msgid "missing"
-msgstr ""
-
-msgid "Your PHP Version: %s | Recommended version: 7.4 | Minimal required: 7.2"
-msgstr ""
-
-msgid "Your PHP Version: %s"
-msgstr ""
-
-msgid "Rank Math is compatible with your PHP version but we recommend updating to PHP 7.4 for increased speed and security. "
-msgstr ""
-
-msgid "More information"
-msgstr ""
-
-msgid "This plugin is compatible with your PHP version but we recommend updating to PHP 7.4 for increased speed and security."
-msgstr ""
-
-msgid " | Recommended: PHP 7.4 or later"
-msgstr ""
-
 msgid "Your website is compatible to run Rank Math SEO"
 msgstr ""
 
@@ -7734,9 +7882,6 @@ msgstr ""
 msgid "Recalculate SEO Scores"
 msgstr ""
 
-msgid "SEO Scores updated"
-msgstr ""
-
 msgid "Deactivating %1$s"
 msgstr ""
 
@@ -7744,6 +7889,9 @@ msgid "Importing %1$s from %2$s"
 msgstr ""
 
 msgid "Starting SEO score recalculation"
+msgstr ""
+
+msgid "SEO Scores updated"
 msgstr ""
 
 msgid "No posts found without SEO score."
@@ -7902,13 +8050,13 @@ msgstr ""
 msgid "Set up temporary or permanent redirections. Combined with the 404 monitor, you can easily redirect faulty URLs on your site, or add custom redirections."
 msgstr ""
 
-msgid "Use automatic structured data to mark up content, to help Google better understand your content's context for display in Search. You can set different defaults for your posts here."
-msgstr ""
-
 msgid "Schema Type for %s"
 msgstr ""
 
 msgid "Default rich snippet selected when creating a new post of this type."
+msgstr ""
+
+msgid "Use automatic structured data to mark up content, to help Google better understand your content's context for display in Search. You can set different defaults for your posts here."
 msgstr ""
 
 msgid "Import"
@@ -8191,9 +8339,6 @@ msgid "Find winning keywords"
 msgstr ""
 
 msgid "Keep an eye on losing keywords"
-msgstr ""
-
-msgid "Built-in Keyword Rank Tracker"
 msgstr ""
 
 msgid "All Keywords"
@@ -8904,6 +9049,15 @@ msgstr ""
 msgid "1 Word Output = 1 Credit"
 msgstr ""
 
+msgid "We are sorry but this feature is only available to Rank Math PRO/Business/Agency Users. Unlock this feature and many more by getting a Rank Math plan."
+msgstr ""
+
+msgid "Bulk Edit SEO Tags"
+msgstr ""
+
+msgid "Advanced Google Analytics 4 Integration"
+msgstr ""
+
 msgid "Required fields."
 msgstr ""
 
@@ -9144,9 +9298,6 @@ msgstr ""
 msgid "Click to copy keyword"
 msgstr ""
 
-msgid "No data available"
-msgstr ""
-
 msgid "Use Keyword in"
 msgstr ""
 
@@ -9216,9 +9367,6 @@ msgstr ""
 msgid "Final Touches to the SEO Recommendations"
 msgstr ""
 
-msgid "New!"
-msgstr ""
-
 msgid "Content AI Knowledge Base."
 msgstr ""
 
@@ -9229,6 +9377,9 @@ msgid "Error: The request payload is too large!"
 msgstr ""
 
 msgid "Generate with AI"
+msgstr ""
+
+msgid "%1$sNote:%2$s Your input is processed using AI. Please review and edit before publishing."
 msgstr ""
 
 msgid "Blog Post Wizard"
@@ -9327,6 +9478,96 @@ msgstr ""
 msgid "Start using Content AI by connecting your RankMath account."
 msgstr ""
 
+msgid "View internal links from this post"
+msgstr ""
+
+msgid "View external links from this post"
+msgstr ""
+
+msgid "Orphan post — no incoming links"
+msgstr ""
+
+msgid "This post has no internal links. We recommend that you add links to this URL in other posts of your website."
+msgstr ""
+
+msgid "View incoming links to this post"
+msgstr ""
+
+msgid "All Posts"
+msgstr ""
+
+msgid "Orphan Posts"
+msgstr ""
+
+msgid "With Incoming Links"
+msgstr ""
+
+msgid "All Scores"
+msgstr ""
+
+msgid "Great"
+msgstr ""
+
+msgid "Bad"
+msgstr ""
+
+msgid "Post Type"
+msgstr ""
+
+msgid "All Types"
+msgstr ""
+
+msgid "Total Posts"
+msgstr ""
+
+msgid "Internal"
+msgstr ""
+
+msgid "External"
+msgstr ""
+
+msgid "Source Post"
+msgstr ""
+
+msgid "Destination"
+msgstr ""
+
+msgid "Link Type"
+msgstr ""
+
+msgid "Success"
+msgstr ""
+
+msgid "Broken"
+msgstr ""
+
+msgid "Redirects"
+msgstr ""
+
+msgid "Robots Blocked"
+msgstr ""
+
+msgid "Marked Safe"
+msgstr ""
+
+msgid "Unchecked"
+msgstr ""
+
+msgid "Total Links"
+msgstr ""
+
+msgid "Bulk Update"
+msgstr ""
+
+msgid "Keyword Maps"
+msgstr ""
+
+msgid "Source URLs"
+msgstr ""
+
+msgid "Ignore Case"
+msgstr ""
+
 msgid "This field must not be empty."
 msgstr ""
 
@@ -9337,12 +9578,6 @@ msgid "Update Redirection"
 msgstr ""
 
 msgid "Add Redirection"
-msgstr ""
-
-msgid "Source URLs"
-msgstr ""
-
-msgid "Ignore Case"
 msgstr ""
 
 msgid "Toggle All"
@@ -9915,12 +10150,6 @@ msgstr ""
 msgid "Calculating SEO score for posts %1$s - %2$s out of %3$s"
 msgstr ""
 
-msgid "Titles & Metas"
-msgstr ""
-
-msgid "Role Manager Settings"
-msgstr ""
-
 msgid "Settings File"
 msgstr ""
 
@@ -9936,10 +10165,16 @@ msgstr ""
 msgid "Are you sure you want to import settings into Rank Math? Don't worry, your current configuration will be saved as a backup."
 msgstr ""
 
-msgid "Export Settings"
+msgid "Titles & Metas"
+msgstr ""
+
+msgid "Role Manager Settings"
 msgstr ""
 
 msgid "Choose the panels to export."
+msgstr ""
+
+msgid "Export Settings"
 msgstr ""
 
 msgid "Plugin Settings"
