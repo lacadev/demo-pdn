@@ -3,30 +3,6 @@
 // Extracted from DashboardWidgets.php – do NOT add inline
 // ============================================================
 
-// ─── CSS Custom Properties ───────────────────────────────────
-
-:root {
-    // Pastel palette
-    --laca-blue:       #8aadf7;
-    --laca-blue-soft:  #eef3fe;
-    --laca-green:      #7dd3a8;
-    --laca-green-soft: #edf9f2;
-    --laca-amber:      #f5c97a;
-    --laca-amber-soft: #fef7ea;
-    --laca-red:        #f29b9b;
-    --laca-red-soft:   #fef0f0;
-
-    // Aliases
-    --laca-primary:    #8aadf7;
-    --laca-primary-lt: #eef3fe;
-    --laca-text-main:  #3d4654;
-    --laca-text-muted: #8b95a5;
-    --laca-bg-soft:    #fafbfc;
-    --laca-border:     #e8ecf0;
-    --laca-radius:     6px;
-    --laca-shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.06);
-}
-
 // ─── Reusable status dot ─────────────────────────────────────
 .laca-dot {
     display: inline-block;
@@ -37,17 +13,17 @@
     vertical-align: middle;
     flex-shrink: 0;
 
-    &--success { background: var(--laca-green); }
-    &--warning { background: var(--laca-amber); }
-    &--danger  { background: var(--laca-red); }
-    &--info    { background: var(--laca-blue); }
-    &--muted   { background: #b8c0cc; }
+    &--success { background: var(--laca-admin-success); }
+    &--warning { background: var(--laca-admin-warning); }
+    &--danger  { background: var(--laca-admin-danger); }
+    &--info    { background: var(--laca-admin-accent); }
+    &--muted   { background: var(--laca-admin-border-strong); }
 }
 
 // ─── Shared Widget Layout ────────────────────────────────────
 
 .lacadev-dashboard-widget {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--laca-admin-text);
 }
 
 .lacadev-two-col {
@@ -57,13 +33,14 @@
 }
 
 .lacadev-stat-box {
-    background: #fff;
-    border-radius: var(--laca-radius);
+    background: var(--laca-admin-surface);
+    border-radius: var(--laca-admin-radius);
     padding: 1rem;
-    border: 1px solid var(--laca-border);
+    border: 1px solid var(--laca-admin-border);
     display: flex;
     align-items: center;
     gap: 0.875rem;
+    box-shadow: var(--laca-admin-shadow);
 
     .stat-icon {
         font-size: 1.75rem;
@@ -72,7 +49,7 @@
 
     .stat-label {
         font-size: 0.6875rem;
-        color: var(--laca-text-muted);
+        color: var(--laca-admin-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.0312rem;
         margin-bottom: 0.25rem;
@@ -81,7 +58,7 @@
     .stat-value {
         font-size: 1.25rem;
         font-weight: 700;
-        color: var(--laca-text-main);
+        color: var(--laca-admin-text);
     }
 }
 
@@ -98,24 +75,25 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: var(--laca-bg-soft);
-        border: 1px solid var(--laca-border);
-        border-radius: var(--laca-radius);
+        background: var(--laca-admin-surface);
+        border: 1px solid var(--laca-admin-border);
+        border-radius: var(--laca-admin-radius);
         padding: 0.625rem 0.5rem;
         text-align: center;
         gap: 0.25rem;
+        box-shadow: var(--laca-admin-shadow);
     }
 
     .stat-value {
         font-size: 1.125rem;
         font-weight: 700;
-        color: var(--laca-text-main);
+        color: var(--laca-admin-text);
         line-height: 1.2;
     }
 
     .stat-label {
         font-size: 0.6875rem;
-        color: var(--laca-text-muted);
+        color: var(--laca-admin-text-muted);
         line-height: 1.3;
     }
 }
@@ -146,7 +124,7 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.0312rem;
-            color: var(--laca-text-muted);
+            color: var(--laca-admin-text-muted);
             font-weight: 700;
         }
 
@@ -159,7 +137,7 @@
 .laca-charts-footer {
     text-align: center;
     padding: 0.75rem 0 0;
-    color: var(--laca-text-muted);
+    color: var(--laca-admin-text-muted);
     font-size: 0.75rem;
 }
 
@@ -169,20 +147,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border: 1px solid var(--laca-border);
+    background: var(--laca-admin-surface);
+    border: 1px solid var(--laca-admin-border);
     padding: 0.625rem;
-    border-radius: var(--laca-radius);
+    border-radius: 12px;
     text-decoration: none;
-    color: #2c3338;
+    color: var(--laca-admin-text);
     font-weight: 600;
     transition: all 0.2s;
     font-size: 0.8125rem;
 
     &:hover {
-        background: #f0f6fb;
-        border-color: var(--laca-primary);
-        color: var(--laca-primary);
+        background: var(--laca-admin-surface);
+        border-color: var(--laca-admin-accent);
+        color: var(--laca-admin-accent);
     }
 
     span {
@@ -195,8 +173,8 @@
     font-size: 0.8125rem;
     font-weight: 700;
     margin: 0.9375rem 0 0.625rem;
-    color: var(--laca-text-main);
-    border-bottom: 2px solid #f1f1f1;
+    color: var(--laca-admin-text);
+    border-bottom: 1px solid var(--laca-admin-border);
     padding-bottom: 0.3125rem;
 }
 
@@ -215,14 +193,14 @@
         align-items: center;
         justify-content: space-between;
         padding: 0.625rem 0;
-        border-bottom: 1px solid #f0f0f1;
+        border-bottom: 1px solid var(--laca-admin-border);
         font-size: 0.8125rem;
 
         &:last-child { border-bottom: none; }
     }
 
-    .health-label { color: var(--laca-text-muted); }
-    .health-value { font-weight: 600; color: var(--laca-text-main); }
+    .health-label { color: var(--laca-admin-text-muted); }
+    .health-value { font-weight: 600; color: var(--laca-admin-text); }
     .health-ok    { color: #00a32a; }
     .health-warn  { color: #dba617; }
     .health-link  { margin-left: 0.5rem; font-size: 0.6875rem; }
@@ -243,19 +221,19 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 0.875rem;
-    background: var(--laca-bg-soft);
-    border-radius: var(--laca-radius);
+    background: var(--laca-admin-surface);
+    border-radius: 12px;
     text-decoration: none;
-    color: var(--laca-text-main);
+    color: var(--laca-admin-text);
     font-size: 0.8125rem;
     font-weight: 600;
-    border: 1px solid var(--laca-border);
+    border: 1px solid var(--laca-admin-border);
     transition: all 0.2s;
 
     &:hover {
-        background: #fff;
-        border-color: var(--laca-primary);
-        color: var(--laca-primary);
+        background: var(--laca-admin-surface);
+        border-color: var(--laca-admin-accent);
+        color: var(--laca-admin-accent);
     }
 
     span:first-child {

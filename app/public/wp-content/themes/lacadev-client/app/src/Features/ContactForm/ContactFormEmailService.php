@@ -52,8 +52,9 @@ class ContactFormEmailService
             return;
         }
 
+        $isHtml  = self::isHtml($body);
         $headers = [
-            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Type: ' . ($isHtml ? 'text/html' : 'text/plain') . '; charset=UTF-8',
             'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>',
         ];
 
@@ -89,8 +90,9 @@ class ContactFormEmailService
             return;
         }
 
+        $isHtml  = self::isHtml($body);
         $headers = [
-            'Content-Type: text/plain; charset=UTF-8',
+            'Content-Type: ' . ($isHtml ? 'text/html' : 'text/plain') . '; charset=UTF-8',
             'From: ' . get_bloginfo('name') . ' <' . get_option('admin_email') . '>',
         ];
 
@@ -113,6 +115,14 @@ class ContactFormEmailService
      * @param array  $vars      Array ['variable_name' => 'value']
      * @return string
      */
+    /**
+     * Kiểm tra nội dung có phải HTML không (có thẻ HTML).
+     */
+    private static function isHtml(string $content): bool
+    {
+        return $content !== strip_tags($content);
+    }
+
     private static function interpolate(string $template, array $vars): string
     {
         foreach ($vars as $key => $value) {

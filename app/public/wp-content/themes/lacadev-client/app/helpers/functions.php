@@ -18,6 +18,67 @@ function subString($str, $limit)
 }
 
 // =============================================================================
+// ADMIN DASHBOARD WIDGETS
+// =============================================================================
+
+function lacadev_dashboard_widget_definitions(): array
+{
+    $widgets = [
+        'management_hub'      => 'LacaDev Business Hub',
+        'content_tracker'     => 'Báo cáo Nội dung',
+        'site_health'         => 'Tình trạng Website',
+        'media_insights'      => 'Thư viện Media',
+        'todo'                => 'Việc cần làm',
+        'quick_search'        => 'Tìm kiếm nhanh',
+        'client_ops'          => 'LacaDev Client Operations',
+        'project_charts'      => 'Thống kê Dự án',
+        'quick_notes'         => 'Ghi chú nhanh',
+        'performance_budget'  => 'Performance Budget',
+        'block_sync'          => 'LacaDev Block Updates',
+        'contact_intro'       => 'Giới thiệu',
+    ];
+
+    return (array) apply_filters('lacadev_dashboard_widget_definitions', $widgets);
+}
+
+function lacadev_dashboard_widget_enabled(string $key): bool
+{
+    $definitions = lacadev_dashboard_widget_definitions();
+    if (!isset($definitions[$key])) {
+        return false;
+    }
+
+    $enabled = null;
+
+    if (function_exists('carbon_get_theme_option')) {
+        $carbonValue = carbon_get_theme_option('dashboard_widgets_enabled');
+        if ($carbonValue !== null && $carbonValue !== false) {
+            $enabled = $carbonValue;
+        }
+    }
+
+    if ($enabled === null) {
+        $rawValue = get_option('_dashboard_widgets_enabled', null);
+        if ($rawValue === null) {
+            $rawValue = get_option('dashboard_widgets_enabled', null);
+        }
+        $enabled = $rawValue;
+    }
+
+    if ($enabled === null) {
+        $enabled = array_keys($definitions);
+    }
+
+    $enabled = maybe_unserialize($enabled);
+
+    if (!is_array($enabled)) {
+        $enabled = $enabled !== '' ? [$enabled] : [];
+    }
+
+    return in_array($key, $enabled, true);
+}
+
+// =============================================================================
 // LANGUAGE & INTERNATIONALIZATION
 // =============================================================================
 

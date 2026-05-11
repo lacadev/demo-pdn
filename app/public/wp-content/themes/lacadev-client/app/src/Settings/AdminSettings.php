@@ -31,7 +31,6 @@ class AdminSettings
 			$this->removeUnnecessaryMenus();
 		}
 
-		$this->applyAdminColorVariables();
 		$this->addDashboardContactWidget();
 		$this->removeDefaultWidgets();
 		$this->removeDashboardWidgets();
@@ -42,6 +41,8 @@ class AdminSettings
 		$this->resizeOriginalImageAfterUpload();
 		$this->renameUploadFileName();
 		$this->addCustomExtensionsInMediaUpload();
+		$this->enableMediaUploaderForHelpGuide();
+		$this->registerHelpGuidePasteImageAjax();
 
 		if (get_option('_disable_admin_confirm_email') === 'yes') {
 			$this->disableChangeAdminEmailRequireConfirm();
@@ -81,24 +82,90 @@ class AdminSettings
 		});
 	}
 
-	public function applyAdminColorVariables(): void
+	/**
+	 * Enable WordPress media uploader and clipboard paste-to-upload on the
+	 * "Quản trị & HD Sử dụng" Carbon Fields theme options screen.
+	 */
+	public function enableMediaUploaderForHelpGuide(): void
 	{
-		$printColors = static function () {
-			$primary   = carbon_get_theme_option('primary_color_ad') ?: '#566a7f';
-			$secondary = carbon_get_theme_option('secondary_color_ad') ?: '#566a7f';
-			$bg        = carbon_get_theme_option('bg_color_ad') ?: '#E6E4FC';
-			$text      = carbon_get_theme_option('text_color_ad') ?: '#000';
+		add_action('admin_enqueue_scripts', static function ($hook_suffix) {
+			$page = isset($_GET['page']) ? (string) wp_unslash($_GET['page']) : '';
+			$screen = function_exists('get_current_screen') ? get_current_screen() : null;
+			$screenId = $screen && !empty($screen->id) ? (string) $screen->id : '';
 
-			echo '<style>:root{'
-				. '--primary-color-ad:' . esc_attr($primary) . ';'
-				. '--secondary-color-ad:' . esc_attr($secondary) . ';'
-				. '--bg-color-ad:' . esc_attr($bg) . ';'
-				. '--text-color-ad:' . esc_attr($text) . ';'
-				. '}</style>';
-		};
+			// Theme options: "Nội dung HD Sử dụng" (rich_text) + legacy slugs + menu HD Sử dụng.
+			$isHelpGuideScreen =
+				strpos((string) $hook_suffix, 'laca-help-content-settings') !== false
+				|| strpos($screenId, 'laca-help-content-settings') !== false
+				|| $page === 'laca-help-content-settings'
+				|| strpos((string) $hook_suffix, 'laca-management-settings') !== false
+				|| strpos($screenId, 'laca-management-settings') !== false
+				|| $page === 'laca-management-settings'
+				|| ($page !== '' && strpos($page, 'management-settings') !== false)
+				|| strpos((string) $hook_suffix, 'lacadev-help') !== false
+				|| $page === 'lacadev-help';
 
-		add_action('admin_head', $printColors);
-		add_action('login_head', $printColors);
+			if (!$isHelpGuideScreen) {
+				return;
+			}
+
+			wp_enqueue_media();
+			$theme_root_uri = dirname(get_template_directory_uri());
+			$script_ver = wp_get_theme()->get('Version') ?: '1.0.0';
+			wp_enqueue_script(
+				'laca-help-guide-paste-image',
+				$theme_root_uri . '/resources/scripts/admin/help-guide-paste-image.js',
+				['jquery'],
+				$script_ver,
+				true
+			);
+			wp_localize_script('laca-help-guide-paste-image', 'lacaHelpPasteImage', [
+				'ajaxUrl' => admin_url('admin-ajax.php'),
+				'nonce'   => wp_create_nonce('laca_help_paste_image'),
+				'i18n'    => [
+					'uploadFail' => __('Không thể upload ảnh từ clipboard. Vui lòng thử lại.', 'laca'),
+				],
+			]);
+		}, 20);
+	}
+
+	/**
+	 * AJAX handler: upload pasted image from help guide editor to Media Library.
+	 */
+	public function registerHelpGuidePasteImageAjax(): void
+	{
+		add_action('wp_ajax_laca_help_paste_image', static function () {
+			if (!check_ajax_referer('laca_help_paste_image', 'nonce', false)) {
+				wp_send_json_error(['message' => __('Nonce không hợp lệ.', 'laca')], 403);
+			}
+
+			if (!current_user_can('upload_files')) {
+				wp_send_json_error(['message' => __('Bạn không có quyền upload media.', 'laca')], 403);
+			}
+
+			if (empty($_FILES['image'])) {
+				wp_send_json_error(['message' => __('Không tìm thấy file ảnh từ clipboard.', 'laca')], 400);
+			}
+
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+
+			$attachmentId = media_handle_upload('image', 0);
+			if (is_wp_error($attachmentId)) {
+				wp_send_json_error(['message' => $attachmentId->get_error_message()], 400);
+			}
+
+			$imageUrl = wp_get_attachment_url($attachmentId);
+			if (!$imageUrl) {
+				wp_send_json_error(['message' => __('Upload thành công nhưng không lấy được URL ảnh.', 'laca')], 500);
+			}
+
+			wp_send_json_success([
+				'id'  => $attachmentId,
+				'url' => $imageUrl,
+			]);
+		});
 	}
 
 	public function disableCheckboxUseWeakPassword()
@@ -125,6 +192,10 @@ class AdminSettings
 	public function addDashboardContactWidget()
 	{
 		add_action('wp_dashboard_setup', static function () {
+			if (function_exists('lacadev_dashboard_widget_enabled') && !lacadev_dashboard_widget_enabled('contact_intro')) {
+				return;
+			}
+
 			wp_add_dashboard_widget('custom_help_widget', 'Giới thiệu', static function () { ?>
 				<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0;">
 					<a target="_blank" href="<?php echo AUTHOR['website'] ?>" title="<?php echo AUTHOR['name'] ?>" style="opacity: 0.9; transition: opacity 0.2s;">
@@ -213,6 +284,9 @@ class AdminSettings
 		$author = AUTHOR;
 		add_action('wp_before_admin_bar_render', static function () use ($author) {
 			global $wp_admin_bar;
+			$hide_comments = get_option('_hide_comment_menu_default') === 'yes';
+			$hide_comments = (bool) apply_filters('lacadev_hide_comments_menu', $hide_comments);
+
 			$wp_admin_bar->remove_menu('wp-logo');          // Remove the Wordpress logo
 			$wp_admin_bar->remove_menu('about');            // Remove the about Wordpress link
 			$wp_admin_bar->remove_menu('wporg');            // Remove the Wordpress.org link
@@ -222,9 +296,12 @@ class AdminSettings
 			// $wp_admin_bar->remove_menu('site-name');        // Remove the site name menu
 			$wp_admin_bar->remove_menu('view-site');        // Remove the view site link
 			$wp_admin_bar->remove_menu('updates');          // Remove the updates link
-			$wp_admin_bar->remove_menu('comments');         // Remove the comments link
 			$wp_admin_bar->remove_menu('new-content');      // Remove the content link
 			$wp_admin_bar->remove_menu('w3tc');             // If you use w3 total cache remove the performance link
+
+			if ($hide_comments) {
+				$wp_admin_bar->remove_menu('comments');
+			}
 			// $wp_admin_bar->remove_menu('my-account');       // Remove the user details tab
 		}, 7);
 
@@ -609,15 +686,22 @@ class AdminSettings
 		add_action('admin_menu', static function () {
 			global $menu;
 			global $submenu;
+			$hide_comments = get_option('_hide_comment_menu_default') === 'yes';
+			$hide_comments = (bool) apply_filters('lacadev_hide_comments_menu', $hide_comments);
+			$hidden_menus = [
+				'tools.php',
+				'wpseo_dashboard',
+				'duplicator',
+				'yit_plugin_panel',
+				'woocommerce-checkout-manager',
+			];
+
+			if ($hide_comments) {
+				$hidden_menus[] = 'edit-comments.php';
+			}
+
 			foreach ($menu as $key => $menuItem) {
-				if (in_array($menuItem[2], [
-					'tools.php',
-					'edit-comments.php',
-					'wpseo_dashboard',
-					'duplicator',
-					'yit_plugin_panel',
-					'woocommerce-checkout-manager',
-				])) {
+				if (in_array($menuItem[2], $hidden_menus, true)) {
 					unset($menu[$key]);
 				}
 			}
@@ -644,16 +728,6 @@ class AdminSettings
 			$options = Container::make('theme_options', __('Laca Admin', 'laca'))
 				->set_page_file(__('laca-admin', 'laca'))
 				->set_page_menu_position(3)
-				->add_tab(__('ADMIN COLOR', 'laca'), [
-					Field::make('color', 'primary_color_ad', __('Primary color', 'laca'))
-						->set_width(25),
-					Field::make('color', 'secondary_color_ad', __('Secondary color', 'laca'))
-						->set_width(25),
-					Field::make('color', 'bg_color_ad', __('Background color', 'laca'))
-						->set_width(25),
-					Field::make('color', 'text_color_ad', __('Text color', 'laca'))
-						->set_width(25),
-				])
 				->add_tab(__('ADMIN', 'laca'), [
 					Field::make('checkbox', 'is_maintenance', __('Bật chế độ bảo trì', 'laca')) 
 						->set_width(30),
@@ -972,6 +1046,7 @@ class AdminSettings
 							. '<p style="margin:0 0 8px;font-weight:600;color:#0369a1">📡 LacaDev Tracker</p>'
 							. '<p style="margin:0;font-size:13px;color:#374151">Gửi log tự động (cập nhật plugin/theme/core, xóa plugin, phát hiện file PHP lạ) về hệ thống quản lý dự án lacadev.com. '
 							. 'Lấy <strong>Endpoint URL</strong> và <strong>Secret Key</strong> từ trang chi tiết project tương ứng trên lacadev.com.</p>'
+							. '<p style="margin:10px 0 0;font-size:12px;color:#475569">Endpoint hỗ trợ khách gửi yêu cầu tại site này: <code>/wp-json/laca/v1/client/request</code>.</p>'
 							. '</div>'
 						),
 
@@ -1089,13 +1164,23 @@ class AdminSettings
             ]);
 
             // Workspace / HD Sử dụng & Dashboard Widgets Settings
-            Container::make('theme_options', __('Quản trị & HD Sử dụng', 'laca'))
+            Container::make('theme_options', __('Dashboard Widgets', 'laca'))
                 ->set_page_parent($options)
-                ->set_page_file(__('laca-management-settings', 'laca'))
-                ->add_tab(__('Dashboard Widget', 'laca'), [
-                    Field::make('html', 'dashboard_widget_desc')
-                        ->set_html('<div class="carbon-field-description">Cấu hình hiển thị Widget <b>"Tổng hợp Nội dung"</b> trên màn hình Dashboard chính.</div>'),
-                    
+                ->set_page_file(__('laca-management-dashboard-widgets', 'laca'))
+                ->add_fields([
+                    Field::make('html', 'dashboard_widgets_desc')
+                        ->set_html('<div class="carbon-field-description">Chọn widget custom nào được hiển thị ngoài màn hình Dashboard. Widget không được chọn sẽ không đăng ký ra Dashboard.</div>'),
+
+                    Field::make('multiselect', 'dashboard_widgets_enabled', __('Widget hiển thị ngoài Dashboard', 'laca'))
+                        ->set_options(function() {
+                            return function_exists('lacadev_dashboard_widget_definitions')
+                                ? lacadev_dashboard_widget_definitions()
+                                : [];
+                        })
+                        ->set_default_value(function_exists('lacadev_dashboard_widget_definitions') ? array_keys(lacadev_dashboard_widget_definitions()) : [])
+                        ->set_help_text(__('Chỉ những widget được chọn mới hiển thị ở Dashboard chính.', 'laca')),
+
+					Field::make('separator', 'content_report_separator', __('Widget báo cáo nội dung', 'laca')),
                     Field::make('multiselect', 'dashboard_widget_post_types', __('Các Post Type hiển thị', 'laca'))
                         ->set_options(function() {
                             $types = get_post_types(['public' => true, 'show_in_menu' => true], 'objects');
@@ -1113,8 +1198,22 @@ class AdminSettings
                         ->set_attribute('type', 'number')
                         ->set_default_value('5')
                         ->set_width(50),
-                ])
-                ->add_tab(__('Nội dung HD Sử dụng', 'laca'), [
+
+                    Field::make('separator', 'performance_budget_separator', __('Widget Performance Budget', 'laca')),
+                    Field::make('html', 'performance_budget_desc')
+                        ->set_html('<div class="carbon-field-description">Performance Budget dùng để xem Core Web Vitals và dung lượng CSS/JS của chính website hiện tại. <b>Không bắt buộc cấu hình</b>: nếu để trống CrUX API Key thì vẫn dùng được nhưng có thể bị giới hạn dữ liệu từ Google; URL cần đo mặc định là trang chủ website này.</div>'),
+                    Field::make('text', 'laca_crux_api_key', __('CrUX API Key', 'laca'))
+                        ->set_width(50),
+                    Field::make('text', 'laca_crux_url', __('URL cần đo', 'laca'))
+                        ->set_attribute('type', 'url')
+                        ->set_default_value(home_url('/'))
+                        ->set_width(50),
+                ]);
+
+            Container::make('theme_options', __('Nội dung HD Sử dụng', 'laca'))
+                ->set_page_parent($options)
+                ->set_page_file(__('laca-help-content-settings', 'laca'))
+                ->add_fields([
                     Field::make('html', 'help_page_desc')
                         ->set_html('<div class="carbon-field-description">Nội dung này sẽ hiển thị ở menu <b>"HD Sử dụng"</b> dành cho khách hàng.</div>'),
 

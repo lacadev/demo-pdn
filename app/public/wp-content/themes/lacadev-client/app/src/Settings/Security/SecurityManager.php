@@ -82,25 +82,21 @@ class SecurityManager
     {
         $activeTab = sanitize_key($_GET['tab'] ?? 'audit');
         $tabs = [
-            'audit'   => '📊 Kiểm tra bảo mật',
-            'fim'     => '🗂️ Giám sát file',
-            'malware' => '🦠 Quét mã độc',
-            'users'   => '👥 User ẩn',
-            'login'   => '🔑 URL đăng nhập',
-            '2fa'     => '📱 2FA TOTP',
+            'audit'   => 'Kiểm tra bảo mật',
+            'fim'     => 'Giám sát file',
+            'malware' => 'Quét mã độc',
+            'users'   => 'User ẩn',
+            'login'   => 'URL đăng nhập',
+            '2fa'     => '2FA TOTP',
         ];
+
+        if (!isset($tabs[$activeTab])) {
+            $activeTab = 'audit';
+        }
         ?>
         <div class="wrap">
-            <h1>🔒 Bảo mật</h1>
-            <nav class="nav-tab-wrapper">
-                <?php foreach ($tabs as $key => $label): ?>
-                    <a href="<?php echo esc_url(add_query_arg(['page' => 'laca-security', 'tab' => $key], admin_url('admin.php'))); ?>"
-                       class="nav-tab <?php echo $activeTab === $key ? 'nav-tab-active' : ''; ?>">
-                        <?php echo esc_html($label); ?>
-                    </a>
-                <?php endforeach; ?>
-            </nav>
-            <div class="tab-content" style="background:#fff;padding:24px;border:1px solid #c3c4c7;border-top:0;margin-top:0;">
+            <h1><?php echo esc_html($tabs[$activeTab]); ?></h1>
+            <div class="tab-content" style="background:#fff;padding:24px;border:1px solid #dfe3ea;border-radius:10px;margin-top:16px;">
                 <?php
                 switch ($activeTab) {
                     case 'audit':   $this->renderAuditTab();   break;

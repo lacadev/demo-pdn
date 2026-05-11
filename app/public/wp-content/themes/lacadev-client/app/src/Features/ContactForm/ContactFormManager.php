@@ -43,6 +43,7 @@ class ContactFormManager
         'datetime' => 'Ngày & Giờ (Datetime)',
         'url' => 'Đường dẫn (URL)',
         'hidden' => 'Ẩn (Hidden)',
+        'step_break' => 'Ngắt bước (Step)',
     ];
 
     /** Allowed column spans in 12-col grid */
@@ -149,13 +150,16 @@ class ContactFormManager
         }
         // Old flat format: first item has 'type' and no 'cols'
         if (isset($raw[0]['type']) && !isset($raw[0]['cols'])) {
-            return $raw;
+            return array_values(array_filter($raw, fn($field) => ($field['type'] ?? '') !== 'step_break'));
         }
         // New row-based format
         $fields = [];
         foreach ($raw as $row) {
             foreach ($row['cols'] ?? [] as $col) {
                 foreach ($col['fields'] ?? [] as $field) {
+                    if (($field['type'] ?? '') === 'step_break') {
+                        continue;
+                    }
                     $fields[] = $field;
                 }
             }
@@ -431,11 +435,14 @@ class ContactFormManager
         $formId = $isNew ? 0 : (int) $form['id'];
         $rows = $isNew ? self::defaultFormRows() : self::toRowsFormat($form);
         $message = $this->getFlashMessage();
+        $styleSettings = json_decode($form['style_settings'] ?? '{}', true) ?: [];
 
         $defaultAdminSubject = 'Liên hệ mới: [$name - $phone_number]';
         $defaultAdminBody = self::defaultAdminEmailBody();
         $defaultCustomerSubject = 'Cảm ơn bạn đã liên hệ - ' . get_bloginfo('name');
         $defaultCustomerBody = self::defaultCustomerEmailBody();
+        $adminEmail = (string) get_option('admin_email');
+        $useAdminNotifyEmail = empty($form['notify_email']);
         ?>
         <div class="wrap laca-cf-wrap">
             <div class="laca-cf-header">
@@ -488,10 +495,45 @@ class ContactFormManager
                                 </div>
                                 <div class="laca-cf-field-group">
                                     <label for="cf-notify-email" class="lcf-form-label">Email nhận thông báo</label>
+                                    <label style="display:flex;align-items:center;gap:8px;margin-bottom:10px;cursor:pointer;font-weight:600;font-size:13px;">
+                                        <input type="checkbox" id="cf-use-admin-email" name="use_admin_notify_email" value="1"
+                                               <?php checked(true, $useAdminNotifyEmail); ?>>
+                                        Dùng Administration Email Address
+                                        <code><?php echo esc_html($adminEmail); ?></code>
+                                    </label>
                                     <input type="email" id="cf-notify-email" name="notify_email" class="widefat"
                                            value="<?php echo esc_attr($form['notify_email'] ?? ''); ?>"
-                                           placeholder="Để trống = dùng <?php echo esc_attr(get_option('admin_email')); ?>">
-                                    <p class="description">Email admin nhận thông báo mỗi khi có submission mới.</p>
+                                           placeholder="Nhập email khác nếu không muốn dùng Administration Email Address"
+                                           <?php disabled($useAdminNotifyEmail); ?>>
+                                    <p class="description">Mặc định form sẽ gửi thông báo về Administration Email Address. Chỉ nhập email ở ô trên khi muốn dùng email nhận thông báo khác.</p>
+                                </div>
+                                <div class="laca-cf-field-group">
+                                    <label for="s-form-mode" class="lcf-form-label">Kiểu hiển thị form</label>
+                                    <select id="s-form-mode" class="widefat" onchange="lcfStyleUpdate('form_mode',this.value)">
+                                        <option value="standard">Form thường</option>
+                                        <option value="multi_step">Form từng bước</option>
+                                    </select>
+                                    <p class="description">Dùng "Ngắt bước (Step)" trong tab Trường để chia form thành nhiều bước.</p>
+                                </div>
+                                <div id="lcf-step-settings" class="lcf-step-settings">
+                                    <div class="laca-cf-field-group">
+                                        <label class="lcf-form-label">Nút tiếp theo</label>
+                                        <input type="text" id="s-step-next-text" class="widefat"
+                                               oninput="lcfStyleUpdate('step_next_text',this.value)"
+                                               placeholder="Tiếp theo">
+                                    </div>
+                                    <div class="laca-cf-field-group">
+                                        <label class="lcf-form-label">Nút quay lại</label>
+                                        <input type="text" id="s-step-prev-text" class="widefat"
+                                               oninput="lcfStyleUpdate('step_prev_text',this.value)"
+                                               placeholder="Quay lại">
+                                    </div>
+                                    <div class="laca-cf-field-group">
+                                        <label class="lcf-form-label">Nút gửi cuối</label>
+                                        <input type="text" id="s-step-submit-text" class="widefat"
+                                               oninput="lcfStyleUpdate('step_submit_text',this.value)"
+                                               placeholder="Gửi thông tin">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -508,6 +550,9 @@ class ContactFormManager
                                 </p>
                                 <div class="laca-cf-add-row-palette">
                                     <span class="lcf-palette-label">+ Thêm hàng:</span>
+                                    <button type="button" class="lcf-add-row-btn lcf-add-step-btn" onclick="lcfAddStep()">
+                                        + Thêm bước
+                                    </button>
                                     <button type="button" class="lcf-add-row-btn" onclick="lcfAddRow('1')">
                                         <span class="lcf-row-preview lcf-rp-1"></span>1 cột
                                     </button>
@@ -693,6 +738,27 @@ class ContactFormManager
                 FIELD_TYPES: <?php echo wp_json_encode(self::FIELD_TYPES); ?>,
                 rows: <?php echo wp_json_encode($rows); ?>
             };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var useAdminCheckbox = document.getElementById('cf-use-admin-email');
+                var notifyEmailInput = document.getElementById('cf-notify-email');
+
+                if (!useAdminCheckbox || !notifyEmailInput) {
+                    return;
+                }
+
+                var syncNotifyEmailState = function () {
+                    var useAdmin = useAdminCheckbox.checked;
+                    notifyEmailInput.disabled = useAdmin;
+
+                    if (useAdmin) {
+                        notifyEmailInput.value = '';
+                    }
+                };
+
+                useAdminCheckbox.addEventListener('change', syncNotifyEmailState);
+                syncNotifyEmailState();
+            });
         </script>
         <?php
     }
@@ -847,17 +913,25 @@ class ContactFormManager
             foreach ($row['cols'] as $col) {
                 $cleanFields = [];
                 foreach ($col['fields'] ?? [] as $field) {
-                    if (empty($field['name']) || empty($field['label'])) {
+                    $fieldType = in_array($field['type'] ?? '', array_keys(self::FIELD_TYPES), true) ? $field['type'] : 'text';
+
+                    if ($fieldType !== 'step_break' && (empty($field['name']) || empty($field['label']))) {
                         continue;
                     }
+
+                    if ($fieldType === 'step_break' && empty($field['label'])) {
+                        $field['label'] = 'Bước tiếp theo';
+                    }
+
                     $cleanFields[] = [
                         'id' => sanitize_key($field['id'] ?? uniqid('field_', true)),
-                        'type' => in_array($field['type'], array_keys(self::FIELD_TYPES), true) ? $field['type'] : 'text',
-                        'name' => sanitize_key($field['name']),
+                        'type' => $fieldType,
+                        'name' => $fieldType === 'step_break' ? '' : sanitize_key($field['name']),
                         'label' => sanitize_text_field($field['label']),
                         'placeholder' => sanitize_text_field($field['placeholder'] ?? ''),
-                        'required' => !empty($field['required']),
-                        'options' => array_map('sanitize_text_field', (array) ($field['options'] ?? [])),
+                        'required' => $fieldType !== 'step_break' && !empty($field['required']),
+                        'options' => $fieldType === 'step_break' ? [] : array_map('sanitize_text_field', (array) ($field['options'] ?? [])),
+                        'condition' => $fieldType === 'step_break' ? [] : self::sanitizeFieldCondition($field['condition'] ?? []),
                     ];
                 }
                 $span = (int) ($col['span'] ?? 12);
@@ -893,6 +967,14 @@ class ContactFormManager
         if (!empty($rawStyle['btn_text'])) {
             $cleanStyle['btn_text'] = sanitize_text_field($rawStyle['btn_text']);
         }
+        if (!empty($rawStyle['form_mode']) && in_array($rawStyle['form_mode'], ['standard', 'multi_step'], true)) {
+            $cleanStyle['form_mode'] = sanitize_key($rawStyle['form_mode']);
+        }
+        foreach (['step_next_text', 'step_prev_text', 'step_submit_text'] as $textKey) {
+            if (!empty($rawStyle[$textKey])) {
+                $cleanStyle[$textKey] = sanitize_text_field($rawStyle[$textKey]);
+            }
+        }
         if (!empty($rawStyle['input_spacing'])) {
             $cleanStyle['input_spacing'] = sanitize_text_field($rawStyle['input_spacing']);
         }
@@ -907,7 +989,9 @@ class ContactFormManager
         $data = [
             'name' => $formName,
             'fields' => $cleanRows,
-            'notify_email' => sanitize_email($_POST['notify_email'] ?? ''),
+            'notify_email' => !empty($_POST['use_admin_notify_email'])
+                ? ''
+                : sanitize_email($_POST['notify_email'] ?? ''),
             'email_admin_subject' => sanitize_text_field($_POST['email_admin_subject'] ?? ''),
             'email_admin_body' => wp_kses_post(stripslashes($_POST['email_admin_body'] ?? '')),
             'email_customer_subject' => sanitize_text_field($_POST['email_customer_subject'] ?? ''),
@@ -924,6 +1008,25 @@ class ContactFormManager
 
         wp_redirect($this->buildRedirectUrl($redirectId, 'saved'));
         exit;
+    }
+
+    private static function sanitizeFieldCondition(array $condition): array
+    {
+        $field = sanitize_key($condition['field'] ?? '');
+        if ($field === '') {
+            return [];
+        }
+
+        $operator = sanitize_key($condition['operator'] ?? 'equals');
+        if (!in_array($operator, ['equals', 'not_equals', 'contains', 'not_empty', 'empty'], true)) {
+            $operator = 'equals';
+        }
+
+        return [
+            'field' => $field,
+            'operator' => $operator,
+            'value' => sanitize_text_field($condition['value'] ?? ''),
+        ];
     }
 
     public function handleDelete(): void

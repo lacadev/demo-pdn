@@ -74,9 +74,24 @@ if (is_admin()) {
     add_action('init', static function () {
         new \App\Settings\ThemeUpdater();
         new \App\Widgets\BlockSyncWidget();
-        new \App\Settings\LacaDevTrackerClient(); // Gửi logs & alerts về lacadev CMS
+
+        if (class_exists('\App\Settings\LacaAdmin\LacaAdminMenuOrganizer')) {
+            (new \App\Settings\LacaAdmin\LacaAdminMenuOrganizer())->register();
+        }
     });
 }
+
+/**
+ * LacaDev Tracker Client — lightweight customer-site reporting.
+ *
+ * Must run outside wp-admin too so WP-Cron scans and REST remote-update routes
+ * are available on normal WordPress requests.
+ */
+add_action('init', static function () {
+    if (class_exists('\App\Settings\LacaDevTrackerClient')) {
+        \App\Settings\LacaDevTrackerClient::register();
+    }
+}, 5);
 
 /**
  * Block Sync Receiver — REST API endpoint nhận blocks từ lacadev.com

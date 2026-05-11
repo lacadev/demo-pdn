@@ -23,6 +23,10 @@ class QuickNotesWidget
 
     public function addWidget(): void
     {
+        if (function_exists('lacadev_dashboard_widget_enabled') && !lacadev_dashboard_widget_enabled('quick_notes')) {
+            return;
+        }
+
         wp_add_dashboard_widget(
             'laca_quick_notes',
             'Ghi chú nhanh',
