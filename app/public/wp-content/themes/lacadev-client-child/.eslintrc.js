@@ -1,5 +1,5 @@
 module.exports = {
-	extends: ['plugin:@wordpress/eslint-plugin/recommended'],
+	extends: [ 'plugin:@wordpress/eslint-plugin/recommended' ],
 	ignorePatterns: [
 		'*.min.js',
 		'dist/**',
@@ -63,4 +63,4 @@ module.exports = {
 		'jsx-a11y/label-has-associated-control': 'warn',
 	},
 };
-// 
+//
