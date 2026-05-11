@@ -8,6 +8,12 @@ if (!defined('ABSPATH'))
  */
 
 $heading = esc_html($attributes['heading'] ?? '');
+$bg_color = preg_match('/^#[0-9a-fA-F]{6}$/', $attributes['bgColor'] ?? '') ? $attributes['bgColor'] : '#0f0f0f';
+$bg_opacity = max(0, min(100, intval($attributes['bgOpacity'] ?? 100)));
+$r = hexdec(substr($bg_color, 1, 2));
+$g = hexdec(substr($bg_color, 3, 2));
+$b = hexdec(substr($bg_color, 5, 2));
+$bg_rgba = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . ($bg_opacity / 100) . ')';
 $slide_desktop = max(1, intval($attributes['slidesPerView'] ?? 4));
 $space = intval($attributes['spaceBetween'] ?? 20);
 $loop = !empty($attributes['loop']);

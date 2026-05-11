@@ -55,6 +55,132 @@
 .laca-help-card-content {
     line-height: 1.7;
     color: #3c434a;
+
+    p {
+        margin: 0 0 0.75rem;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.625rem;
+        margin-top: 0.75rem;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    figure {
+        margin: 0.875rem 0;
+    }
+
+    iframe,
+    video {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0.625rem;
+    }
+}
+
+.laca-help-step-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.laca-help-toggle {
+    display: block;
+}
+
+.laca-help-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    list-style: none;
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    h3 {
+        margin: 0;
+        flex: 1;
+    }
+}
+
+.laca-help-toggle-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.5rem;
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(34, 113, 177, 0.25);
+    background: rgba(34, 113, 177, 0.1);
+    color: #0f3f67;
+    font-size: 0.8125rem;
+    font-weight: 700;
+
+    .label-open {
+        display: none;
+    }
+
+    .label-close {
+        display: inline;
+    }
+}
+
+.laca-help-toggle[open] .laca-help-toggle-button {
+    .label-open {
+        display: inline;
+    }
+
+    .label-close {
+        display: none;
+    }
+}
+
+.laca-help-toggle .laca-help-card-content {
+    display: none;
+    padding: 0 1.25rem 1.25rem;
+}
+
+.laca-help-toggle[open] .laca-help-card-content {
+    display: block;
+}
+
+.laca-help-steps {
+    counter-reset: helpStep;
+}
+
+.laca-help-steps > p,
+.laca-help-steps > ul > li,
+.laca-help-steps > ol > li {
+    position: relative;
+}
+
+.laca-help-steps > p::before,
+.laca-help-steps > ul > li::before,
+.laca-help-steps > ol > li::before {
+    counter-increment: helpStep;
+    content: "Bước " counter(helpStep);
+    display: inline-block;
+    margin-right: 0.5rem;
+    margin-bottom: 0.35rem;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(34, 113, 177, 0.1);
+    border: 1px solid rgba(34, 113, 177, 0.2);
+    color: #0f3f67;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.3;
 }
 
 .laca-help-footer {
@@ -84,4 +210,32 @@
     grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
     gap: 1.25rem;
     margin-top: 1.25rem;
+}
+
+@media (max-width: 48rem) {
+    .laca-help-wrap {
+        padding: 0.875rem;
+    }
+
+    .laca-help-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .laca-help-card {
+        padding: 1.125rem;
+    }
+
+    .laca-help-step-card {
+        padding: 0.9375rem;
+    }
+
+    .laca-help-card-header {
+        padding: 0;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .laca-help-toggle .laca-help-card-content {
+        padding: 0.875rem 0 0;
+    }
 }

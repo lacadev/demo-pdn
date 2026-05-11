@@ -42,6 +42,8 @@ class AdminSettings
 		$this->resizeOriginalImageAfterUpload();
 		$this->renameUploadFileName();
 		$this->addCustomExtensionsInMediaUpload();
+		$this->enableMediaUploaderForHelpGuide();
+		$this->registerHelpGuidePasteImageAjax();
 
 		if (get_option('_disable_admin_confirm_email') === 'yes') {
 			$this->disableChangeAdminEmailRequireConfirm();
@@ -78,6 +80,83 @@ class AdminSettings
 				$url = wp_get_attachment_url($attachmentID);
 			}
 			die($url);
+		});
+	}
+
+	/**
+	 * Ensure WordPress media uploader is available in
+	 * "Quản trị & HD Sử dụng" (Carbon Fields theme options page).
+	 */
+	public function enableMediaUploaderForHelpGuide(): void
+	{
+		add_action('admin_enqueue_scripts', static function ($hook_suffix) {
+			$page = isset($_GET['page']) ? (string) wp_unslash($_GET['page']) : '';
+			$screen = function_exists('get_current_screen') ? get_current_screen() : null;
+			$screenId = $screen && !empty($screen->id) ? (string) $screen->id : '';
+
+			$isHelpGuideScreen =
+				strpos((string) $hook_suffix, 'laca-management-settings') !== false
+				|| strpos($screenId, 'laca-management-settings') !== false
+				|| $page === 'laca-management-settings'
+				|| ($page !== '' && strpos($page, 'management-settings') !== false);
+
+			if (!$isHelpGuideScreen) {
+				return;
+			}
+
+			wp_enqueue_media();
+			$theme_root_uri = dirname(get_template_directory_uri());
+			$script_ver       = wp_get_theme()->get('Version') ?: '1.0.0';
+			wp_enqueue_script(
+				'laca-help-guide-paste-image',
+				$theme_root_uri . '/resources/scripts/admin/help-guide-paste-image.js',
+				['jquery'],
+				$script_ver,
+				true
+			);
+			wp_localize_script('laca-help-guide-paste-image', 'lacaHelpPasteImage', [
+				'ajaxUrl' => admin_url('admin-ajax.php'),
+				'nonce'   => wp_create_nonce('laca_help_paste_image'),
+				'i18n'    => [
+					'uploadFail' => __('Không thể upload ảnh từ clipboard. Vui lòng thử lại.', 'laca'),
+				],
+			]);
+		}, 20);
+	}
+
+	public function registerHelpGuidePasteImageAjax(): void
+	{
+		add_action('wp_ajax_laca_help_paste_image', static function () {
+			if (!check_ajax_referer('laca_help_paste_image', 'nonce', false)) {
+				wp_send_json_error(['message' => __('Nonce không hợp lệ.', 'laca')], 403);
+			}
+
+			if (!current_user_can('upload_files')) {
+				wp_send_json_error(['message' => __('Bạn không có quyền upload media.', 'laca')], 403);
+			}
+
+			if (empty($_FILES['image'])) {
+				wp_send_json_error(['message' => __('Không tìm thấy file ảnh từ clipboard.', 'laca')], 400);
+			}
+
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+
+			$attachmentId = media_handle_upload('image', 0);
+			if (is_wp_error($attachmentId)) {
+				wp_send_json_error(['message' => $attachmentId->get_error_message()], 400);
+			}
+
+			$imageUrl = wp_get_attachment_url($attachmentId);
+			if (!$imageUrl) {
+				wp_send_json_error(['message' => __('Upload thành công nhưng không lấy được URL ảnh.', 'laca')], 500);
+			}
+
+			wp_send_json_success([
+				'id'  => $attachmentId,
+				'url' => $imageUrl,
+			]);
 		});
 	}
 

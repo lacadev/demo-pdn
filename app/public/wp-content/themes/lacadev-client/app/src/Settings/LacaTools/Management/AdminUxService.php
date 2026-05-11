@@ -72,19 +72,31 @@ class AdminUxService
 
             <div class="laca-help-grid">
                 <?php if (!empty($blocks)) : ?>
-                    <?php foreach ($blocks as $block) : ?>
-                        <div class="laca-help-card" style="border-top-color: <?php echo esc_attr($block['border_color'] ?: '#2271b1'); ?>;">
-                            <h3><?php echo esc_html($block['title']); ?></h3>
-                            <div class="laca-help-card-content">
-                                <?php echo wpautop(wp_kses_post($block['content'])); ?>
-                            </div>
-                        </div>
+                    <?php foreach ($blocks as $index => $block) : ?>
+                        <?php
+                        $borderColor = !empty($block['border_color']) ? $block['border_color'] : '#2271b1';
+                        $title       = !empty($block['title']) ? $block['title'] : sprintf(__('Khối %d', 'laca'), ((int) $index + 1));
+                        ?>
+                        <article class="laca-help-card laca-help-step-card" style="border-top-color: <?php echo esc_attr($borderColor); ?>;">
+                            <details class="laca-help-toggle">
+                                <summary class="laca-help-card-header">
+                                    <h3><?php echo esc_html($title); ?></h3>
+                                    <span class="laca-help-toggle-button" aria-hidden="true">
+                                        <span class="label-open"><?php echo esc_html__('Ẩn', 'laca'); ?></span>
+                                        <span class="label-close"><?php echo esc_html__('Hiện', 'laca'); ?></span>
+                                    </span>
+                                </summary>
+                                <div class="laca-help-card-content laca-help-steps">
+                                    <?php echo wpautop(wp_kses_post($block['content'])); ?>
+                                </div>
+                            </details>
+                        </article>
                     <?php endforeach; ?>
                 <?php else : ?>
-                    <div class="laca-help-card">
+                    <article class="laca-help-card">
                         <h3>📝 Hướng dẫn mặc định</h3>
                         <p>Vui lòng vào <strong>Laca Admin &gt; Quản trị &amp; HD Sử dụng</strong> để cập nhật nội dung hướng dẫn cho khách hàng.</p>
-                    </div>
+                    </article>
                 <?php endif; ?>
             </div>
 
